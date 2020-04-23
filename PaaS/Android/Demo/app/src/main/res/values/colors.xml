@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="hlfTransparent">#00000000</color>
+    <color name="line_btn">#BBBBBB</color>
+
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="colorBlack">#000000</color>
+    <color name="colorGray">#CDCDCD</color>
+    <color name="colorRed">#FF0000</color>
+    <color name="colorGreen">#00FF00</color>
+    <color name="colorBlue">#0000FF</color>
+    <color name="colorYellow">#FFFF00</color>
+    <color name="colorDarkGray">#555555</color>
+
+    <color name="colorHalf">#88333333</color>
+    <color name="colorBack">#181818</color>
+    <color name="colorBackHover">#2A2A2A</color>
+
+    <!-- 新交互颜色定义-->
+    <color name="msg_bg_color">#EFEFEF</color>
+    <color name="holo_light_primary">#ffe6e6e6</color>
+    <color name="holo_light_primary_light">#ffffffff</color>
+    <color name="holo_button_pressed">#59f0f0f0</color>
+    <color name="holo_button_normal">#bd292f34</color>
+    <color name="holo_light_button_pressed">#66666666</color>
+    <color name="holo_light_button_normal">#b3cccccc</color>
+    <color name="text_color_sub_info">#888888</color>
+    <color name="create_class_bg_color">#F2F2F2</color>
+    <color name="color_edit_bg">#BBBBBB</color>
+    <color name="color_my_info_bg">#006EFF</color>
+    <color name="color_title_bg">#AA006EFF</color>
+    <color name="stroke_color">#E8E8E8</color>
+    <color name="system_msg_bg_color">#D8D8D8</color>
+
+    <!-- invite btn style -->
+    <color name="invite_btn_stroke_normal_color">#DDDDDD</color>
+    <color name="invite_btn_stroke_press_color">#D2D2D2</color>
+    <color name="invite_btn_stroke_disable_color">#d5d5d5</color>
+
+    <color name="invite_btn_fill_normal_color">#006eff</color>
+    <color name="invite_btn_fill_press_color">#0068f2</color>
+    <color name="invite_btn_disable_color">#f2f2f2</color>
+    <color name="invite_btn_disable_text_color">#bbbbbb</color>
+
+    <!-- whiteboard panel -->
+    <color name="whiteboard_panel_diver_color">#1AFFFFFF</color>
+    <color name="whiteboard_panel_bg_color">#1F252F</color>
+    <color name="whiteboard_bg_color">#e7e7e7</color>
+
+</resources>

@@ -1,0 +1,85 @@
+.container-box {
+  background-image: url(https://main.qcloudimg.com/raw/20db9863af9f7e57a7be64dbac685691.png);
+  background-color: #1F2531;
+  background-repeat: no-repeat;
+  background-size: 60%;
+  background-position: center bottom;
+  height: 100vh;
+  overflow: hidden;
+  color: #fff;
+}
+
+
+button {
+  margin: 4vh auto;
+  width: 40vw;
+  font-size: 14px;
+}
+
+.section {
+  display: flex;
+  margin: 50rpx 10rpx;
+}
+
+.section .section_title {
+  flex: 1;
+  font-size: 32rpx;
+  color: #fff;
+  text-align: right;
+}
+
+.section .section_input {
+  flex: 3;
+  font-size: 32rpx;
+  color: #fff;
+  margin: 0 50rpx;
+}
+
+.section .section_input input,
+.section .section_input picker {
+  background-color: transparent;
+  border-bottom: 1px solid #577785;
+  text-align: center;
+  font-size: 16px;
+  padding: 5rpx 0;
+}
+
+.section .dropdowns-box {
+  position: relative;
+}
+
+.section .dropdowns-box .dropdowns {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin-right: 10rpx;
+  width: 20rpx;
+  height: 20rpx;
+  border-left: 1rpx solid #fff;
+  border-top: 1rpx solid #fff;
+  transform: rotate(225deg);
+}
+
+.mode-group label {
+  display: block;
+  margin-bottom: 10rpx;
+}
+
+.tips {
+  text-align: center;
+  font-size: 24rpx;
+  margin-bottom: 10rpx;
+}
+
+.btn-joinclass {
+  height: 38px;
+  margin-top: 20px;
+  line-height: 38px;
+  background-color: #0a818c;
+  border: 1px solid #0a818c;
+  color: #dcebeb;
+  outline: none;
+  border-radius: 2px;
+  font-size: 12px;
+  padding: 0 20px;
+}

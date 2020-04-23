@@ -1,0 +1,22 @@
+{
+  "pages": [
+    "pages/tic/room_webview/index/index",
+    "pages/tic/room_webview/room/room"
+  ],
+  "window": {
+    "pageOrientation": "auto",
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "腾讯云互动课堂",
+    "navigationBarBackgroundColor": "#f8f8f8",
+    "backgroundColor": "#f8f8f8",
+    "renderingMode": "seperated"
+  },
+  "networkTimeout": {
+    "request": 10000,
+    "connectSocket": 10000,
+    "uploadFile": 10000,
+    "downloadFile": 10000
+  },
+  "debug": true,
+  "sitemapLocation": "sitemap.json"
+}

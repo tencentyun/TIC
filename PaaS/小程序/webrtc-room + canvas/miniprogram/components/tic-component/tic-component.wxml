@@ -1,0 +1,3 @@
+<board-component id="tx_board_component" bindBoardEvent="onBoardEvent">
+  <slot></slot>
+</board-component>

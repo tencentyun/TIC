@@ -1,0 +1,38 @@
+{
+  "name": "TIC_SDK",
+  "version": "1.0.0",
+  "description": "- 集实时音视频、互动白板、IM聊天室、文档转码、屏幕和媒体分享等功能的一站式在线教育互动课堂解决方案\r - 基于教育场景提供统一的TIC SDK，整合了音视频能力（iLiveSDK），白板文档能力（boardSDK,COSSDK）极大的降低用户的学习成本。",
+  "main": "webpack.dev.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "webpack --watch --config webpack.dev.js",
+    "prod": "webpack --config webpack.prod.js",
+    "demo": "cd demo && live-server --port=5555"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://git.code.oa.com/ilvb/TIC_SDK.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.1.6",
+    "@babel/plugin-transform-runtime": "^7.1.0",
+    "@babel/preset-env": "^7.1.6",
+    "babel-loader": "^8.0.0-beta.0",
+    "copy-webpack-plugin": "^4.5.1",
+    "core-js": "^2.5.7",
+    "eslint": "^5.16.0",
+    "eslint-loader": "^2.1.2",
+    "uglifyjs-webpack-plugin": "^1.2.5",
+    "webpack": "^4.26.0",
+    "webpack-cli": "^3.1.2"
+  },
+  "dependencies": {
+    "add-module-exports-webpack-plugin": "^0.1.0",
+    "axios": "^0.18.0",
+    "babel-plugin-add-module-exports": "^1.0.0",
+    "js-md5": "^0.7.3"
+  }
+}

@@ -1,0 +1,51 @@
+/**index.wxss**/
+.tedu-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background-image: url(https://mc.qcloudimg.com/static/img/7da57e0050d308e2e1b1e31afbc42929/bg.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: hidden;
+  background-color: #2A2C2F;
+}
+
+.tedu-class__box {
+  position: absolute;
+  background-color: #2A2C2F;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* webview */
+.tedu-class__box .tedu-webpage-container {
+  background-color: #2A2C2F;
+}
+
+/* 竖屏*/
+@media (orientation: portrait) {
+  .tedu-camera-chat__box {
+    background: red;
+    width: 100vw !important;
+  }
+
+  .tedu-camera__box {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* 横屏*/
+@media (orientation: landscape) {
+  .tedu-camera-chat__box {
+    background: yellow;
+    flex-direction: column;
+    height: 100vh !important;
+  }
+
+  .tedu-camera__box {
+    width: 100%;
+    height: 100%;
+  }
+}

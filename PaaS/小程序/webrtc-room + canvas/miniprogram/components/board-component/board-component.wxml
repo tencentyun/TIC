@@ -1,0 +1,13 @@
+<view class="tic-board-box">
+  <view class="tic-board-wrap" hidden="{{hideBoard}}" style="width: {{wrapWidth}}px; height: {{wrapHeight}}px;" bindtouchmove="bindWrapTouchmove">
+    <canvas class="tic_board_canvas float_layout" canvas-id="tic_float_board_canvas" bindtouchstart="bindContainerTouchstart" bindtouchmove="bindContainerTouchmove" bindtouchend="bindContainerTouchend" bindtouchcancel="bindContainerTouchcancel"></canvas>
+    <canvas class="tic_board_canvas" canvas-id="tic_board_canvas">
+      <slot></slot>
+    </canvas>
+    <image id="tic_board_img_bg" data-src="{{currentPic}}" data-board="{{currentBoard}}" class="tic_board_img_bg {{orientation}}" hidden="{{hideImg}}" style="{{imgStyle}}" wx:if="{{currentPic}}" src="{{currentPic}}" bindload="imgOnLoad" binderror="imgOnLoadError"></image>
+    <view class="tic_board_color_bg" style="background-color:{{bgColor}}"></view>
+    <view>
+      <image wx:for="{{ imgLoadList }}" wx:key="*this" src="{{ item }}" data-src="{{ item }}" style="width:0;height:0;" />
+    </view>
+  </view>
+</view>

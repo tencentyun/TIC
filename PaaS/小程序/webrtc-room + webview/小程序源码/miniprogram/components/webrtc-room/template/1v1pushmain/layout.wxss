@@ -1,0 +1,80 @@
+.t1v1pushmain.videoview {
+  position: relative;
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.t1v1pushmain .pusher-box {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  vertical-align: top;
+}
+
+.t1v1pushmain live-pusher {
+  width: 100%;
+  height: 100%;
+}
+
+
+.t1v1pushmain .player-box {
+  position: absolute;
+  display: inline-block;
+  overflow: hidden;
+  width: 46vw;
+  height: 61.33vw;
+  text-align: center;
+  margin-bottom: 2vw;
+  vertical-align: top;
+}
+
+.t1v1pushmain .poster {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: #000;
+}
+
+.t1v1pushmain .set {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.t1v1pushmain live-player {
+  width: 100%;
+  height: 100%;
+}
+
+.t1v1pushmain .character {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  font-size: 16px;
+  color: #999;
+  width: 100%;
+  height: 10vw;
+  line-height: 10vw;
+  text-align: left;
+}
+
+.t1v1pushmain .loading {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.t1v1pushmain .loading cover-image {
+  position: absolute;
+  top: calc(50% - 15px);
+  left: calc(50% - 15px);
+  width: 30px;
+  height: 30px;
+}

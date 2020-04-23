@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">TICSDK-TRTC Demo</string>
+    <string name="str_tag_pos">POS</string>
+    <string name="login_remind">建议按文档说明发邮件申请体验账号，默认账号使用过程中可能由于多个体验者登录同一个账号导致互踢</string>
+    <string name="str_app_name">互动课堂</string>
+    <string name="str_app_tips">互动课堂是基于腾讯互动直播课堂SDK的课堂应用，专注于课堂场景的解决方案</string>
+    <string name="str_btn_join">加入课堂</string>
+    <string name="str_btn_create">创建课堂</string>
+    <string name="str_btn_login">登录</string>
+    <string name="str_title_join">加入课堂</string>
+    <string name="str_tips_conf_id">课堂号</string>
+    <string name="str_tips_name">使用个人名称加入课堂</string>
+    <string name="str_tips_nick">昵称</string>
+    <string name="str_tips_auto_mic">自动开启麦克风</string>
+    <string name="str_tips_auto_camera">自动打开摄像头</string>
+    <string name="str_title_create">创建课堂</string>
+    <string name="str_menu_switch_camera">切换摄像头</string>
+    <string name="str_menu_camera">摄像头</string>
+    <string name="str_menu_mic">麦克风</string>
+    <string name="str_tips_blank"><![CDATA[白板功能，敬请期待->]]></string>
+
+    <string name="str_tips_com_wait">正在启动任务</string>
+    <string name="str_tips_wait_regist">正在注册帐号</string>
+    <string name="str_tips_wait_login">正在登录帐号</string>
+    <string name="str_tips_wait_create">正在创建课堂</string>
+    <string name="str_tips_wait_join">正在加入课堂</string>
+
+    <string name="str_sys_title">系统消息:</string>
+    <string name="str_sys_join_conf">%s加入课堂</string>
+    <string name="str_sys_quit_conf">%s退出课堂</string>
+
+    <!-- 提示信息 -->
+    <string name="msg_title">提示</string>
+    <string name="msg_title_wait">等待</string>
+    <string name="msg_head_group">group</string>
+    <string name="msg_head_c2c">c2c</string>
+
+    <!-- 按钮 -->
+    <string name="str_btn_send">发送</string>
+    <string name="str_btn_cancel">取消</string>
+    <string name="str_btn_confirm">确认</string>
+
+</resources>

@@ -1,0 +1,98 @@
+.t1v1.videoview {
+  position: relative;
+  display: flex;
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 100%;
+  height: 100%;
+}
+
+@media (orientation: portrait) {
+  .t1v1 .pusher-box {
+    position: absolute;
+    display: inline-block;
+    left: 0vw;
+    top: 0vh;
+    height: calc(23vh - 5px);
+    width: 50vw;
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .t1v1 .player-box {
+    position: absolute;
+    display: inline-block;
+    left: 50vw;
+    top: 0vh;
+    height: calc(23vh - 5px);
+    width: 50vw;
+    overflow: hidden;
+    text-align: center;
+    vertical-align: top;
+  }
+}
+
+@media (orientation: landscape) {
+  .t1v1 .pusher-box {
+    position: absolute;
+    display: inline-block;
+    top: 0vh;
+    left: 0vw;
+    height: 50vh;
+    width: calc(19vw - 5px);
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .t1v1 .player-box {
+    position: absolute;
+    display: inline-block;
+    top: 50vh;
+    left: 0vw;
+    height: 50vh;
+    width: calc(19vw - 5px);
+    overflow: hidden;
+    text-align: center;
+    vertical-align: top;
+  }
+}
+
+
+.t1v1 live-pusher {
+  width: 100%;
+  height: 100%;
+}
+
+.t1v1 .poster {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background-color: #000;
+}
+
+.t1v1 .set {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.t1v1 live-player {
+  width: 100%;
+  height: 100%;
+}
+
+.t1v1 .loading {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.t1v1 .loading cover-image {
+  position: absolute;
+  top: calc(50% - 15px);
+  left: calc(50% - 15px);
+  width: 30px;
+  height: 30px;
+}

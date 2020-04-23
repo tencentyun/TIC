@@ -1,0 +1,622 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 51;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		6A20E661219186EA0021CA30 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A20E660219186EA0021CA30 /* libc++.tbd */; };
+		6A9FC2B2217EBCC6009ACB83 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6A9FC2B1217EBCC6009ACB83 /* AppDelegate.m */; };
+		6A9FC2B5217EBCC6009ACB83 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6A9FC2B4217EBCC6009ACB83 /* ViewController.m */; };
+		6A9FC2B7217EBCC7009ACB83 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A9FC2B6217EBCC7009ACB83 /* Assets.xcassets */; };
+		6A9FC2BA217EBCC7009ACB83 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6A9FC2B8217EBCC7009ACB83 /* Main.storyboard */; };
+		6A9FC2BD217EBCC7009ACB83 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6A9FC2BC217EBCC7009ACB83 /* main.m */; };
+		CF0AF30022785CFA00B9CD87 /* ColorPickViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CF0AF2FF22785CFA00B9CD87 /* ColorPickViewController.m */; };
+		CF3019DE23A210EB005296DF /* TICManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CF3019C023A210EA005296DF /* TICManager.m */; };
+		CF3019DF23A210EB005296DF /* TICWeakProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = CF3019C223A210EA005296DF /* TICWeakProxy.m */; };
+		CF3019E023A210EB005296DF /* TICDef.m in Sources */ = {isa = PBXBuildFile; fileRef = CF3019C423A210EA005296DF /* TICDef.m */; };
+		CF3019E123A210EB005296DF /* TICReport.m in Sources */ = {isa = PBXBuildFile; fileRef = CF3019C523A210EA005296DF /* TICReport.m */; };
+		CF3019E223A210EB005296DF /* NSDate+NetworkClock.m in Sources */ = {isa = PBXBuildFile; fileRef = CF3019CB23A210EA005296DF /* NSDate+NetworkClock.m */; };
+		CF3019E323A210EB005296DF /* Notes in Resources */ = {isa = PBXBuildFile; fileRef = CF3019CC23A210EA005296DF /* Notes */; };
+		CF3019E423A210EB005296DF /* NetAssociation.m in Sources */ = {isa = PBXBuildFile; fileRef = CF3019D023A210EB005296DF /* NetAssociation.m */; };
+		CF3019E523A210EB005296DF /* NetworkClock.m in Sources */ = {isa = PBXBuildFile; fileRef = CF3019D123A210EB005296DF /* NetworkClock.m */; };
+		CF3019E623A210EB005296DF /* TICRecorder.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF3019D223A210EB005296DF /* TICRecorder.mm */; };
+		CF3019E723A210EB005296DF /* TICKeychainWrapper.m in Sources */ = {isa = PBXBuildFile; fileRef = CF3019D323A210EB005296DF /* TICKeychainWrapper.m */; };
+		CF3019E823A210EB005296DF /* TICReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = CF3019D523A210EB005296DF /* TICReachability.m */; };
+		CF3019E923A210EB005296DF /* TICRenderView.m in Sources */ = {isa = PBXBuildFile; fileRef = CF3019D823A210EB005296DF /* TICRenderView.m */; };
+		CF3019EA23A210EB005296DF /* TICDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = CF3019D923A210EB005296DF /* TICDevice.m */; };
+		CF3019EB23A210EB005296DF /* GCDAsyncUdpSocket.m in Sources */ = {isa = PBXBuildFile; fileRef = CF3019DB23A210EB005296DF /* GCDAsyncUdpSocket.m */; };
+		CF3FB350227707CC001C148E /* config.json in Resources */ = {isa = PBXBuildFile; fileRef = CF3FB34D227707CC001C148E /* config.json */; };
+		CF3FB351227707CC001C148E /* TICConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = CF3FB34F227707CC001C148E /* TICConfig.m */; };
+		CF8E2DC2238F68B80091710F /* 欢迎新同学.ppt in Resources */ = {isa = PBXBuildFile; fileRef = CF8E2DC1238F68B80091710F /* 欢迎新同学.ppt */; };
+		CF8E2DD0238F85DB0091710F /* ThumbItem.m in Sources */ = {isa = PBXBuildFile; fileRef = CF8E2DCE238F85DB0091710F /* ThumbItem.m */; };
+		CF8E2DD1238F85DB0091710F /* ThumbItem.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF8E2DCF238F85DB0091710F /* ThumbItem.xib */; };
+		D0077225490D0FA78E07FB85 /* libPods-TICDemo_Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E7161EF7E766C455AC848E0 /* libPods-TICDemo_Mac.a */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		CF3FB3482276A452001C148E /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		3E7161EF7E766C455AC848E0 /* libPods-TICDemo_Mac.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TICDemo_Mac.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6A20E660219186EA0021CA30 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
+		6A20E662219187560021CA30 /* libiconv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libiconv.tbd; path = usr/lib/libiconv.tbd; sourceTree = SDKROOT; };
+		6A20E6642191879E0021CA30 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
+		6A20E666219189B50021CA30 /* CoreWLAN.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreWLAN.framework; path = System/Library/Frameworks/CoreWLAN.framework; sourceTree = SDKROOT; };
+		6A20E66821918A290021CA30 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		6A20E66A21918A360021CA30 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
+		6A20E66C21918A4D0021CA30 /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
+		6A20E66E21918A550021CA30 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		6A20E67021918A5D0021CA30 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		6A20E67221918A970021CA30 /* libresolv.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libresolv.tbd; path = usr/lib/libresolv.tbd; sourceTree = SDKROOT; };
+		6A94EA27219AB83900F4B42B /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		6A9FC2AD217EBCC6009ACB83 /* TICDemo_Mac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TICDemo_Mac.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6A9FC2B0217EBCC6009ACB83 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		6A9FC2B1217EBCC6009ACB83 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		6A9FC2B3217EBCC6009ACB83 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		6A9FC2B4217EBCC6009ACB83 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		6A9FC2B6217EBCC7009ACB83 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		6A9FC2B9217EBCC7009ACB83 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		6A9FC2BB217EBCC7009ACB83 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		6A9FC2BC217EBCC7009ACB83 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		6A9FC2BE217EBCC7009ACB83 /* TICDemo_Mac.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TICDemo_Mac.entitlements; sourceTree = "<group>"; };
+		CF0AF2FE22785CFA00B9CD87 /* ColorPickViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ColorPickViewController.h; sourceTree = "<group>"; };
+		CF0AF2FF22785CFA00B9CD87 /* ColorPickViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ColorPickViewController.m; sourceTree = "<group>"; };
+		CF3019BF23A210EA005296DF /* TICKeychainWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TICKeychainWrapper.h; sourceTree = "<group>"; };
+		CF3019C023A210EA005296DF /* TICManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TICManager.m; sourceTree = "<group>"; };
+		CF3019C123A210EA005296DF /* TICRenderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TICRenderView.h; sourceTree = "<group>"; };
+		CF3019C223A210EA005296DF /* TICWeakProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TICWeakProxy.m; sourceTree = "<group>"; };
+		CF3019C323A210EA005296DF /* TICReachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TICReachability.h; sourceTree = "<group>"; };
+		CF3019C423A210EA005296DF /* TICDef.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TICDef.m; sourceTree = "<group>"; };
+		CF3019C523A210EA005296DF /* TICReport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TICReport.m; sourceTree = "<group>"; };
+		CF3019C623A210EA005296DF /* TICDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TICDevice.h; sourceTree = "<group>"; };
+		CF3019C723A210EA005296DF /* TICRecorder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TICRecorder.h; sourceTree = "<group>"; };
+		CF3019C923A210EA005296DF /* NetworkClock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetworkClock.h; sourceTree = "<group>"; };
+		CF3019CA23A210EA005296DF /* NetAssociation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetAssociation.h; sourceTree = "<group>"; };
+		CF3019CB23A210EA005296DF /* NSDate+NetworkClock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+NetworkClock.m"; sourceTree = "<group>"; };
+		CF3019CC23A210EA005296DF /* Notes */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Notes; sourceTree = "<group>"; };
+		CF3019CD23A210EA005296DF /* ios-ntp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ios-ntp.h"; sourceTree = "<group>"; };
+		CF3019CE23A210EB005296DF /* ntp-log.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ntp-log.h"; sourceTree = "<group>"; };
+		CF3019CF23A210EB005296DF /* NSDate+NetworkClock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+NetworkClock.h"; sourceTree = "<group>"; };
+		CF3019D023A210EB005296DF /* NetAssociation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetAssociation.m; sourceTree = "<group>"; };
+		CF3019D123A210EB005296DF /* NetworkClock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NetworkClock.m; sourceTree = "<group>"; };
+		CF3019D223A210EB005296DF /* TICRecorder.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TICRecorder.mm; sourceTree = "<group>"; };
+		CF3019D323A210EB005296DF /* TICKeychainWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TICKeychainWrapper.m; sourceTree = "<group>"; };
+		CF3019D423A210EB005296DF /* TICDef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TICDef.h; sourceTree = "<group>"; };
+		CF3019D523A210EB005296DF /* TICReachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TICReachability.m; sourceTree = "<group>"; };
+		CF3019D623A210EB005296DF /* TICManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TICManager.h; sourceTree = "<group>"; };
+		CF3019D723A210EB005296DF /* TICWeakProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TICWeakProxy.h; sourceTree = "<group>"; };
+		CF3019D823A210EB005296DF /* TICRenderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TICRenderView.m; sourceTree = "<group>"; };
+		CF3019D923A210EB005296DF /* TICDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TICDevice.m; sourceTree = "<group>"; };
+		CF3019DB23A210EB005296DF /* GCDAsyncUdpSocket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GCDAsyncUdpSocket.m; sourceTree = "<group>"; };
+		CF3019DC23A210EB005296DF /* GCDAsyncUdpSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCDAsyncUdpSocket.h; sourceTree = "<group>"; };
+		CF3019DD23A210EB005296DF /* TICReport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TICReport.h; sourceTree = "<group>"; };
+		CF3FB34D227707CC001C148E /* config.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = config.json; sourceTree = "<group>"; };
+		CF3FB34E227707CC001C148E /* TICConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TICConfig.h; sourceTree = "<group>"; };
+		CF3FB34F227707CC001C148E /* TICConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TICConfig.m; sourceTree = "<group>"; };
+		CF8E2DC1238F68B80091710F /* 欢迎新同学.ppt */ = {isa = PBXFileReference; lastKnownFileType = file; path = "欢迎新同学.ppt"; sourceTree = "<group>"; };
+		CF8E2DCD238F85DB0091710F /* ThumbItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ThumbItem.h; sourceTree = "<group>"; };
+		CF8E2DCE238F85DB0091710F /* ThumbItem.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ThumbItem.m; sourceTree = "<group>"; };
+		CF8E2DCF238F85DB0091710F /* ThumbItem.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ThumbItem.xib; sourceTree = "<group>"; };
+		E784B6796A93459BFAF57367 /* Pods-TICDemo_Mac.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TICDemo_Mac.debug.xcconfig"; path = "Target Support Files/Pods-TICDemo_Mac/Pods-TICDemo_Mac.debug.xcconfig"; sourceTree = "<group>"; };
+		F9A6957509FA4A3D83713A18 /* Pods-TICDemo_Mac.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TICDemo_Mac.release.xcconfig"; path = "Target Support Files/Pods-TICDemo_Mac/Pods-TICDemo_Mac.release.xcconfig"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		6A9FC2AA217EBCC6009ACB83 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6A20E661219186EA0021CA30 /* libc++.tbd in Frameworks */,
+				D0077225490D0FA78E07FB85 /* libPods-TICDemo_Mac.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		6A20E65F219186EA0021CA30 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				6A94EA27219AB83900F4B42B /* libz.tbd */,
+				6A20E67221918A970021CA30 /* libresolv.tbd */,
+				6A20E67021918A5D0021CA30 /* AVFoundation.framework */,
+				6A20E66E21918A550021CA30 /* CoreGraphics.framework */,
+				6A20E66C21918A4D0021CA30 /* CoreMedia.framework */,
+				6A20E66A21918A360021CA30 /* CoreTelephony.framework */,
+				6A20E66821918A290021CA30 /* SystemConfiguration.framework */,
+				6A20E666219189B50021CA30 /* CoreWLAN.framework */,
+				6A20E6642191879E0021CA30 /* libsqlite3.tbd */,
+				6A20E662219187560021CA30 /* libiconv.tbd */,
+				6A20E660219186EA0021CA30 /* libc++.tbd */,
+				3E7161EF7E766C455AC848E0 /* libPods-TICDemo_Mac.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		6A9FC2A4217EBCC6009ACB83 = {
+			isa = PBXGroup;
+			children = (
+				6A9FC2AF217EBCC6009ACB83 /* TICDemo_Mac */,
+				6A9FC2AE217EBCC6009ACB83 /* Products */,
+				6A20E65F219186EA0021CA30 /* Frameworks */,
+				86F353C846969B0498D45005 /* Pods */,
+			);
+			sourceTree = "<group>";
+		};
+		6A9FC2AE217EBCC6009ACB83 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				6A9FC2AD217EBCC6009ACB83 /* TICDemo_Mac.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		6A9FC2AF217EBCC6009ACB83 /* TICDemo_Mac */ = {
+			isa = PBXGroup;
+			children = (
+				CF3019BE23A210EA005296DF /* TIC */,
+				CF8E2DC0238F68B80091710F /* Resource */,
+				CF3FB34C227707CC001C148E /* Config */,
+				6A9FC2B0217EBCC6009ACB83 /* AppDelegate.h */,
+				6A9FC2B1217EBCC6009ACB83 /* AppDelegate.m */,
+				6A9FC2B3217EBCC6009ACB83 /* ViewController.h */,
+				6A9FC2B4217EBCC6009ACB83 /* ViewController.m */,
+				CF0AF2FE22785CFA00B9CD87 /* ColorPickViewController.h */,
+				CF0AF2FF22785CFA00B9CD87 /* ColorPickViewController.m */,
+				6A9FC2B6217EBCC7009ACB83 /* Assets.xcassets */,
+				6A9FC2B8217EBCC7009ACB83 /* Main.storyboard */,
+				6A9FC2BB217EBCC7009ACB83 /* Info.plist */,
+				6A9FC2BC217EBCC7009ACB83 /* main.m */,
+				6A9FC2BE217EBCC7009ACB83 /* TICDemo_Mac.entitlements */,
+				CF8E2DCD238F85DB0091710F /* ThumbItem.h */,
+				CF8E2DCE238F85DB0091710F /* ThumbItem.m */,
+				CF8E2DCF238F85DB0091710F /* ThumbItem.xib */,
+			);
+			path = TICDemo_Mac;
+			sourceTree = "<group>";
+		};
+		86F353C846969B0498D45005 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				E784B6796A93459BFAF57367 /* Pods-TICDemo_Mac.debug.xcconfig */,
+				F9A6957509FA4A3D83713A18 /* Pods-TICDemo_Mac.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		CF3019BE23A210EA005296DF /* TIC */ = {
+			isa = PBXGroup;
+			children = (
+				CF3019BF23A210EA005296DF /* TICKeychainWrapper.h */,
+				CF3019C023A210EA005296DF /* TICManager.m */,
+				CF3019C123A210EA005296DF /* TICRenderView.h */,
+				CF3019C223A210EA005296DF /* TICWeakProxy.m */,
+				CF3019C323A210EA005296DF /* TICReachability.h */,
+				CF3019C423A210EA005296DF /* TICDef.m */,
+				CF3019C523A210EA005296DF /* TICReport.m */,
+				CF3019C623A210EA005296DF /* TICDevice.h */,
+				CF3019C723A210EA005296DF /* TICRecorder.h */,
+				CF3019C823A210EA005296DF /* ios-ntp */,
+				CF3019D223A210EB005296DF /* TICRecorder.mm */,
+				CF3019D323A210EB005296DF /* TICKeychainWrapper.m */,
+				CF3019D423A210EB005296DF /* TICDef.h */,
+				CF3019D523A210EB005296DF /* TICReachability.m */,
+				CF3019D623A210EB005296DF /* TICManager.h */,
+				CF3019D723A210EB005296DF /* TICWeakProxy.h */,
+				CF3019D823A210EB005296DF /* TICRenderView.m */,
+				CF3019D923A210EB005296DF /* TICDevice.m */,
+				CF3019DA23A210EB005296DF /* CocoaAsyncSocket */,
+				CF3019DD23A210EB005296DF /* TICReport.h */,
+			);
+			path = TIC;
+			sourceTree = "<group>";
+		};
+		CF3019C823A210EA005296DF /* ios-ntp */ = {
+			isa = PBXGroup;
+			children = (
+				CF3019C923A210EA005296DF /* NetworkClock.h */,
+				CF3019CA23A210EA005296DF /* NetAssociation.h */,
+				CF3019CB23A210EA005296DF /* NSDate+NetworkClock.m */,
+				CF3019CC23A210EA005296DF /* Notes */,
+				CF3019CD23A210EA005296DF /* ios-ntp.h */,
+				CF3019CE23A210EB005296DF /* ntp-log.h */,
+				CF3019CF23A210EB005296DF /* NSDate+NetworkClock.h */,
+				CF3019D023A210EB005296DF /* NetAssociation.m */,
+				CF3019D123A210EB005296DF /* NetworkClock.m */,
+			);
+			path = "ios-ntp";
+			sourceTree = "<group>";
+		};
+		CF3019DA23A210EB005296DF /* CocoaAsyncSocket */ = {
+			isa = PBXGroup;
+			children = (
+				CF3019DB23A210EB005296DF /* GCDAsyncUdpSocket.m */,
+				CF3019DC23A210EB005296DF /* GCDAsyncUdpSocket.h */,
+			);
+			path = CocoaAsyncSocket;
+			sourceTree = "<group>";
+		};
+		CF3FB34C227707CC001C148E /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				CF3FB34D227707CC001C148E /* config.json */,
+				CF3FB34E227707CC001C148E /* TICConfig.h */,
+				CF3FB34F227707CC001C148E /* TICConfig.m */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+		CF8E2DC0238F68B80091710F /* Resource */ = {
+			isa = PBXGroup;
+			children = (
+				CF8E2DC1238F68B80091710F /* 欢迎新同学.ppt */,
+			);
+			path = Resource;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		6A9FC2AC217EBCC6009ACB83 /* TICDemo_Mac */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6A9FC2C1217EBCC7009ACB83 /* Build configuration list for PBXNativeTarget "TICDemo_Mac" */;
+			buildPhases = (
+				FE3F6E267C51E145CDEAD550 /* [CP] Check Pods Manifest.lock */,
+				6A9FC2A9217EBCC6009ACB83 /* Sources */,
+				6A9FC2AA217EBCC6009ACB83 /* Frameworks */,
+				6A9FC2AB217EBCC6009ACB83 /* Resources */,
+				CF3FB3482276A452001C148E /* Embed Frameworks */,
+				4D28ABC26E019D61C6733A96 /* [CP] Embed Pods Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TICDemo_Mac;
+			productName = TIC_Demo_Mac;
+			productReference = 6A9FC2AD217EBCC6009ACB83 /* TICDemo_Mac.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		6A9FC2A5217EBCC6009ACB83 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1000;
+				ORGANIZATIONNAME = Tencent;
+				TargetAttributes = {
+					6A9FC2AC217EBCC6009ACB83 = {
+						CreatedOnToolsVersion = 10.0;
+						SystemCapabilities = {
+							com.apple.Sandbox = {
+								enabled = 1;
+							};
+						};
+					};
+				};
+			};
+			buildConfigurationList = 6A9FC2A8217EBCC6009ACB83 /* Build configuration list for PBXProject "TICDemo_Mac" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 6A9FC2A4217EBCC6009ACB83;
+			productRefGroup = 6A9FC2AE217EBCC6009ACB83 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				6A9FC2AC217EBCC6009ACB83 /* TICDemo_Mac */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		6A9FC2AB217EBCC6009ACB83 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF3019E323A210EB005296DF /* Notes in Resources */,
+				6A9FC2B7217EBCC7009ACB83 /* Assets.xcassets in Resources */,
+				CF8E2DD1238F85DB0091710F /* ThumbItem.xib in Resources */,
+				CF8E2DC2238F68B80091710F /* 欢迎新同学.ppt in Resources */,
+				6A9FC2BA217EBCC7009ACB83 /* Main.storyboard in Resources */,
+				CF3FB350227707CC001C148E /* config.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		4D28ABC26E019D61C6733A96 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TICDemo_Mac/Pods-TICDemo_Mac-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-TICDemo_Mac/Pods-TICDemo_Mac-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TICDemo_Mac/Pods-TICDemo_Mac-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		FE3F6E267C51E145CDEAD550 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-TICDemo_Mac-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		6A9FC2A9217EBCC6009ACB83 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CF3019E923A210EB005296DF /* TICRenderView.m in Sources */,
+				CF3019E523A210EB005296DF /* NetworkClock.m in Sources */,
+				6A9FC2B5217EBCC6009ACB83 /* ViewController.m in Sources */,
+				CF3019E023A210EB005296DF /* TICDef.m in Sources */,
+				6A9FC2BD217EBCC7009ACB83 /* main.m in Sources */,
+				CF3019E723A210EB005296DF /* TICKeychainWrapper.m in Sources */,
+				6A9FC2B2217EBCC6009ACB83 /* AppDelegate.m in Sources */,
+				CF3019E123A210EB005296DF /* TICReport.m in Sources */,
+				CF3019DF23A210EB005296DF /* TICWeakProxy.m in Sources */,
+				CF0AF30022785CFA00B9CD87 /* ColorPickViewController.m in Sources */,
+				CF8E2DD0238F85DB0091710F /* ThumbItem.m in Sources */,
+				CF3019EB23A210EB005296DF /* GCDAsyncUdpSocket.m in Sources */,
+				CF3019E223A210EB005296DF /* NSDate+NetworkClock.m in Sources */,
+				CF3019EA23A210EB005296DF /* TICDevice.m in Sources */,
+				CF3FB351227707CC001C148E /* TICConfig.m in Sources */,
+				CF3019DE23A210EB005296DF /* TICManager.m in Sources */,
+				CF3019E823A210EB005296DF /* TICReachability.m in Sources */,
+				CF3019E623A210EB005296DF /* TICRecorder.mm in Sources */,
+				CF3019E423A210EB005296DF /* NetAssociation.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		6A9FC2B8217EBCC7009ACB83 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				6A9FC2B9217EBCC7009ACB83 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		6A9FC2BF217EBCC7009ACB83 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		6A9FC2C0217EBCC7009ACB83 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		6A9FC2C2217EBCC7009ACB83 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E784B6796A93459BFAF57367 /* Pods-TICDemo_Mac.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = TICDemo_Mac/TICDemo_Mac.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/TICDemo_Mac/TIC\"",
+				);
+				INFOPLIST_FILE = TICDemo_Mac/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_LDFLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.tencent.tic.demo.mac;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = Debug;
+		};
+		6A9FC2C3217EBCC7009ACB83 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F9A6957509FA4A3D83713A18 /* Pods-TICDemo_Mac.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = TICDemo_Mac/TICDemo_Mac.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Manual;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/TICDemo_Mac/TIC\"",
+				);
+				INFOPLIST_FILE = TICDemo_Mac/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				OTHER_LDFLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.tencent.tic.demo.mac;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		6A9FC2A8217EBCC6009ACB83 /* Build configuration list for PBXProject "TICDemo_Mac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6A9FC2BF217EBCC7009ACB83 /* Debug */,
+				6A9FC2C0217EBCC7009ACB83 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6A9FC2C1217EBCC7009ACB83 /* Build configuration list for PBXNativeTarget "TICDemo_Mac" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6A9FC2C2217EBCC7009ACB83 /* Debug */,
+				6A9FC2C3217EBCC7009ACB83 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 6A9FC2A5217EBCC6009ACB83 /* Project object */;
+}

@@ -1,0 +1,7 @@
+{
+  "component": true,
+  "navigationBarTitleText": "tic_prog",
+  "usingComponents": {
+    "board-component": "/components/board-component/board-component"
+  }
+}

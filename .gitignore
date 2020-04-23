@@ -1,0 +1,15 @@
+PaaS/Android/Demo/.gradle
+PaaS/Android/Demo/.idea
+PaaS/Android/Demo/build
+PaaS/iOS/Demo/TICDemo/Pods/Pods.xcodeproj/xcuserdata
+PaaS/iOS/Demo/TICDemo/Pods
+PaaS/macOS/Demo/TICDemo_Mac/Pods
+PaaS/iOS/Demo/TICDemo/TICDemo.xcodeproj/xcuserdata
+PaaS/iOS/Demo/TICDemo/TICDemo.xcworkspace/xcuserdata
+PaaS/macOS/Demo/TICDemo_Mac/TICDemo_Mac.xcodeproj/xcuserdata
+PaaS/macOS/Demo/TICDemo_Mac/TICDemo_Mac.xcworkspace/xcuserdata
+PaaS/macOS/Demo/TICDemo_Mac/TICDemo_Mac.xcworkspace/xcshareddata
+*.iml
+local.properties
+Podfile.lock
+PaaS/iOS/Demo/TICDemo/TICDemo.xcworkspace/xcshareddata

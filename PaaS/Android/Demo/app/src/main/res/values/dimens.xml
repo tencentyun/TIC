@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="icon_width">45dp</dimen>
+    <dimen name="icon_height">45dp</dimen>
+
+    <dimen name="horizontal_margin">30dp</dimen>
+    <dimen name="vertical_margin">200dp</dimen>
+    <dimen name="corner_radius">0dp</dimen>
+
+    <dimen name="item_avatar_size">40dp</dimen>
+
+    <!-- login page -->
+    <dimen name="login_logo_top_margin">90dp</dimen>
+    <dimen name="login_btn_bottom_margin">276dp</dimen>
+    <dimen name="default_horizontal_margin">15dp</dimen>
+    <dimen name="default_margin_bottom">20dp</dimen>
+    <dimen name="login_page_input_bottom_margin">30dp</dimen>
+    <dimen name="login_page_btn_height">45dp</dimen>
+    <dimen name="default_text_size">14sp</dimen>
+    <dimen name="small_text_size">12sp</dimen>
+
+    <!-- class list page -->
+    <dimen name="class_list_page_item_height">90dp</dimen>
+    <dimen name="class_list_page_item_horizontal_margin">15dp</dimen>
+    <dimen name="class_list_page_item_vertical_margin">10dp</dimen>
+
+    <!-- create class page -->
+    <dimen name="class_create_input_editor_margin_top">20dp</dimen>
+
+    <dimen name="sub_screen_height">80dp</dimen>
+    <dimen name="sub_screen_padding">2dp</dimen>
+
+    <!-- students infos list page-->
+    <dimen name="student_info_item_height">60dp</dimen>
+    <dimen name="avatar_margin_right">10dp</dimen>
+    <dimen name="student_info_invite_btn_width">70dp</dimen>
+    <dimen name="student_info_invite_btn_height">26dp</dimen>
+    <dimen name="student_info_desc_vertical_margin">3dp</dimen>
+
+    <!-- living video page -->
+    <dimen name="text_box_horizontal_padding">10dp</dimen>
+    <dimen name="text_box_vertical_padding">8dp</dimen>
+    <dimen name="input_textbox_margin_bottom">20dp</dimen>
+
+    <!-- whiteboard tool bar -->
+    <dimen name="whiteboard_tool_bar_margin">10dp</dimen>
+    <dimen name="whiteboard_tool_bar_margin_top">20dp</dimen>
+    <dimen name="whiteboard_tool_bar_margin_bottom">18dp</dimen>
+    <dimen name="whiteboard_tool_bar_margin_horizontal">20dp</dimen>
+
+    <dimen name="action_bar_height">40dp</dimen>
+</resources>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="ToolType">
+        <item>铅笔</item>
+        <item>橡皮</item>
+        <item>激光教鞭</item>
+        <item>直线</item>
+        <item>空心椭圆</item>
+        <item>空心矩形</item>
+        <item>实心椭圆</item>
+        <item>实心矩形</item>
+        <item>文本</item>
+    </string-array>
+
+    <string-array name="VideoRes">
+        <item>腾讯云</item>
+    </string-array>
+
+</resources>

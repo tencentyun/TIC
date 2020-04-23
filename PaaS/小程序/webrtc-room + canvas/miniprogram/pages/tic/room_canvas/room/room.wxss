@@ -1,0 +1,114 @@
+/**index.wxss**/
+.container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background-image: url(https://main.qcloudimg.com/raw/20db9863af9f7e57a7be64dbac685691.png);
+  background-color: #1F2531;
+  background-repeat: no-repeat;
+  background-size: 60%;
+  background-position: center bottom;
+  overflow: hidden;
+}
+
+.camera-box {
+  width: 100vw;
+  height: calc(100vh - 100vw * 9 / 16 - 80rpx - 80rpx);
+}
+
+
+.container .tools-box {
+  height: 80rpx;
+  display: flex;
+  overflow: hidden;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.container .tools-box .item-icon {
+  height: 50rpx;
+  width: 50rpx;
+  margin: 0 2px;
+}
+
+
+.container .board_chat_tablist_container {
+  height: 80rpx;
+  line-height: 80rpx;
+  display: flex;
+  background: #fff;
+}
+
+.board_chat_tablist_container .tab {
+  flex: 1;
+  font-size: 32rpx;
+  text-align: center;
+  color: #fff;
+  background-color: #6c757d;
+  box-sizing: border;
+}
+
+.board_chat_tablist_container .tab.active {
+  border-bottom: 10rpx solid #007bff;
+}
+
+.container .board_chat_container {
+  width: 100vw;
+  height: calc(100vw * 9 / 16);
+}
+
+.container .board_chat_container.horizontal {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: calc(100vh * 9 / 16);
+  height: 100vh;
+}
+
+.container .board_container {
+  width: 100%;
+  height: 100%;
+}
+
+.container .board_container .tx_board_slot {
+  position: absolute;
+  right: 0;
+  width: 60rpx;
+  height: 60rpx;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+}
+
+.container .board_container .tx_board_slot.horizontal {
+  bottom: 0;
+}
+
+.container .chat_container {
+  width: 100%;
+  height: 100%;
+  background: #fff;
+}
+
+
+.container .chat_container .chat_scroll_container {
+  height: calc((100vw * 9 / 16) - (80rpx + 80rpx));
+}
+
+.container .chat_container .chat_scroll_container .chat_item {
+  padding: 0 20rpx;
+  height: 48rpx;
+  line-height: 48rpx;
+  font-size: 32rpx;
+  color: #333;
+}
+
+.comment-input {
+  /* background: #999; */
+}
+
+.comment-input input {
+  font-size: 24rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  padding: 0 10rpx;
+}

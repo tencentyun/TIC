@@ -1,0 +1,10 @@
+<import src='./template/1v1/layout.wxml' />
+<import src='./template/1v1playmain/layout.wxml' />
+<view class='conponent-box'>
+  <view style="width:100%;height:100%;" wx:if="{{template=='1v1'}}">
+    <template is='1v1' data="{{pushURL, aspect, minBitrate, maxBitrate, beauty, whiteness, muted, debug, members, creator, enableIM, enableCamera, smallViewLeft, smallViewTop, smallViewWidth, smallViewHeight, startPlay, fixPlayId, playerBackgroundImg, waitingImg, loadingImg, pusherBackgroundImg}}" />
+  </view>
+  <view style="width:100%;height:100%;" wx:if="{{template=='1v1bigsmall'}}">
+    <template is='1v1playmain' data="{{pushURL, aspect, minBitrate, maxBitrate, beauty, whiteness, muted, debug, members, creator, enableIM, enableCamera, smallViewLeft, smallViewTop, smallViewWidth, smallViewHeight, startPlay, fixPlayId, playerBackgroundImg, waitingImg, loadingImg, pusherBackgroundImg}}" />
+  </view>
+</view>

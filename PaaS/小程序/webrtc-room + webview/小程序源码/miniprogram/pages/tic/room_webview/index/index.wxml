@@ -1,0 +1,35 @@
+<view class="container-box">
+  <view class="section">
+    <view class="section_title">账号</view>
+    <view class="section_input  dropdowns-box">
+      <picker bindchange="bindPickerChange" value="{{index}}" range="{{array}}" range-key="userId">
+        <view class="picker">{{array[index]['userId']}}</view>
+      </picker>
+      <view class="dropdowns"></view>
+    </view>
+  </view>
+  <view class="section">
+    <view class="section_title">课堂ID</view>
+    <view class="section_input">
+      <input maxlength="10" type="number" bindinput='bindRoomID' placeholder="课堂ID" />
+    </view>
+  </view>
+  <view class="section">
+    <view class="section_title">角色</view>
+    <view class="section_input">
+      <radio-group class="radio-group" bindchange="radioChange">
+        <label class="radio">
+          <radio value="1" />
+          老师
+        </label>
+        <label class="radio">
+          <radio value="0" checked="true" />
+          学生
+        </label>
+      </radio-group>
+    </view>
+  </view>
+  <view class="tips">webrtcroom + webview：支持动画PPT【推荐使用】</view>
+  <button class="btn-joinclass" bindtap="onClick">{{role? '创建': '进入'}}课堂</button>
+  <view class="tips">体验互通的时候，请选择不同的账号</view>
+</view>

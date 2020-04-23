@@ -1,0 +1,40 @@
+{"sdkappid":1400127140,
+  "users": [{
+    "userId": "Android_trtc_01",
+    "userToken": "eJxlj01Pg0AURff8CsJWI2*YAsWkixZao9VUoKW2mwkyA0xMYZxOP4jxv0uxiSS*zV2ck3vzvjRd143lc3yXZll9qBRRjWCGfq8bYNz*QSE4JakiWNJ-kJ0Fl4ykuWKyg8i2bQug73DKKsVzfjXGFZV126ikygignrinH6Rb*20aACDLbaOv8KKDL9PQf3w4xJiV8LpxVtvoU8SbtaN8cybfue*svGS2iKynYIvDvDmN*QTLCawj82ZBzTkoGpSJSOa7QVCg0DsX3lCejuWbHzjNtBiNepOK79j1NRe7FgZ32KNHJve8rjrBAmSjVricoX1rP-shX24_"
+  }, {
+    "userId": "Android_trtc_02",
+    "userToken": "eJxlj8FOg0AURff9CsJWY4aZIomJC1KnxYaiFpDoZoLMgK*tAwyvBmv8dys2kcS3uYtzcm-e58SyLDsJ44u8KOq9RoEfjbKtK8sm9vkfbBqQIkfBjPwHVd*AUSIvUZkBOq7rUkLGDkilEUo4Gb6Wpj42osFCEDoSO7kVw9pv05QQh3rHGCtQDXDF09ntotpVQZTJ7UvekNVN8opRtOSXydJ5hLjq27DnYbchd7SNfeD*HjfzXeLx*UOqZiif1ywL1i5k*j6tSh0s*vaMh0-t4VAX16NJhDd1es1jHmWUTUf0XZkOaj0IlDiuQxn5OXvyNfkG7Bthkg__"
+  }, {
+    "userId": "Android_trtc_03",
+    "userToken": "eJxlj81Og0AYRfc8BWFtdH6gJCYuCCURRUJ-qNTNhDDTYWyBcToUqPHdrdhEEr-NXZyTe-N9GqZpWutodZsXRdPWmuhBMsu8Ny1g3fxBKQUluSZY0X*Q9VIoRvKdZmqE0HEcBMDUEZTVWuzE1fBqqppLo1a6IABPxCPdk3Htt8kGACL3ElNF8BG*BKkfLnzWYnV4HKr1vJlv354yXbxWgd6nm7TslsmZl8shW-kpf**7kEezUxwsYh4*f9ihd05oUg5h0vbN3UZB3ss*8u1tFx-SzHuYTGpRsetrLnYRRjN7Qk9MHUVTjwIC0IEIg5*zjC-jG5p1Yto_"
+  }, {
+    "userId": "Android_trtc_04",
+    "userToken": "eJxlj11PgzAYhe-5FQ3XRkspwkx2wRgOIyNhY1nkpsG21G6usK4YP*J-d*KSsfgm5*p5ck7eLwsAYBfp8rqitOmUIeaj5Ta4Aza0r86wbSUjlSGuZv8gf2*l5qSqDdc9dDzPQxAOHcm4MrKWJyNUTDfHRqMNJRAPxAPbkn7trwlDiALkuBeKFD2cx3n0cK*mbkBnu1HybEZhkXvhU-SKJvNWJLijOtm85FB35Sa-XYcynESrVRqUN4-NtpyyWbZf*Nk*rkRs0g4Xolrky6bOPuO1FuPxYNLIHT*95mP-GOwO6BvXB9moXkDQ8Rzkwt*zrW-rB1AfYGU_"
+  },
+    {
+      "userId": "Android_trtc_05",
+      "userToken": "eJxlj01PhDAQhu-8CtKrRkqhoCYeNqsuEEEJErKnBtrCNhs*LKO7avzvIm4iiXOZw-PMOzOfhmma6Pkhuyg57187YPA*SGRemwij8z84DEqwEpijxT8oj4PSkpU1SD1Dm1JKMF46SsgOVK1OxqoTup8SQQNnmC7EUezZvO03ycXYJv7UlopqZhjf5eswvW3Cs8f0JbnM2-EJfJsL2BTxzguq*LiRB3zf1qKgeZDJMg2bhMvth*W2QVXkfhjtD*BuV5HlXUVDsaYVt1Tf7ZI6A2*8WawE1crTa77jE2c6aUHfpB6nuVkg2KY2cfBPIePL*AaE52CW"
+    },
+    {
+      "userId": "Android_trtc_06",
+      "userToken": "eJwtjVsLgkAUhP-Lvhq2Lh5v4IME4YMQklBEILkXOYm2rUsG0X9PzKdhvhlmPqQqju5LGpIQ5lKyWTwKOVhUuOBsEOaBorbG8poGa2UU3U1rFCTxfEo9Fs7yT*Rbo5EzBwBG6Uot9gsL-ZgFEMXrCrbzg3CcfTlC0ZR36A676brlk*YZnk*8vzQ5r3LIn6xVlqsoJd8ftiQ1eA__\n"
+    },
+    {
+      "userId": "Android_trtc_07",
+      "userToken": "eJyrVgrxCdYrSy1SslIy0jNQ0gHzM1NS80oy0zLBwo55KUX5mSnxJUUlyfEG5lAlxSnZiQUFmSlKVoYmBgaGRuZACiKTWlGQWZQKFDc1NTUyMICKlmTmgsXMTSyNzMwtTaCmZKYDbQgJ1S6t1LZwM0uOSHOqKDaxyC8s9ArQDqxw8TeN8iiO8kp3C7IwN3AryDKxVaoFAHirNFM_\n"
+    },
+    {
+      "userId": "Android_trtc_08",
+      "userToken": "eJyrVgrxCdYrSy1SslIy0jNQ0gHzM1NS80oy0zLBwo55KUX5mSnxJUUlyfEGFlAlxSnZiQUFmSlKVoYmBgaGRuZACiKTWlGQWZQKFDc1NTUyMICKlmTmgsXMTSyNzCwMoaLFmelAG0LDjYsrSp3TjZ19vEzcssxSEwv8YvTNLYOdTFxi9N0D-IuqHEssUsJ9XALdy22VagHavjTb\n"
+    },
+    {
+      "userId": "Android_trtc_09",
+      "userToken": "eJwtjc0KwjAQhN8lZynbmPQPPIjQHhSxGjx4KdKNspTGmAapFd-dUnsa5pth5sPU7hS8tGMZ4wGwxeQJtfF0owmvDboHYeWdrytI50qHzdVaQpaFAiDk8Sj-RPeWnB65lJIDzNRTO7FYpDxKOJ9X6D4*HM8DtlGn7Fvtm42WS6DGXdSW8kG4-pknRRmiKUx5ECv2-QGYATVg\n"
+    },
+    {
+      "userId": "Android_trtc_10",
+      "userToken": "eJw1jd0KgkAUhN9lr0N3N3VJ6EIyChML9FIQ6axxMnVbF*mH3j0xuxrmm2HmTbI4tQapiU*4Rcli8giyNVjhhIMWdIdQGG3OBftXeqhLpRCIzxxKGRej-BL5UKjlyF3X5ZTO1GAzMeGsuCe85byCl-Eh3EAUdtnRxOUQ1*z5SpLI6XfVbd-kdiquFYA63NtTkNvddk0*X-dCNgs_\n"
+    }
+  ],
+  "roles":[{"name":"user","value":"640x368"}]}

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <!-- TRTC -->
+            <com.tencent.tic.demo.activities.TICVideoRootView
+                android:id="@+id/trtc_root_view"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                android:background="@color/colorGray"/>
+
+            <!-- Board -->
+            <FrameLayout
+                android:id="@+id/board_view_container"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"/>
+
+            <!-- Message -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:id="@+id/ll_message_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_gravity="bottom"
+                    android:background="@color/msg_bg_color"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:orientation="horizontal">
+
+                    <EditText
+                        android:id="@+id/et_message_input"
+                        android:layout_width="0dp"
+                        android:layout_height="34dp"
+                        android:layout_marginBottom="@dimen/input_textbox_margin_bottom"
+                        android:layout_marginLeft="@dimen/default_horizontal_margin"
+                        android:layout_marginRight="@dimen/default_horizontal_margin"
+                        android:layout_weight="4"
+                        android:background="@color/colorGray"
+                        android:focusableInTouchMode="false"
+                        android:gravity="center_vertical|left"
+                        android:imeOptions="actionSend"
+                        android:paddingLeft="@dimen/text_box_horizontal_padding"
+                        android:paddingRight="@dimen/text_box_horizontal_padding"
+                        android:singleLine="true"
+                        android:text="Test Message on Android"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="@dimen/small_text_size" />
+
+                    <Button
+                        android:id="@+id/btn_send"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="发送" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tv_log"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_above="@id/ll_message_input"
+                    android:background="@color/colorGray"
+                    android:scrollbars="vertical"
+                    android:singleLine="false"
+                    android:maxLines="13"
+                    android:gravity="bottom" />
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:fitsSystemWindows="true">
+            <TextView
+                android:id="@+id/tv_double_room_back_button"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="left|center_vertical"
+                android:textColor="@color/colorWhite"
+                android:textSize="20dp"
+                android:text="退出" />
+
+            <TextView
+                android:id="@+id/tv_room_id"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_centerInParent="true"
+                android:singleLine="true"
+                android:textColor="@color/colorWhite"
+                android:textSize="24dp"
+                android:text="899"/>
+
+            <TextView
+                android:id="@+id/tv_memu"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="right"
+                android:singleLine="true"
+                android:textColor="@color/colorWhite"
+                android:layout_alignParentRight="true"
+                android:textSize="20dp"
+                android:text="菜单"/>
+
+        </RelativeLayout>
+
+</FrameLayout>

@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="TIC">
+      <UniqueIdentifier>{a9792862-dae5-44ea-9613-0943fada1ba2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TIC\jsoncpp">
+      <UniqueIdentifier>{a6816ab2-d96f-4fd5-8266-5f630117b622}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="config">
+      <UniqueIdentifier>{d612d220-53e7-43bd-99cc-530ce602fe7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TIC\localrecord">
+      <UniqueIdentifier>{fcc3df41-d083-48c2-a50d-12c96f4084c6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="TICDemo.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TICDemoDlg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Config.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoDlg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="BoardDlg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SDK\TIC\TICManager.h">
+      <Filter>TIC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SDK\TIC\TICManagerImpl.h">
+      <Filter>TIC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SDK\TIC\NTP.h">
+      <Filter>TIC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SDK\TIC\HttpClient.h">
+      <Filter>TIC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SDK\TIC\jsoncpp\json.h">
+      <Filter>TIC\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SDK\TIC\jsoncpp\json-forwards.h">
+      <Filter>TIC\jsoncpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SDK\TIC\TICRecorder.h">
+      <Filter>TIC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SDK\TIC\localRecord\TICLocalRecord.h">
+      <Filter>TIC\localrecord</Filter>
+    </ClInclude>
+    <ClInclude Include="..\SDK\TIC\localRecord\TICLocalRecordImpl.h">
+      <Filter>TIC\localrecord</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="TICDemo.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TICDemoDlg.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Config.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoDlg.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="BoardDlg.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SDK\TIC\TICManager.cpp">
+      <Filter>TIC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SDK\TIC\TICManagerImpl.cpp">
+      <Filter>TIC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SDK\TIC\NTP.cpp">
+      <Filter>TIC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SDK\TIC\HttpClient.cpp">
+      <Filter>TIC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SDK\TIC\jsoncpp\jsoncpp.cpp">
+      <Filter>TIC\jsoncpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SDK\TIC\TICRecorder.cpp">
+      <Filter>TIC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SDK\TIC\localRecord\TICLocalRecord.cpp">
+      <Filter>TIC\localrecord</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SDK\TIC\localRecord\TICLocalRecordImpl.cpp">
+      <Filter>TIC\localrecord</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="TICDemo.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\TICDemo.rc2">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="config.json">
+      <Filter>config</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\TICDemo.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+  </ItemGroup>
+</Project>

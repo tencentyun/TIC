@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="10dp"
+    android:layout_gravity="top|left">
+
+    <TextView
+        android:id="@+id/tv_login_log"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        android:visibility="visible" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|left"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:text="点击选择账号：" />
+
+            <Spinner
+                android:id="@+id/spinner_account"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:background="@android:color/background_light"
+                android:spinnerMode="dropdown" />
+
+        </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onLoginClick"
+            android:text="登录" />
+
+        <Button
+            android:id="@+id/btn_logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="onLogoutClick"
+            android:text="退出" />
+
+    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:id="@+id/tv_version_trtc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="IMSDK版本号" />
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:id="@+id/tv_version_im"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="IMSDK版本号" />
+
+            <TextView
+                android:layout_marginTop="10dp"
+                android:id="@+id/tv_version_board"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="IMSDK版本号" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_login_remind"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textAlignment="center"
+            android:text="@string/login_remind"
+            android:textColor="@color/colorRed"/>
+
+    </LinearLayout>
+
+
+</FrameLayout>

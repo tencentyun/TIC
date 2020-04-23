@@ -1,0 +1,8 @@
+# Uncomment the next line to define a global platform for your project
+platform :ios, '8.0'
+
+target 'TICDemo' do
+  pod 'TEduBoard_iOS','2.4.6.1'
+  pod 'TXIMSDK_iOS','4.6.101'
+  pod 'TXLiteAVSDK_TRTC','6.9.8341'
+end
