@@ -2,12 +2,7 @@
 
 ## 下载说明
 
->!由于`Github`默认不支持大文件上传，请您在克隆代码前先安装 Git-LFS，用于实现 Github 对大文件的支持。请使用以下命令克隆代码，勿直接`Download ZIP`。
-```
-git clone https://github.com/tencentyun/TIC.git
-```
-
-如果您访问 Github 或安装 Git-LFS 遇到问题，请使用腾讯云分流地址下载：
+如果您访问 Github 遇到问题，请使用腾讯云分流地址下载：
 
 <table>
 <tr>
