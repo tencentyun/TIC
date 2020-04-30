@@ -78,6 +78,7 @@ window.app = new Vue({
       isPushing: 0, // 是否正在推流
       isPushCamera: 0, // 是否推摄像头流
       remoteVideos: {},
+      imReady: false
     }
   },
 
@@ -174,6 +175,13 @@ window.app = new Vue({
           } else {
             this.showMessageInBox('TIC', "init Succ.");
             this.status = this.STATUS_UNLOGIN;
+
+            this.tim = this.tic.getImInstance(); //获取im实例
+            // 监听im的状态，如果不是ready状态，创建群，加群，发消息等操作都会失败
+            this.tim.on(window.TIM.EVENT.SDK_READY, () => {
+              // im 已经准备好了
+              this.imReady = true;
+            });
             this.login();
           }
         });
@@ -215,7 +223,6 @@ window.app = new Vue({
 
         return;
       }
-
       this.logout_internal();
     },
 
@@ -228,6 +235,7 @@ window.app = new Vue({
         } else {
           this.initData();
           this.status = this.STATUS_UNLOGIN;
+          this.imReady = false; // im状态ready设置为false
 
           this.showTip('登出成功');
           this.showMessageInBox('TIC', "logout Succ");
@@ -527,14 +535,21 @@ window.app = new Vue({
             this.showTip('转码中，当前进度:' + res.progress + '%');
           } else if (status === 'FINISHED') {
             this.showTip('转码完成');
-            this.teduBoard.addTranscodeFile({
+            let config = {
               url: res.resultUrl,
               title: res.title,
               pages: res.pages,
               resolution: res.resolution
-            });
+            }
+            console.log('transcodeFile:', config);
+            this.teduBoard.addTranscodeFile(config);
           }
         }
+      });
+
+      // 框选如果有选中内容则会触发此事件
+      teduBoard.on(TEduBoard.EVENT.TEB_RECTSELECTED, () => {
+        this.teduBoard.clear(false, true); // 清空选中的内容
       });
     },
 
@@ -566,7 +581,6 @@ window.app = new Vue({
 
       // 监听‘stream-subscribed’事件
       this.trtcClient.on('stream-subscribed', event => {
-
         const remoteStream = window.remoteStream = event.stream;
         // 远端流订阅成功，在HTML页面中创建一个<video>标签，假设该标签ID为‘remote-video-view’
         // 播放该远端流
@@ -984,7 +998,7 @@ window.app = new Vue({
       } else {
         this.teduBoard.applyFileTranscode({
           data: file,
-          userData: 'hello'
+          userData: 'tiw'
         }, {
           minResolution: '960x540',
           isStaticPPT: false,
@@ -994,7 +1008,7 @@ window.app = new Vue({
     },
 
     onAddH5File(url) {
-      this.teduBoard.addH5PPTFile(url);
+      this.teduBoard.addH5File(url);
     },
 
     onAddVideoFile(url) {

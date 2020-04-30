@@ -159,22 +159,26 @@
                   </el-form-item>
 
                   <el-form-item>
-                    <el-button @click="createClassroom" :disabled="status < STATUS_LOGINED || status == STATUS_INCLASS"
-                      v-text="'创建房间'"></el-button>
-                  </el-form-item>
-
-                  <el-form-item>
-                    <el-button @click="destroyClassroom" :disabled="status < STATUS_LOGINED" v-text="'销毁房间'">
+                    <el-button @click="createClassroom"
+                      :disabled="status < STATUS_LOGINED || status == STATUS_INCLASS || !imReady" v-text="'创建房间'">
                     </el-button>
                   </el-form-item>
 
                   <el-form-item>
-                    <el-button @click="joinClassroom" :disabled="status < STATUS_LOGINED || status == STATUS_INCLASS"
-                      v-text="'进入房间'"></el-button>
+                    <el-button @click="destroyClassroom" :disabled="status < STATUS_LOGINED || !imReady"
+                      v-text="'销毁房间'">
+                    </el-button>
                   </el-form-item>
 
                   <el-form-item>
-                    <el-button @click="quitClassroom()" :disabled="status < STATUS_LOGINED" v-text="'退出房间'">
+                    <el-button @click="joinClassroom"
+                      :disabled="status < STATUS_LOGINED || status == STATUS_INCLASS || !imReady" v-text="'进入房间'">
+                    </el-button>
+                  </el-form-item>
+
+                  <el-form-item>
+                    <el-button @click="quitClassroom()" :disabled="status < STATUS_LOGINED ||  !imReady"
+                      v-text="'退出房间'">
                     </el-button>
                   </el-form-item>
                 </el-form>
@@ -496,12 +500,14 @@
   <script src="./libs/trtc.js"></script>
 
   <!-- COS SDK -->
+  <!-- <script src="https://resources-tiw.qcloudtrtc.com/thirdpart/cos/5.1.0/cos.min.js"></script> -->
   <script src="./libs/cos-js-sdk-v5.min.js"></script>
   <!-- WebIM SDK -->
+  <!-- <script src="https://resources-tiw.qcloudtrtc.com/webim/webim.min.js"></script> -->
   <script src="./libs/tim-js.js"></script>
 
   <!-- 白板SDK -->
-  <script src="https://resources-tiw.qcloudtrtc.com/board/2.4.6/TEduBoard.min.js"></script>
+  <script src="https://resources-tiw.qcloudtrtc.com/board/2.4.7/TEduBoard.min.js"></script>
   <script src="https://resources-tiw.qcloudtrtc.com/tic/2.5.0/TIC.min.js"></script>
 
   <script src="libs/thirdpart/purl.js"></script>
