@@ -1,4 +1,5 @@
-strFileURL = "https://sdk.qcloudtiw.com/win32/demo_sdk.zip"
+strZipFileName = "demo_sdk_20200430@1.zip"
+strFileURL = "https://sdk.qcloudtiw.com/win32/" & strZipFileName
 
 Function DownloadTo(url, dest)
 	' Fetch the file
@@ -40,7 +41,7 @@ End Function
 'Make file path
 Set fso = CreateObject("Scripting.FileSystemObject")
 sParentPath = fso.GetAbsolutePathName("..")
-strZipFile = sParentPath & "\" & "demo_sdk.zip"
+strZipFile = sParentPath & "\" & strZipFileName
 outFolder = sParentPath & "\SDK"
 
 If not fso.FileExists(strZipFile) Then
@@ -63,12 +64,10 @@ ExtractTo strZipFile, outFolder
 ' Move files 
 Set folder = fso.GetFolder(outFolder)
 
-If folder.Files.Count = 0 AND folder.SubFolders.Count = 1 Then
-	For Each subFolder In folder.SubFolders
-        fso.MoveFolder subFolder & "/*.*", outFolder
-        fso.DeleteFolder(subFolder)
-	Next
-end if
+For Each subFolder In folder.SubFolders
+    fso.MoveFolder subFolder & "/*.*", outFolder
+    fso.DeleteFolder(subFolder)
+Next
 
 
 'WScript.Echo("download and unzip complete")
