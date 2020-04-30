@@ -1,5 +1,25 @@
 # Release Notes - 小程序
 
+## 2.4.7.106 @2020.04.30
+- BUG修复
+    - 修复IM信令每次都重复发送一条问题
+- 性能优化
+    - 优化房间内其他人涂鸦渲染的流程性
+
+## 2.4.6 @ 2020.04.02
+
+- 新增回调
+    - TEduBoardImageStatus 新增两个状态回调
+        - TEDU_BOARD_IMAGE_STATUS_LOAD_TIMEOUT 图片加载超时
+        - TEDU_BOARD_IMAGE_STATUS_LOAD_CANCEL 图片取消加载
+    - onTEBRectSelected 框选工具选中回调
+- 新增参数
+    - progressBarUrl 自定义加载图标
+    - imageTimeout 图片加载超时
+- BUG修复
+    - 修复加载相同图片没有回调问题
+
+
 ## 2.4.4 @ 2020.03.14
 
 - 批量导入图片组时，对URL字符串长度进行限制(总长7K)，超长时同步返回空串，同时回调错误TEDU_BOARD_ERROR_DATA_TOO_LARGE
