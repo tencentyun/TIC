@@ -1,4 +1,4 @@
-strZipFileName = "demo_sdk_20200511@1.zip"
+strZipFileName = "demo_sdk_20200430@1.zip"
 strFileURL = "https://sdk.qcloudtiw.com/win32/" & strZipFileName
 
 Function DownloadTo(url, dest)

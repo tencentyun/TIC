@@ -1,8 +1,10 @@
 const CONSTANT = require('../../../../constant/Constant');
+const TIM = require('tim-wx-sdk');
 
 Page({
   // TIC
   txTic: null,
+  tim: null,
   webrtcroomComponent: null,
 
   data: {
@@ -99,17 +101,21 @@ Page({
         });
       } else {
         this.showToast('登录成功');
-        // 增加事件监听
-        this.addTICMessageListener();
-        this.addTICEventListener();
-        this.addTICStatusListener();
-        if (this.data.isTeacher) {
-          // 老师就创建课堂
-          this.createClassroom();
-        } else { // 如果是学生
-          // 有了课堂后就直接加入
-          this.joinClassroom();
-        }
+      }
+    });
+
+    this.tim = this.txTic.getImInstance();
+    this.tim.on(TIM.EVENT.SDK_READY, (event) => {
+      // 增加事件监听
+      this.addTICMessageListener();
+      this.addTICEventListener();
+      this.addTICStatusListener();
+      if (this.data.isTeacher) {
+        // 老师就创建课堂
+        this.createClassroom();
+      } else { // 如果是学生
+        // 有了课堂后就直接加入
+        this.joinClassroom();
       }
     });
   },
@@ -151,7 +157,6 @@ Page({
         this.data.teduBoard = this.txTic.getBoardInstance();
         this.initBoardEvent();
         this.startRTC();
-
       }
     });
   },
@@ -383,7 +388,9 @@ Page({
       }
     });
 
-
+    this.data.teduBoard.on('TEB_ADDIMAGESFILE', (data) => {
+      console.log('======================:  ', 'TEB_ADDIMAGESFILE:: data: ', data);
+    });
   },
 
   // 开始RTC

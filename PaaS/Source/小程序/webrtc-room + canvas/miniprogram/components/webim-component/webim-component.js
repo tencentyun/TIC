@@ -20,7 +20,7 @@ module.exports = {
     this.tim = TIM.create({
       SDKAppID: sdkAppId
     }); // SDK 实例通常用 tim 表示
-    this.tim.setLogLevel(1);
+    this.tim.setLogLevel(6);
   },
 
   initEvent() {
@@ -33,6 +33,11 @@ module.exports = {
     this.tim.off(TIM.EVENT.MESSAGE_RECEIVED, this.onMessageReceived) // SDK 收到推送的单聊、群聊、群提示、群系统通知的新消息
     this.tim.off(TIM.EVENT.GROUP_SYSTEM_NOTICE_RECEIVED, this.onGroupSystemNoticeReceived) // SDK 收到新的群系统通知时触发
     this.tim.off(TIM.EVENT.KICKED_OUT, this.onKickedOut) // 用户被踢下线时触发
+
+    MessageListener.removeTICMessageListener(); // 清空所有监听
+    EventListener.removeTICEventListener(); // 清空所有监听
+    StatusListener.removeTICStatusListener(); // 清空所有监听
+    BoardListener.removeBoardEventListener(); // 清空所有监听
   },
 
   onKickedOut(event) {

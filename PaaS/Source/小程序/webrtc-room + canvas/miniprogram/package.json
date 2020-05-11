@@ -10,7 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@tencent/aegis-mp-sdk": "^1.11.2",
-    "tim-wx-sdk": "^2.5.2"
+    "tim-wx-sdk": "^2.6.2"
   }
 }

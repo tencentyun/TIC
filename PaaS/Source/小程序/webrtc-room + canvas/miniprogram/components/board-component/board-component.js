@@ -1,6 +1,5 @@
 const TEduBoard = require('./libs/TEduBoard_miniprogram.min.js');
 const logReport = require('../elk-component/ELKReport');
-const AegisMp = require('../aegis-component/aegis');
 
 Component({
   /**
@@ -39,7 +38,6 @@ Component({
    * 组件的初始数据
    */
   data: {
-    aegis: null,
     board: null,
     boardImg: '',
     currentPic: "", //当前图片链接
@@ -73,7 +71,6 @@ Component({
   methods: {
     render(boardConfig = {}, callback) {
       let startTime = Date.now();
-      this.data.aegis = new AegisMp(boardConfig.sdkAppId, boardConfig.userId);
       logReport.setSdkAppId(boardConfig.sdkAppId);
       logReport.setUserId(boardConfig.userId);
       logReport.setRoomId(boardConfig.classId);
@@ -145,7 +142,7 @@ Component({
       if (event.changedTouches.length) {
         logReport.delayReport('touchstart', event.changedTouches[0]);
       }
-      this.data.board.canvasTouchStart(event);
+      this.data.board && this.data.board.canvasTouchStart(event);
     },
 
     /**
@@ -156,7 +153,7 @@ Component({
       if (event.changedTouches.length) {
         logReport.delayReport('touchmove', event.changedTouches[0]);
       }
-      this.data.board.canvasTouchMove(event);
+      this.data.board && this.data.board.canvasTouchMove(event);
 
     },
 
@@ -168,7 +165,7 @@ Component({
       if (event.changedTouches.length) {
         logReport.delayReport('touchend', event.changedTouches[0]);
       }
-      this.data.board.canvasTouchEnd(event);
+      this.data.board && this.data.board.canvasTouchEnd(event);
     },
 
 
@@ -177,6 +174,7 @@ Component({
      * @param {*} event 
      */
     bindWrapTouchmove(event) {
+      // console.error('====== bindWrapTouchmove');
       // 如果是android平台
       if (this.data.systemInfo.platform && this.data.systemInfo.platform.toLowerCase() === 'android') {
         if (event && event.changedTouches && event.changedTouches[0]) {
@@ -201,7 +199,7 @@ Component({
               }]
             }
             logReport.delayReport('touchmove-android', mockTouch.changedTouches[0]);
-            this.data.board.canvasTouchMove(mockTouch);
+            this.data.board && this.data.board.canvasTouchMove(mockTouch);
           }
         }
       }
@@ -216,7 +214,7 @@ Component({
       if (event.changedTouches.length) {
         logReport.delayReport('touchcancel', event.changedTouches[0]);
       }
-      this.data.board.canvasTouchCancel(event);
+      this.data.board && this.data.board.canvasTouchCancel(event);
     },
 
     /**
@@ -312,7 +310,7 @@ Component({
     },
 
     addSyncData(data) {
-      this.data.board.addSyncData(data);
+      this.data.board && this.data.board.addSyncData(data);
     },
 
     // 设置当前背景图片
@@ -435,6 +433,13 @@ Component({
         imgStyle: style.join(';'),
         hideImg: false
       });
+    },
+
+    /**
+     * 销毁白板
+     */
+    destroy() {
+      this.data.board && this.data.board.destroy();
     }
   }
 })

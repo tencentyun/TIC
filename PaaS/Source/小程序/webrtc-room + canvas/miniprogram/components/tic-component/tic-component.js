@@ -260,6 +260,10 @@ Component({
       let startTime = Date.now();
       logReport.report(logReport.EVENT_NAME.QUITGROUP_START);
       webimComponent.quitGroup(this.data.classId).then(() => {
+        // 销毁白板
+        this.data.txBoard && this.data.txBoard.destroy();
+
+
         // 退出成功
         callback && callback({
           module: Constant.TICModule.TICMODULE_IMSDK,
@@ -298,6 +302,9 @@ Component({
       let startTime = Date.now();
       logReport.report(logReport.EVENT_NAME.DELETEGROUP_START);
       webimComponent.destroyGroup(classId, () => {
+        // 销毁白板
+        this.data.txBoard && this.data.txBoard.destroy();
+
         // 销毁成功
         callback && callback({
           module: Constant.TICModule.TICMODULE_IMSDK,
@@ -345,8 +352,7 @@ Component({
          * 监听到实时涂鸦数据后，通过im将数据同步到各端
          */
         txBoard.getBoardInstance().on(TEduBoard.EVENT.TEB_SYNCDATA, data => {
-          webimComponent.sendBoardGroupCustomMessage(data).then((content) => {
-          }, (error) => {
+          webimComponent.sendBoardGroupCustomMessage(data).then((content) => {}, (error) => {
             // 同步到远端增加失败日志
             try {
               logReport.report(logReport.EVENT_NAME.ONTEBADDSYNCTOREMOTEERROR, {
@@ -355,6 +361,7 @@ Component({
                 ext: JSON.stringify(error)
               });
             } catch (error) {}
+
           });
         });
         callback && callback();
@@ -449,7 +456,7 @@ Component({
      * @param {*} orientation 
      */
     setOrientation(orientation, callback) {
-      this.data.txBoard.setOrientation(orientation, callback);
+      this.data.txBoard && this.data.txBoard.setOrientation(orientation, callback);
     },
 
     /**
@@ -457,7 +464,7 @@ Component({
      * @return {Board} board 返回白板实例
      */
     getBoardInstance() {
-      return this.data.txBoard.getBoardInstance();
+      return this.data.txBoard && this.data.txBoard.getBoardInstance();
     },
 
     /**
