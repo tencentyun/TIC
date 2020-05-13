@@ -71,6 +71,7 @@ Page({
     if (this.data.isJoinClassroom) {
       this.quitClassroom();
     }
+    this.tim.off(TIM.EVENT.SDK_READY, this.imSDKReady);
     this.txTic.logout(() => {
       // this.showToast('注销成功');
     }, error => {
@@ -105,19 +106,21 @@ Page({
     });
 
     this.tim = this.txTic.getImInstance();
-    this.tim.on(TIM.EVENT.SDK_READY, (event) => {
-      // 增加事件监听
-      this.addTICMessageListener();
-      this.addTICEventListener();
-      this.addTICStatusListener();
-      if (this.data.isTeacher) {
-        // 老师就创建课堂
-        this.createClassroom();
-      } else { // 如果是学生
-        // 有了课堂后就直接加入
-        this.joinClassroom();
-      }
-    });
+    this.tim.on(TIM.EVENT.SDK_READY, this.imSDKReady);
+  },
+
+  imSDKReady() {
+    // 增加事件监听
+    this.addTICMessageListener();
+    this.addTICEventListener();
+    this.addTICStatusListener();
+    if (this.data.isTeacher) {
+      // 老师就创建课堂
+      this.createClassroom();
+    } else { // 如果是学生
+      // 有了课堂后就直接加入
+      this.joinClassroom();
+    }
   },
 
   createClassroom() {
