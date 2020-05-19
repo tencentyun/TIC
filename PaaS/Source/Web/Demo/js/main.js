@@ -178,16 +178,19 @@ window.app = new Vue({
 
             this.tim = this.tic.getImInstance(); //获取im实例
             // 监听im的状态，如果不是ready状态，创建群，加群，发消息等操作都会失败
-            this.tim.on(window.TIM.EVENT.SDK_READY, () => {
-              // im 已经准备好了
-              this.imReady = true;
-            });
+            // 监听的im的事件，一定要调用off注销，否则会出现重复监听的问题
+            this.tim.on(window.TIM.EVENT.SDK_READY, this.imReadyHandler);
             this.login();
           }
         });
       } else {
         this.login();
       }
+    },
+
+    imReadyHandler() {
+      // im 已经准备好了
+      this.imReady = true;
     },
 
     // 登录
@@ -215,7 +218,6 @@ window.app = new Vue({
 
     // 登出
     logout() {
-
       if (this.status == this.STATUS_INCLASS) {
         this.quitClassroom(res => {
           this.logout_internal();
@@ -236,6 +238,8 @@ window.app = new Vue({
           this.initData();
           this.status = this.STATUS_UNLOGIN;
           this.imReady = false; // im状态ready设置为false
+          // 注销im事件
+          this.tim.off(window.TIM.EVENT.SDK_READY, this.imReadyHandler);
 
           this.showTip('登出成功');
           this.showMessageInBox('TIC', "logout Succ");
@@ -248,6 +252,7 @@ window.app = new Vue({
     },
 
     // 创建房间
+    // 需要监听im的状态，如果不是ready状态，创建群，加群，发消息等操作都会失败
     createClassroom() {
       if (!this.roomID) {
         this.showErrorTip('房间号不能为空');
@@ -313,6 +318,7 @@ window.app = new Vue({
         return;
       }
 
+      // 需要监听im的状态，如果不是ready状态，创建群，加群，发消息等操作都会失败
       this.tic.joinClassroom({
         // compatSaas: true,
         classId: this.roomID
