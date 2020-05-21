@@ -24,7 +24,7 @@
 <a href="https://demo.qlcoudtiw.com/wins/exe/TICDemo_Windows.zip">点击下载</a>
 </td>
 <td style="text-align:center">
-<a href="https://tic-demo-1259648581.cos.ap-shanghai.myqcloud.com/index.html">点击体验</a>
+<a href="https://demo.qlcoudtiw.com/web/latest/index.html">点击体验</a>
 </td>
 </tr>
 </table>
