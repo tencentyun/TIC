@@ -920,6 +920,11 @@ public class TICClassMainActivity extends BaseActvity
          }
 
          @Override
+         public void onTEBRefresh() {
+             TXLog.i(TAG, "onTEBRefresh:" );
+         }
+
+         @Override
         public void onTEBDeleteFile(String fileId) {
         }
 

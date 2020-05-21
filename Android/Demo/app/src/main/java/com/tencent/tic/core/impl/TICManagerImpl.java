@@ -1179,6 +1179,11 @@ public class TICManagerImpl  extends TICManager{
         }
 
         @Override
+        public void onTEBRefresh() {
+
+        }
+
+        @Override
         public void onTEBAddTranscodeFile(String s) {
         }
 

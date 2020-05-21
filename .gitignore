@@ -13,3 +13,4 @@ macOS/Demo/TICDemo_Mac/TICDemo_Mac.xcworkspace/xcshareddata
 local.properties
 Podfile.lock
 iOS/Demo/TICDemo/TICDemo.xcworkspace/xcshareddata
+iOS/Demo/TICDemo/TICDemo.xcodeproj/project.xcworkspace/xcshareddata
