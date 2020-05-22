@@ -47,8 +47,8 @@ Android
 </td>
 </tr>
 <tr>
-<td style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/e395a39c07dd421061a39f9b9fa80eb0.png"/></td>
-<td style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/fe21a59bc2d45e84994b67997a83793c.png"/></td>
+<td style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/e21c76fabb83e3185679ad28f175eafb.png"/></td>
+<td style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/ecc0f984442bd32aec81879a6cf41961.png"/></td>
 </tr>
 </table>
 
@@ -66,7 +66,7 @@ Web
 </tr>
 <tr>
 <td style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/bfb64d9b03f8bb99c5dad3ececbf756c.png"/></td>
-<td style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/a684af8647c307aac6080ce4cdecc8ee.png"/></td>
+<td style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/f79cfa748fa69cd2be23abd899726c18.png"/></td>
 <td style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/594350af38e2be6d7578139d72102905.png"/></td>
 </tr>
 </table>
