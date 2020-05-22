@@ -2,6 +2,10 @@
 
 腾讯云在线教育互动课堂（Tencent Interact Class，TIC）是集实时音视频、交互式白板涂鸦、IM 聊天室、PPT 课件共享、屏幕分享和录制回放等功能于一体的一站式在线教育互动课堂解决方案。
 
+* [互动白板官网](https://cloud.tencent.com/document/product/1137)
+* [实时音视频官网](https://cloud.tencent.com/document/product/647)
+* [即时通信官网](https://cloud.tencent.com/document/product/269)
+
 ## Demo 体验
 
 <table>
