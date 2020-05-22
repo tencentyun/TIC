@@ -47,7 +47,7 @@ Android
 </td>
 </tr>
 <tr>
-<td style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/61d5880ad90931f7ff6c98fa542546e6.png"/></td>
+<td style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/e395a39c07dd421061a39f9b9fa80eb0.png"/></td>
 <td style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/fe21a59bc2d45e84994b67997a83793c.png"/></td>
 </tr>
 </table>
@@ -55,22 +55,26 @@ Android
 <table>
 <tr>
 <td>
-Mac/Windows/Web
+Mac
+</td>
+<td>
+Windows
+</td>
+<td>
+Web
 </td>
 </tr>
 <tr>
-<td style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/eb24fcda50b3cb0019492a1293d9db88.png"/></td>
+<td style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/bfb64d9b03f8bb99c5dad3ececbf756c.png"/></td>
+<td style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/a684af8647c307aac6080ce4cdecc8ee.png"/></td>
+<td style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/594350af38e2be6d7578139d72102905.png"/></td>
 </tr>
 </table>
 
 
 ## Demo 编译
 
-为避免开发测试导致账号被强制下线，您需要替换自己的`SDKAppID`和测试账号信息。
-
-登录 [实时音视频控制台](https://console.cloud.tencent.com/trtc)，选择左侧菜单栏【开发辅助】>【UserSig生成&校验】，在【应用（SDKAppID）】下拉框中选择对应的应用，生成一组`UserID`和`UserSig`。
-![](https://main.qcloudimg.com/raw/80eed8e45a6bfd403db05ec96b24072e.png)
-然后将`SDKAppID`以及`UserID`对应的`UserSig`替换配置文件中对应的字段即可。
+为避免开发测试导致账号被强制下线，您需要替换自己的`SDKAppID`和测试账号信息。登录 [实时音视频控制台](https://console.cloud.tencent.com/trtc)，选择左侧菜单栏【开发辅助】>【UserSig生成&校验】，在【应用（SDKAppID）】下拉框中选择对应的应用，生成一组`UserID`和`UserSig`。最后将`SDKAppID`以及`UserID`对应的`UserSig`替换配置文件中对应的字段即可。
 
 |所属平台|配置文件路径|
 |-|-|
@@ -88,20 +92,21 @@ Mac/Windows/Web
 <td>
 <a href="https://mp.weixin.qq.com/s/uGVhpxRW4ZYXwlmZr8diuA">网壳课堂</a> - 灵活的多人白板互动，让课堂更有参与感
 </td>
-</tr>
-<tr>
-<td style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/b625503511f2612b91612fdff54d5c78.png"/></td>
-</tr>
-</table>
 
-<table>
-<tr>
 <td>
 <a href="https://mp.weixin.qq.com/s/ssXmeEAYp7gJcxKr0hnPnw">毛豆课堂</a> - 让每一个孩子成为最好的自己
 </td>
 </tr>
 <tr>
+<td style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/b625503511f2612b91612fdff54d5c78.png"/></td>
 <td style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/bc4b24a2fee707bca7488cb034fe0530.png"/></td>
+</tr>
+</table>
+
+<table>
+<tr>
+</tr>
+<tr>
 </tr>
 </table>
 
