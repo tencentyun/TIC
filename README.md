@@ -35,37 +35,33 @@
 
 >? iOS 和 Android 扫码后，请输入安装密码 `tiw` 后即可安装。
 
-**iOS**
+
 
 <table>
 <tr>
-<th style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/ed7cf5d61d672b5a33ccc5127c603d00.jpg"/></th>
-<th style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/70bc3687abd7d8e9a073a231a78685cf.jpg"/></th>
-<th style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/d2371d5aebab2f6fe4be2c985e9250d5.jpg"/></th>
+<td>
+iOS
+</td>
+<td>
+Android
+</td>
+</tr>
+<tr>
+<td style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/61d5880ad90931f7ff6c98fa542546e6.png"/></td>
+<td style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/fe21a59bc2d45e84994b67997a83793c.png"/></td>
 </tr>
 </table>
-
-**Android**
 
 <table>
 <tr>
-<th style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/e22dad1473a0365b77508bda74538d94.jpg"/></th>
-<th style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/d8d89cf70076c579a4328e36af99c7a4.jpg"/></th>
-<th style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/1e7f984701abb1cef08513f085087bef.jpg"/></th>
+<td>
+Mac/Windows/Web
+</td>
+</tr>
+<tr>
+<td style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/eb24fcda50b3cb0019492a1293d9db88.png"/></td>
 </tr>
 </table>
-
-**Mac OS**
-
-![](https://main.qcloudimg.com/raw/89b12ab1c38739de7ff3366e275f2ece.jpg)
-
-**Windows**
-
-![](https://main.qcloudimg.com/raw/5e3691859f5ef2694c99f1a0d487461d.jpg)
-
-**Web**
-
-![](https://main.qcloudimg.com/raw/e049152ec1eea11c633b952753337af5.jpg)
 
 
 ## Demo 编译
@@ -84,6 +80,32 @@
 |macOS|macOS/Demo/TICDemo_Mac/TICDemo_Mac/Config/config.json|
 |Web|Web/Demo/js/account_dev.js|
 |小程序|小程序/Demo/miniprogram/pages/tic/account.js|
+
+## 优秀案例
+
+<table>
+<tr>
+<td>
+<a href="https://mp.weixin.qq.com/s/uGVhpxRW4ZYXwlmZr8diuA">网壳课堂</a> - 灵活的多人白板互动，让课堂更有参与感
+</td>
+</tr>
+<tr>
+<td style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/b625503511f2612b91612fdff54d5c78.png"/></td>
+</tr>
+</table>
+
+<table>
+<tr>
+<td>
+<a href="https://mp.weixin.qq.com/s/ssXmeEAYp7gJcxKr0hnPnw">毛豆课堂</a> - 让每一个孩子成为最好的自己
+</td>
+</tr>
+<tr>
+<td style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/bc4b24a2fee707bca7488cb034fe0530.png"/></td>
+</tr>
+</table>
+
+
 
 
 
