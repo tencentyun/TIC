@@ -65,9 +65,9 @@ Web
 </td>
 </tr>
 <tr>
-<td style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/bfb64d9b03f8bb99c5dad3ececbf756c.png"/></td>
+<td style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/7ee48a5592da9acc2347b421e0170a71.png"/></td>
 <td style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/f79cfa748fa69cd2be23abd899726c18.png"/></td>
-<td style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/594350af38e2be6d7578139d72102905.png"/></td>
+<td style="text-align:center; width:33%;"><img src="https://main.qcloudimg.com/raw/db4305fa7ee7e02abf09ba3cda82c084.png"/></td>
 </tr>
 </table>
 
