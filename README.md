@@ -19,11 +19,8 @@
 </tr>
 <tr>
 <td style="text-align:center">
-安装密码 tiw
 <img src="https://main.qcloudimg.com/raw/6cf3b2864c6ad847f380e4877f56ed93.png" width="150"/></td>
-<td style="text-align:center">
-安装密码 tiw
-<img src="https://main.qcloudimg.com/raw/98569a546d085544b5171670e6e60c11.png" width="150"/></td>
+<td style="text-align:center"><img src="https://main.qcloudimg.com/raw/98569a546d085544b5171670e6e60c11.png" width="150"/></td>
 <td style="text-align:center"><img src="https://main.qcloudimg.com/raw/b660a6c57aecebf6a0c749a1daf8532a.jpg" width="150"/></td>
 <td style="text-align:center">
 <a href="https://demo.qlcoudtiw.com/mac/app/TICDemo_Mac.zip">点击下载</a>
@@ -37,6 +34,7 @@
 </tr>
 </table>
 
+* iOS 和 Android 扫码后，请输入安装密码 `tiw` 后即可安装。
 * 实时音视频 Web 端所依赖的 WebRTC 技术由于各浏览器实现差异，在移动端兼容性较差，不建议您在移动端使用。本 Demo 只针对桌面端浏览器做过适配，若需要在移动端使用，需要您自行做移动端适配工作。
 * 本 Demo 仅用于演示互动白板产品功能，源码对外开放，可供您接入时参考，但是 Demo 本身未经过严格测试，若您计划将 Demo 代码用于生产环境，请确保发布前自行进行充分测试，避免发生潜在问题可能给您造成损失。
 
