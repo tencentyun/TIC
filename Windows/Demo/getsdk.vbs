@@ -54,20 +54,8 @@ If fso.FolderExists(outFolder) Then
 	fso.DeleteFolder(outFolder)
 End If
 
-fso.CreateFolder(outFolder)
+'WScript.Echo "Extracting items to " & sParentPath
 
-'WScript.Echo "Extracting items to " & outFolder
-
-ExtractTo strZipFile, outFolder
-
-
-' Move files 
-Set folder = fso.GetFolder(outFolder)
-
-For Each subFolder In folder.SubFolders
-    fso.MoveFolder subFolder & "/*.*", outFolder
-    fso.DeleteFolder(subFolder)
-Next
-
+ExtractTo strZipFile, sParentPath
 
 'WScript.Echo("download and unzip complete")
