@@ -23,13 +23,13 @@
 <td style="text-align:center"><img src="https://main.qcloudimg.com/raw/98569a546d085544b5171670e6e60c11.png" width="150"/></td>
 <td style="text-align:center"><img src="https://main.qcloudimg.com/raw/b660a6c57aecebf6a0c749a1daf8532a.jpg" width="150"/></td>
 <td style="text-align:center">
-<a href="https://demo.qlcoudtiw.com/mac/app/TICDemo_Mac.zip">点击下载</a>
+<a href="https://demo.qcloudtiw.com/mac/app/TICDemo_Mac.zip">点击下载</a>
 </td>
 <td style="text-align:center">
-<a href="https://demo.qlcoudtiw.com/wins/exe/TICDemo_Windows.zip">点击下载</a>
+<a href="https://demo.qcloudtiw.com/wins/exe/TICDemo_Windows.zip">点击下载</a>
 </td>
 <td style="text-align:center">
-<a href="https://demo.qlcoudtiw.com/web/latest/index.html">点击体验</a>
+<a href="https://demo.qcloudtiw.com/web/latest/index.html">点击体验</a>
 </td>
 </tr>
 </table>
