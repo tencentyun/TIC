@@ -26,7 +26,7 @@
 <a href="https://demo.qcloudtiw.com/mac/app/TICDemo_Mac.zip">点击下载</a>
 </td>
 <td style="text-align:center">
-<a href="https://demo.qcloudtiw.com/wins/exe/TICDemo_Windows.zip">点击下载</a>
+<a href="https://demo.qcloudtiw.com/win/exe/tic_demo.zip">点击下载</a>
 </td>
 <td style="text-align:center">
 <a href="https://demo.qcloudtiw.com/web/latest/index.html">点击体验</a>
