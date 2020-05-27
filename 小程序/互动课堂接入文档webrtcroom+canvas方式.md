@@ -89,11 +89,14 @@ webrtc-room 组件：与其他端音视频互通的组件。
 
 | 域名 | 说明 |
 | --- | ---  |
-| `https://webim.tim.qq.com` |     IM 服务域名        |
-| `https://yun.tim.qq.com` |        WebRTC 音视频鉴权服务域名 [1]     |
+| `https://yun.tim.qq.com` |        白板服务器域名     |
+| `https://aegis.qq.com` |   日志服务域名          |
+| `https://report-log-lv0.api.qcloud.com` |   日志服务域名          |
 | `https://official.opensso.tencent-cloud.com` |     WebRTC 音视频鉴权服务域名 [2]        |
 | `https://cloud.tencent.com` |     WebRTC 推拉流服务域名        |
-| `https://ilivelog.qcloud.com` |   日志服务域名          |
+| `https://webim.tim.qq.com` |     IM 服务域名        |
+| `https://pingtas.qq.com` |     IM 服务域名        |
+
 
 ### 创建小程序应用
 

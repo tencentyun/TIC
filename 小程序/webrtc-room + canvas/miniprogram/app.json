@@ -8,8 +8,7 @@
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "腾讯云互动课堂-canvas",
     "navigationBarBackgroundColor": "#f8f8f8",
-    "backgroundColor": "#f8f8f8",
-    "renderingMode": "seperated"
+    "backgroundColor": "#f8f8f8"
   },
   "networkTimeout": {
     "request": 10000,
