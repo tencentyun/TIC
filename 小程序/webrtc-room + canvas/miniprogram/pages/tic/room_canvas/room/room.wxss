@@ -68,6 +68,7 @@
 .container .board_container {
   width: 100%;
   height: 100%;
+  position: relative;
 }
 
 .container .board_container .tx_board_slot {
@@ -75,8 +76,9 @@
   right: 0;
   width: 60rpx;
   height: 60rpx;
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.7);
   border-radius: 50%;
+  z-index: 10000;
 }
 
 .container .board_container .tx_board_slot.horizontal {

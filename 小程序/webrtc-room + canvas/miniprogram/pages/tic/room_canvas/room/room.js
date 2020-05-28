@@ -1,45 +1,33 @@
-const CONSTANT = require('../../../../constant/Constant');
 const TIM = require('tim-wx-sdk');
+const TEduBoard = require('../../../../components/board-component/libs/TEduBoard_miniprogram.min');
 
 Page({
   // TIC
   txTic: null,
   tim: null,
-  webrtcroomComponent: null,
 
   data: {
-    identifier: null,
+    userId: null,
     userSig: null,
     sdkAppId: null,
     roomID: null,
 
+    isErrorModalShow: false, // 房间事件会重复触发，增加错误窗口是否显示的标志
+
     isTeacher: false,
-
     isJoinClassroom: false, // 是否已经在课堂中
-
-    // 音视频模板
-    template: '1v1bigsmall',
-
-    smallViewLeft: 'calc(100vw - 20vw - 1vw)',
-    smallViewTop: 'calc(1vw)',
-    smallViewWidth: '20vw',
-    smallViewHeight: '26vw',
-
-    // 是否启用摄像头
-    enableCamera: true,
-
     isShowBoardPanel: true, // 是否显示白板面板
+    _isLogined: false, // im 是否登录了
 
     chatMsg: '', // 聊天输入框值
     msgList: [], // IM消息列表
-
-    waitingImg: "https://main.qcloudimg.com/raw/d009e8c5c3455213e13b4b772e53f2a9.png",
-    pusherBackgroundImg: "https://main.qcloudimg.com/raw/d009e8c5c3455213e13b4b772e53f2a9.png",
-    playerBackgroundImg: "https://main.qcloudimg.com/raw/d009e8c5c3455213e13b4b772e53f2a9.png",
-
     scrollToView: null, // 聊天面板聊天记录最后滚动的位置
-    isErrorModalShow: false, // 房间事件会重复触发，增加错误窗口是否显示的标志
+
     boardShowFullScreen: false, // 是否全屏显示白板
+
+    // 音视频模板
+    template: 'custom_canvas',
+    trtcConfig: {}, // trtcroom的参数
   },
 
   onReady(options) {
@@ -50,7 +38,7 @@ Page({
   },
 
   onLoad(options) {
-    this.data.identifier = options.identifier;
+    this.data.userId = options.userId;
     this.data.userSig = options.userSig;
     this.data.sdkAppId = options.sdkAppId;
     this.data.roomID = options.roomID;
@@ -59,24 +47,25 @@ Page({
     // 获取tic组件
     this.txTic = this.selectComponent('#tx_board');
     wx.txTic = this.txTic;
-    // 获取webrtc组件
-    this.webrtcroomComponent = this.selectComponent('#webrtcroom');
 
     // 登录
     this.init();
   },
 
   onUnload() {
-    // 如果在课堂中，则退出课堂
-    if (this.data.isJoinClassroom) {
+    this.tim.off(TIM.EVENT.SDK_READY, this.imSDKReady);
+    // 如果在课堂中 && 是登录态，则退出课堂
+    if (this.data.isJoinClassroom && this.data._isLogined) {
       this.quitClassroom();
     }
-    this.tim.off(TIM.EVENT.SDK_READY, this.imSDKReady);
-    this.txTic.logout(() => {
-      // this.showToast('注销成功');
-    }, error => {
-      // this.showErrorToast('注销失败', error);
-    });
+    // 注销事件接口
+    this.txTic.removeTICMessageListener();
+    this.txTic.removeTICEventListener();
+    this.txTic.removeTICStatusListener();
+    // 如果已经登录，则调用注销接口
+    if (this.data._isLogined) {
+      this.txTic.logout(() => {}, error => {});
+    }
   },
 
   init() {
@@ -92,20 +81,24 @@ Page({
   // 登录
   login() {
     this.txTic.login({
-      userId: this.data.identifier,
+      userId: this.data.userId,
       userSig: this.data.userSig
     }, (res) => {
       if (res.code) {
+        this.data._isLogined = false;
         this.showErrorToast('登录失败', res.desc);
         wx.navigateBack({
           delta: 1
         });
       } else {
+        this.data._isLogined = true;
         this.showToast('登录成功');
       }
     });
 
     this.tim = this.txTic.getImInstance();
+
+    // 监听im的ready事件，如果没有ready，则创建群，加群，发消息都会失败
     this.tim.on(TIM.EVENT.SDK_READY, this.imSDKReady);
   },
 
@@ -175,7 +168,6 @@ Page({
       }
     });
     // 停止音视频
-    this.webrtcroomComponent.stop();
   },
 
   addTICMessageListener() {
@@ -237,9 +229,7 @@ Page({
        * @param msg	IM消息体
        * @note 所有收到的消息都会在此回调进行通知，包括前面已经封装的文本和自定义消息（白板信令消息除外）
        */
-      onTICRecvMessage(msg) {
-
-      }
+      onTICRecvMessage(msg) {}
     });
   },
 
@@ -271,6 +261,7 @@ Page({
   addTICStatusListener() {
     this.txTic.addTICStatusListener({
       onTICForceOffline: () => {
+        this.data._isLogined = false;
         this.showErrorToast('被踢下线');
         wx.navigateBack({
           delta: 1
@@ -281,91 +272,96 @@ Page({
 
   // 初始化白板
   initBoardEvent() {
-    this.data.teduBoard.on(CONSTANT.EVENT.BOARD.TEB_INIT, () => {
+
+    // 白板错误回调，务必监听处理
+    this.data.teduBoard.on(TEduBoard.EVENT.TEB_ERROR, (code, msg) => {
+      console.log('======================:  ', 'TEB_ERROR', ' code:', code, ' msg:', msg);
+      this.showErrorToast(`加载白板错误 code:${code} msg: ${msg}`);
+      wx.navigateBack({
+        delta: 1
+      });
+    });
+
+    // 白板警告回调，务必监听，并参考错误码，修正业务逻辑
+    this.data.teduBoard.on(TEduBoard.EVENT.TEB_WARNING, (code, msg) => {
+      console.log('======================:  ', 'TEB_WARNING', ' code:', code, ' msg:', msg);
+    });
+
+    this.data.teduBoard.on(TEduBoard.EVENT.TEB_INIT, () => {
       console.log('======================:  ', 'TEB_INIT');
     });
 
     // 撤销状态改变
-    this.data.teduBoard.on(CONSTANT.EVENT.BOARD.TEB_OPERATE_CANUNDO_STATUS_CHANGED, (enable) => {
+    this.data.teduBoard.on(TEduBoard.EVENT.TEB_OPERATE_CANUNDO_STATUS_CHANGED, (enable) => {
       console.log('======================:  ', 'TEB_OPERATE_CANUNDO_STATUS_CHANGED', enable ? '可撤销' : '不可撤销');
     });
 
     // 重做状态改变
-    this.data.teduBoard.on(CONSTANT.EVENT.BOARD.TEB_OPERATE_CANREDO_STATUS_CHANGED, (enable) => {
+    this.data.teduBoard.on(TEduBoard.EVENT.TEB_OPERATE_CANREDO_STATUS_CHANGED, (enable) => {
       console.log('======================:  ', 'TEB_OPERATE_CANREDO_STATUS_CHANGED', enable ? '可恢复' : '不可恢复');
     });
 
     // 新增白板
-    this.data.teduBoard.on(CONSTANT.EVENT.BOARD.TEB_ADDBOARD, (boardId, fid) => {
+    this.data.teduBoard.on(TEduBoard.EVENT.TEB_ADDBOARD, (boardId, fid) => {
       console.log('======================:  ', 'TEB_ADDBOARD', ' boardId:', boardId, ' fid:', fid);
     });
 
-    // 白板错误回调
-    this.data.teduBoard.on(CONSTANT.EVENT.BOARD.TEB_ERROR, (code, msg) => {
-      console.log('======================:  ', 'TEB_ERROR', ' code:', code, ' msg:', msg);
-    });
-
-    // 白板警告回调
-    this.data.teduBoard.on(CONSTANT.EVENT.BOARD.TEB_WARNING, (code, msg) => {
-      console.log('======================:  ', 'TEB_WARNING', ' code:', code, ' msg:', msg);
-    });
-
     // 图片状态加载回调
-    this.data.teduBoard.on(CONSTANT.EVENT.BOARD.TEB_IMAGE_STATUS_CHANGED, (status, data) => {
+    this.data.teduBoard.on(TEduBoard.EVENT.TEB_IMAGE_STATUS_CHANGED, (status, data) => {
       console.log('======================:  ', 'TEB_IMAGE_STATUS_CHANGED', ' status:', status, ' data:', data);
     });
 
     // 删除白板页回调
-    this.data.teduBoard.on(CONSTANT.EVENT.BOARD.TEB_DELETEBOARD, (boardId, fid) => {
+    this.data.teduBoard.on(TEduBoard.EVENT.TEB_DELETEBOARD, (boardId, fid) => {
       console.log('======================:  ', 'TEB_DELETEBOARD', ' boardId:', boardId, ' fid:', fid);
     });
 
     // 跳转白板页回调
-    this.data.teduBoard.on(CONSTANT.EVENT.BOARD.TEB_GOTOBOARD, (boardId, fid) => {
+    this.data.teduBoard.on(TEduBoard.EVENT.TEB_GOTOBOARD, (boardId, fid) => {
       console.log('======================:  ', 'TEB_GOTOBOARD', ' boardId:', boardId, ' fid:', fid);
     });
 
     // 删除文件回调
-    this.data.teduBoard.on(CONSTANT.EVENT.BOARD.TEB_DELETEFILE, (fid) => {
+    this.data.teduBoard.on(TEduBoard.EVENT.TEB_DELETEFILE, (fid) => {
       console.log('======================:  ', 'TEB_DELETEFILE', ' fid:', fid);
     });
 
     // 文件上传状态
-    this.data.teduBoard.on(CONSTANT.EVENT.BOARD.TEB_FILEUPLOADSTATUS, (status, data) => {
+    this.data.teduBoard.on(TEduBoard.EVENT.TEB_FILEUPLOADSTATUS, (status, data) => {
       console.log('======================:  ', 'TEB_FILEUPLOADSTATUS', status, data);
     });
 
     // 切换文件回调
-    this.data.teduBoard.on(CONSTANT.EVENT.BOARD.TEB_SWITCHFILE, (fid) => {
+    this.data.teduBoard.on(TEduBoard.EVENT.TEB_SWITCHFILE, (fid) => {
       console.log('======================:  ', 'TEB_SWITCHFILE', ' fid:', fid);
     });
 
     // 上传背景图片的回调
-    this.data.teduBoard.on(CONSTANT.EVENT.BOARD.TEB_SETBACKGROUNDIMAGE, (fileName, fileUrl, userData) => {
+    this.data.teduBoard.on(TEduBoard.EVENT.TEB_SETBACKGROUNDIMAGE, (fileName, fileUrl, userData) => {
       console.log('======================:  ', 'TEB_SETBACKGROUNDIMAGE', '  fileName:', fileName, '  fileUrl:', fileUrl, ' userData:', userData);
     });
 
     // 文件上传进度
-    this.data.teduBoard.on(CONSTANT.EVENT.BOARD.TEB_FILEUPLOADPROGRESS, (data) => {
+    this.data.teduBoard.on(TEduBoard.EVENT.TEB_FILEUPLOADPROGRESS, (data) => {
       console.log('======================:  ', 'TEB_FILEUPLOADPROGRESS:: ', data);
     });
 
     // H5背景加载状态
-    this.data.teduBoard.on(CONSTANT.EVENT.BOARD.TEB_H5BACKGROUND_STATUS_CHANGED, (status, data) => {
+    this.data.teduBoard.on(TEduBoard.EVENT.TEB_H5BACKGROUND_STATUS_CHANGED, (status, data) => {
       console.log('======================:  ', 'TEB_H5BACKGROUND_STATUS_CHANGED:: status:', status, '  data:', data);
     });
 
     // H5背景加载状态
-    this.data.teduBoard.on(CONSTANT.EVENT.BOARD.TEB_H5BACKGROUND_STATUS_CHANGED, (status, data) => {
+    this.data.teduBoard.on(TEduBoard.EVENT.TEB_H5BACKGROUND_STATUS_CHANGED, (status, data) => {
       console.log('======================:  ', 'TEB_H5BACKGROUND_STATUS_CHANGED:: status:', status, '  data:', data);
     });
 
     // 新增转码文件
-    this.data.teduBoard.on(CONSTANT.EVENT.BOARD.TEB_ADDTRANSCODEFILE, (fid) => {
+    this.data.teduBoard.on(TEduBoard.EVENT.TEB_ADDTRANSCODEFILE, (fid) => {
       console.log('======================:  ', 'TEB_ADDTRANSCODEFILE', ' fid:', fid);
     });
 
-    this.data.teduBoard.on(CONSTANT.EVENT.BOARD.TEB_TRANSCODEPROGRESS, (res) => {
+    this.data.teduBoard.on(TEduBoard.EVENT.TEB_TRANSCODEPROGRESS, (res) => {
       console.log('=======  TEB_TRANSCODEPROGRESS 转码进度：', res);
       if (res.code) {
         this.showErrorToast('转码失败code:' + res.code + ' message:' + res.message);
@@ -399,13 +395,61 @@ Page({
   // 开始RTC
   startRTC() {
     this.setData({
-      userID: this.data.identifier,
-      userSig: this.data.userSig,
-      sdkAppID: this.data.sdkAppId,
-      roomID: this.data.roomID
+      trtcConfig: {
+        sdkAppID: this.data.sdkAppId, // 开通实时音视频服务创建应用后分配的 SDKAppID
+        userID: this.data.userId, // 用户 ID，可以由您的帐号系统指定
+        userSig: this.data.userSig, // 身份签名，相当于登录密码的作用
+        template: this.data.template, // 画面排版模式
+      }
     }, () => {
-      this.webrtcroomComponent.start();
-    });
+      let trtcRoomContext = this.selectComponent('#trtcroom')
+      let EVENT = trtcRoomContext.EVENT
+
+      if (trtcRoomContext) {
+
+        // 监听trtcroom错误，并处理，参考文档https://cloud.tencent.com/document/product/647/38313
+        trtcRoomContext.on(EVENT.ERROR, (event) => {
+
+        })
+
+        // 更多事件请参考trtc-room文档 https://cloud.tencent.com/document/product/647/17018#Event
+        trtcRoomContext.on(EVENT.LOCAL_JOIN, (event) => {
+          // 进房成功后发布本地音频流和视频流 
+          trtcRoomContext.publishLocalVideo()
+          trtcRoomContext.publishLocalAudio()
+        })
+        // 监听远端用户的视频流的变更事件
+        trtcRoomContext.on(EVENT.REMOTE_VIDEO_ADD, (event) => {
+          // 订阅（即播放）远端用户的视频流
+          let userID = event.data.userID
+          let streamType = event.data.streamType // 'main' or 'aux'            
+          trtcRoomContext.subscribeRemoteVideo({
+            userID: userID,
+            streamType: streamType
+          })
+        })
+
+        // 监听远端用户的音频流的变更事件
+        trtcRoomContext.on(EVENT.REMOTE_AUDIO_ADD, (event) => {
+          // 订阅（即播放）远端用户的音频流
+          let userID = event.data.userID
+          trtcRoomContext.subscribeRemoteAudio({
+            userID: userID
+          })
+        })
+
+        // 进入房间
+        trtcRoomContext.enterRoom({
+          roomID: this.data.roomID
+        }).catch((error) => {
+          this.showErrorToast('room joinRoom 进房失败', error.message);
+          // 进房失败后，退出当前页
+          wx.navigateBack({
+            delta: 1
+          });
+        })
+      }
+    })
   },
 
   updateChatMsg(msg) {
@@ -418,65 +462,12 @@ Page({
     });
   },
 
-  /**
-   * 监听webrtc事件
-   */
-  onRoomEvent(e) {
-    var self = this;
-    switch (e.detail.tag) {
-      case 'error':
-        // 错误提示窗口是否已经显示
-        if (this.data.isErrorModalShow) {
-          return;
-        }
-
-        if (e.detail.code === -10) { // 进房失败，一般为网络切换的过程中
-          this.data.isErrorModalShow = true;
-          wx.showModal({
-            title: '提示',
-            content: e.detail.detail,
-            confirmText: '重试',
-            cancelText: '退出',
-            success: function (res) {
-
-            }
-          });
-        } else {
-          var pages = getCurrentPages();
-          console.log(pages, pages.length, pages[pages.length - 1].__route__);
-          if (pages.length > 1 && (pages[pages.length - 1].__route__ == 'pages/index/index')) {
-            this.data.isErrorModalShow = true;
-            wx.showModal({
-              title: '提示',
-              content: e.detail.detail,
-              showCancel: false,
-              complete: function () {
-                self.data.isErrorModalShow = false
-                pages = getCurrentPages();
-                if (pages.length > 1 && (pages[pages.length - 1].__route__ == 'pages/index/index')) {
-                  wx.showToast({
-                    title: `code:${e.detail.code} content:${e.detail.detail}`
-                  });
-                  wx.navigateBack({
-                    delta: 1
-                  });
-                }
-              }
-            });
-          }
-        }
-        break;
-    }
-  },
-
-  // IM输入框的信息
   bindChatMsg: function (e) {
     this.data.chatMsg = e.detail.value;
   },
 
   // 发送IM消息
   sendComment() {
-    // var msg = this.data.chatMsg || '';
     var msg = 'Hello，这是测试im消息';
     if (!msg || !msg.trim()) {
       this.showErrorToast('不能发送空消息');
@@ -508,24 +499,6 @@ Page({
   showChatPanel() {
     this.setData({
       isShowBoardPanel: false
-    });
-  },
-
-  // 切换白板全屏显示
-  togglerBoardFullScreen() {
-    var boardShowFullScreen = !this.data.boardShowFullScreen;
-    this.setData({
-      boardShowFullScreen: boardShowFullScreen,
-    }, () => {
-      if (boardShowFullScreen) { // 全屏显示，则切换到横屏方式
-        this.txTic.setOrientation('horizontal', () => {
-
-        });
-      } else { // 垂直方向
-        this.txTic.setOrientation('vertical', () => {
-
-        });
-      }
     });
   },
 
@@ -577,7 +550,7 @@ Page({
               path,
               type,
               name,
-              userData: 'hello'
+              userData: 'tiw'
             });
           } else {
             // 一定要参考文档先配置合法域名
@@ -585,7 +558,7 @@ Page({
               path,
               type,
               name,
-              userData: 'hello'
+              userData: 'tiw'
             });
           }
         }

@@ -1,6 +1,6 @@
 <view class="container">
   <view class="camera-box" hidden="{{boardShowFullScreen}}">
-    <webrtc-room id="webrtcroom" wx:if="{{!!template}}" template="{{template}}" roomID="{{roomID}}" userID="{{userID}}" userSig="{{userSig}}" sdkAppID="{{sdkAppID}}" privateMapKey="{{privateMapKey}}" smallViewLeft="{{smallViewLeft}}" smallViewTop="{{smallViewTop}}" smallViewWidth="{{smallViewWidth}}" smallViewHeight="{{smallViewHeight}}" enableCamera="{{enableCamera}}" pusherBackgroundImg="{{pusherBackgroundImg}}" playerBackgroundImg="{{playerBackgroundImg}}" waitingImg="{{waitingImg}}" enableIM="{{false}}" bindRoomEvent="onRoomEvent"></webrtc-room>
+    <trtc-room id="trtcroom" class="tedu-camera__box" config="{{trtcConfig}}"></trtc-room>
   </view>
   <view class="tools-box" wx:if="{{!boardShowFullScreen}}">
     <image catchtap="prevTap" class="item-icon" src="/resources/images/icon-prev.png"></image>
@@ -37,9 +37,7 @@
       </view>
     </view>
     <view class="board_container" hidden="{{!isShowBoardPanel}}">
-      <tic-component id="tx_board" bindIMEvent="onIMEvent" bindBoardEvent="onBoardEvent">
-        <cover-image catchtap="togglerBoardFullScreen" class="tx_board_slot {{boardShowFullScreen ? 'horizontal': ''}}" src="{{boardShowFullScreen ? '/resources/images/smallscreen.png':'/resources/images/fullscreen.png' }}"></cover-image>
-      </tic-component>
+      <tic-component id="tx_board" bindIMEvent="onIMEvent" bindBoardEvent="onBoardEvent"></tic-component>
     </view>
   </view>
 </view>

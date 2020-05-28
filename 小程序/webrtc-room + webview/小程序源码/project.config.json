@@ -4,11 +4,15 @@
 	"setting": {
 		"urlCheck": true,
 		"es6": true,
-		"enhance": false,
 		"postcss": true,
+		"preloadBackgroundData": false,
 		"minified": true,
 		"newFeature": true,
 		"autoAudits": false,
+		"coverView": true,
+		"showShadowRootInWxmlPanel": true,
+		"scopeDataCheck": false,
+		"enhance": false,
 		"checkInvalidKey": true,
 		"checkSiteMap": true,
 		"uploadWithSourceMap": true,
@@ -16,7 +20,8 @@
 			"ignore": [],
 			"disablePlugins": [],
 			"outputPath": ""
-		}
+		},
+		"useCompilerModule": true
 	},
 	"appid": "wx748277861c01d4be",
 	"projectname": "%E8%85%BE%E8%AE%AF%E4%BA%91%E4%BA%92%E5%8A%A8%E8%AF%BE%E5%A0%82-webview",

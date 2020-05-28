@@ -4,7 +4,7 @@ Page({
   data: {
     sdkAppId: TEST_ACCOUNT.sdkappid,
     array: TEST_ACCOUNT.users,
-    roomID: '',
+    roomID: 0,
     role: 0, // 0 学生， 1： 老师
     index: Math.floor((Math.random() * TEST_ACCOUNT.users.length))
   },
@@ -23,9 +23,7 @@ Page({
     });
   },
 
-  onLoad: function () {
-
-  },
+  onLoad: function () {},
 
   radioChange(ev) {
     this.setData({
@@ -41,7 +39,7 @@ Page({
       })
       return;
     }
-    var url = `/pages/tic/room_canvas/room/room?sdkAppId=${this.data.sdkAppId}&identifier=${TEST_ACCOUNT.users[this.data.index]['userId']}&userSig=${TEST_ACCOUNT.users[this.data.index]['userToken']}&roomID=${this.data.roomID}&role=${this.data.role}`;
+    var url = `/pages/tic/room_canvas/room/room?sdkAppId=${this.data.sdkAppId}&userId=${TEST_ACCOUNT.users[this.data.index]['userId']}&userSig=${TEST_ACCOUNT.users[this.data.index]['userToken']}&roomID=${this.data.roomID}&role=${this.data.role}`;
     wx.navigateTo({
       url: url
     });

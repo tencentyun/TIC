@@ -1,0 +1,22 @@
+/* 通过方法自定义模式 */
+.template-custom_canvas {
+  /* 绝对定位模式 pusher 和 player 都用绝对定位*/
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  height: 100%;
+  align-content: flex-start;
+}
+
+
+.template-custom_canvas .view-container {
+  width: 25%;
+  height: 25%;
+}
+
+
+.template-custom_canvas live-pusher,
+.template-custom_canvas live-player {
+  width: 100%;
+  height: 100%;
+}

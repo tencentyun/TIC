@@ -6,7 +6,7 @@ class ELKReport {
     this.delayTime = 5;
     this.delayData = [];
 
-    this.reportApi = 'https://report-log-lv1.api.qcloud.com/log/report';
+    this.reportApi = 'https://report-log-lv0.api.qcloud.com/log/report';
 
     this.wxSysData = wx.getSystemInfoSync();
 

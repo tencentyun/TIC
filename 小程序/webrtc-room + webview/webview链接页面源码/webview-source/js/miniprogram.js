@@ -61,8 +61,13 @@ window.app = new Vue({
 
   mounted() {
     this.isShow = true;
-    // this.setOrientation();
     this.start();
+  },
+
+  computed: {
+    boardBoxWidth() {
+      return `calc(100% - ${this.videoSize}px)`
+    },
   },
 
   methods: {
@@ -288,6 +293,7 @@ window.app = new Vue({
         return;
       }
 
+      // 第二个传入false 不启用trtc模块
       this.tic.joinClassroom(this.classId, false, {
         id: 'sketchpad',
         ratio: '16:9',

@@ -4,6 +4,6 @@
   "disableScroll": true,
   "disableSwipeBack": true,
   "usingComponents": {
-    "webrtc-room": "/components/webrtc-room/webrtc-room"
+    "trtc-room": "/components/trtc-room/trtc-room"
   }
 }

@@ -1,39 +1,22 @@
-const CONSTANT = require('../../../../constant/Constant');
-
 Page({
   // TIC
   txTic: null,
-  webrtcroomComponent: null,
+  trtcroomComponent: null,
 
   data: {
-    identifier: null,
+    userId: null,
     userSig: null,
     sdkAppId: null,
     roomID: null,
     isTeacher: false,
-
-    isJoinClassroom: false, // 是否已经在课堂中
-    boardShowFullScreen: false,
-
     // 音视频模板
-    template: '1v1',
-
-    // 是否启用摄像头
-    enableCamera: true,
-
-    isShowBoardPanel: false, // 是否显示白板面板
-
-    chatMsg: '', // 聊天输入框值
-    msgList: [], // IM消息列表
-
-    waitingImg: "https://main.qcloudimg.com/raw/d009e8c5c3455213e13b4b772e53f2a9.png",
-    pusherBackgroundImg: "https://main.qcloudimg.com/raw/d009e8c5c3455213e13b4b772e53f2a9.png",
-    playerBackgroundImg: "https://main.qcloudimg.com/raw/d009e8c5c3455213e13b4b772e53f2a9.png",
+    template: 'custom',
 
     isErrorModalShow: false, // 房间事件会重复触发，增加错误窗口是否显示的标志
     classUrl: '', // 课堂链接
     loadClass: true,
     videoSize: 150, // 视频的
+    trtcConfig: {}
   },
 
   onReady(options) {
@@ -44,7 +27,7 @@ Page({
   },
 
   onLoad(options) {
-    this.data.identifier = options.identifier;
+    this.data.userId = options.userId;
     this.data.userSig = options.userSig;
     this.data.sdkAppId = options.sdkAppId;
     this.data.roomID = options.roomID;
@@ -52,12 +35,10 @@ Page({
     this.callWebview();
   },
 
-  onUnload() {
-
-  },
+  onUnload() {},
 
   callWebview() {
-    let url = `https://tic-demo-1259648581.cos.ap-shanghai.myqcloud.com/miniprogram/miniprogram.html?isTeacher=${this.data.isTeacher}&sdkAppId=${this.data.sdkAppId}&classId=${this.data.roomID}&userId=${this.data.identifier}&userSig=${this.data.userSig}&videoSize=${this.data.videoSize}`;
+    let url = `https://tic-demo-1259648581.cos.ap-shanghai.myqcloud.com/miniprogram/miniprogram.html?isTeacher=${this.data.isTeacher}&sdkAppId=${this.data.sdkAppId}&classId=${this.data.roomID}&userId=${this.data.userId}&userSig=${this.data.userSig}&videoSize=${this.data.videoSize}`;
     console.log('classUrl:', url);
     this.setData({
       classUrl: encodeURI(url),
@@ -68,16 +49,57 @@ Page({
   // 开始RTC
   startRTC() {
     // 获取webrtc组件
-    this.webrtcroomComponent = this.selectComponent('#webrtcroom');
+    this.trtcroomComponent = this.selectComponent('#trtcroom');
 
     this.setData({
-      userID: this.data.identifier,
-      userSig: this.data.userSig,
-      sdkAppId: this.data.sdkAppId,
-      roomID: this.data.roomID
+      trtcConfig: {
+        sdkAppID: this.data.sdkAppId, // 开通实时音视频服务创建应用后分配的 SDKAppID
+        userID: this.data.userId, // 用户 ID，可以由您的帐号系统指定
+        userSig: this.data.userSig, // 身份签名，相当于登录密码的作用
+        template: this.data.template, // 画面排版模式
+      }
     }, () => {
-      this.webrtcroomComponent.start();
-    });
+      let trtcRoomContext = this.selectComponent('#trtcroom')
+      let EVENT = trtcRoomContext.EVENT
+
+      if (trtcRoomContext) {
+        trtcRoomContext.on(EVENT.LOCAL_JOIN, (event) => {
+          // 进房成功后发布本地音频流和视频流 
+          trtcRoomContext.publishLocalVideo()
+          trtcRoomContext.publishLocalAudio()
+        })
+        // 监听远端用户的视频流的变更事件
+        trtcRoomContext.on(EVENT.REMOTE_VIDEO_ADD, (event) => {
+          // 订阅（即播放）远端用户的视频流
+          let userID = event.data.userID
+          let streamType = event.data.streamType // 'main' or 'aux'            
+          trtcRoomContext.subscribeRemoteVideo({
+            userID: userID,
+            streamType: streamType
+          })
+        })
+
+        // 监听远端用户的音频流的变更事件
+        trtcRoomContext.on(EVENT.REMOTE_AUDIO_ADD, (event) => {
+          // 订阅（即播放）远端用户的音频流
+          let userID = event.data.userID
+          trtcRoomContext.subscribeRemoteAudio({
+            userID: userID
+          })
+        })
+
+        // 进入房间
+        trtcRoomContext.enterRoom({
+          roomID: this.data.roomID
+        }).catch((error) => {
+          this.showErrorToast('room joinRoom 进房失败', error.message);
+          // 进房失败后，退出当前页
+          wx.navigateBack({
+            delta: 1
+          });
+        })
+      }
+    })
   },
 
   webviewLoad() {
@@ -85,59 +107,6 @@ Page({
       this.startRTC();
     }, 1000);
   },
-
-  /**
-   * 监听webrtc事件
-   */
-  onRoomEvent(e) {
-    var self = this;
-    switch (e.detail.tag) {
-      case 'error':
-        // 错误提示窗口是否已经显示
-        if (this.data.isErrorModalShow) {
-          return;
-        }
-
-        if (e.detail.code === -10) { // 进房失败，一般为网络切换的过程中
-          this.data.isErrorModalShow = true;
-          wx.showModal({
-            title: '提示',
-            content: e.detail.detail,
-            confirmText: '重试',
-            cancelText: '退出',
-            success: function (res) {
-
-            }
-          });
-        } else {
-          var pages = getCurrentPages();
-          console.log(pages, pages.length, pages[pages.length - 1].__route__);
-          if (pages.length > 1 && (pages[pages.length - 1].__route__ == 'pages/index/index')) {
-            this.data.isErrorModalShow = true;
-            wx.showModal({
-              title: '提示',
-              content: e.detail.detail,
-              showCancel: false,
-              complete: function () {
-                self.data.isErrorModalShow = false
-                pages = getCurrentPages();
-                if (pages.length > 1 && (pages[pages.length - 1].__route__ == 'pages/index/index')) {
-                  wx.showToast({
-                    title: `code:${e.detail.code} content:${e.detail.detail}`
-                  });
-                  wx.navigateBack({
-                    delta: 1
-                  });
-                }
-              }
-            });
-          }
-        }
-        break;
-    }
-  },
-
-
 
   /**
    * 显示信息弹窗

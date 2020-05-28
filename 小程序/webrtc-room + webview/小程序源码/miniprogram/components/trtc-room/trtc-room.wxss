@@ -1,0 +1,49 @@
+@import "./template/custom/custom.wxss";
+@import "./template/custom_canvas/custom_canvas.wxss";
+
+.pusher {
+  width: 100%;
+  height: 100%;
+}
+
+.player {
+  width: 100%;
+  height: 100%;
+}
+
+
+.trtc-room-container {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.trtc-room-container .btn {
+  display: inline-block;
+  width: auto;
+  height: 60rpx;
+  min-height: 60rpx;
+  line-height: 60rpx;
+  font-size: 12px;
+  font-weight: normal;
+  padding: 0 10rpx;
+  color: #006eff;
+  background-color: #f2f2f2;
+  margin: 0 16rpx;
+}
+
+.trtc-room-container .btn.active {
+  color: #f2f2f2;
+  background-color: #006eff;
+}
+
+.trtc-room-container .btn-hover {
+  background-color: #d1d1d1;
+}
+
+.none,
+.view-container.none,
+.template-grid .view-container.none,
+.template-1v1 .view-container.none {
+  display: none !important;
+}

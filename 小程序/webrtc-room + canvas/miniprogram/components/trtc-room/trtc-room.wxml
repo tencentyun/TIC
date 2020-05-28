@@ -1,0 +1,10 @@
+<import src='./template/custom/custom.wxml' />
+<import src='./template/custom_canvas/custom_canvas.wxml' />
+<view class="trtc-room-container {{isFullscreenDevice?'fullscreen-device-fix':''}}">
+  <block wx:if="{{template === 'custom'}}">
+    <template is='custom' data="{{pusher, streamList, debug}}"></template>
+  </block>
+  <block wx:if="{{template === 'custom_canvas'}}">
+    <template is='custom_canvas' data="{{pusher, streamList, debug}}"></template>
+  </block>
+</view>

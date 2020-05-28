@@ -3,14 +3,15 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>=====教育SDK开发者DEMO===</title>
+  <title>腾讯云互动课堂Demo</title>
   <script src="libs/thirdpart/vue.js"></script>
 
-
-  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-  <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+  <!-- 引入样式 -->
+  <link rel="stylesheet" href="libs/thirdpart/elementui/index.css">
+  <!-- 引入组件库 -->
+  <script src="libs/thirdpart/elementui/index.js"></script>
 
   <style>
     * {
@@ -56,7 +57,8 @@
 <body>
   <div id="app">
     <div id="emptyBlock" v-bind:style="{width: videoSize + 'px'}"></div>
-    <el-tabs class="board-box" type="border-card" style="display: none;flex:1;" v-show="isShow">
+    <el-tabs class="board-box" type="border-card" style="display: none;box-sizing: border-box;"
+      v-bind:style="{width: boardBoxWidth}" v-show="isShow">
       <el-tab-pane label="白板" style="height: 100%;">
         <el-container style="position: relative; height: 100%;">
           <el-header style="z-index:10;">
@@ -78,12 +80,14 @@
                     <el-button size="mini" @click="addBoard" v-text="'新建白板'"></el-button>
                   </el-col>
                   <el-col :span="9">
-                    <el-select style="width: 100px;" size="mini" placeholder="工具" v-model="toolType" @change="onSetToolType">
+                    <el-select style="width: 100px;" size="mini" placeholder="工具" v-model="toolType"
+                      @change="onSetToolType">
                       <el-option label="画笔" v-bind:value="TEduBoard.TOOL_TYPE.TEDU_BOARD_TOOL_TYPE_PEN"></el-option>
                       <el-option label="直线" v-bind:value="TEduBoard.TOOL_TYPE.TEDU_BOARD_TOOL_TYPE_LINE"></el-option>
                       <el-option label="实心(椭)圆" v-bind:value="TEduBoard.TOOL_TYPE.TEDU_BOARD_TOOL_TYPE_OVAL_SOLID">
                       </el-option>
-                      <el-option label="空心(椭)圆" v-bind:value="TEduBoard.TOOL_TYPE.TEDU_BOARD_TOOL_TYPE_OVAL"></el-option>
+                      <el-option label="空心(椭)圆" v-bind:value="TEduBoard.TOOL_TYPE.TEDU_BOARD_TOOL_TYPE_OVAL">
+                      </el-option>
                       <el-option label="实心矩形" v-bind:value="TEduBoard.TOOL_TYPE.TEDU_BOARD_TOOL_TYPE_RECT_SOLID">
                       </el-option>
                       <el-option label="空心矩形" v-bind:value="TEduBoard.TOOL_TYPE.TEDU_BOARD_TOOL_TYPE_RECT"></el-option>
@@ -94,7 +98,8 @@
                       </el-option>
                       <el-option label="点选" v-bind:value="TEduBoard.TOOL_TYPE.TEDU_BOARD_TOOL_TYPE_POINT_SELECT">
                       </el-option>
-                      <el-option label="移动" v-bind:value="TEduBoard.TOOL_TYPE.TEDU_BOARD_TOOL_TYPE_ZOOM_DRAG"></el-option>
+                      <el-option label="移动" v-bind:value="TEduBoard.TOOL_TYPE.TEDU_BOARD_TOOL_TYPE_ZOOM_DRAG">
+                      </el-option>
 
                       <el-option label="鼠标" v-bind:value="TEduBoard.TOOL_TYPE.TEDU_BOARD_TOOL_TYPE_MOUSE"></el-option>
                     </el-select>
@@ -139,11 +144,20 @@
                     <el-button size="mini" @click="onDeleteBoard(-1)" v-text="'删除白板'"></el-button>
                   </el-col>
                   <el-col :span="9">
-                    <el-select style="width: 100px;" size="mini" placeholder="工具" v-model="backgroundImage" @change="onSetBackgroundImage">
-                      <el-option label="美图1" v-bind:value="'https://main.qcloudimg.com/raw/36d31e0d6f9d24a9b5727ab5e21b4b8c.jpg'"></el-option>
-                      <el-option label="美图2" v-bind:value="'https://main.qcloudimg.com/raw/a748528fecffd13a466a3a6c23ad1f45.jpg'"></el-option>
-                      <el-option label="美图3" v-bind:value="'https://main.qcloudimg.com/raw/5e3f50336b85071ef09affcd967e679d.jpg'"></el-option>
-                      <el-option label="美图4" v-bind:value="'https://main.qcloudimg.com/raw/4a897d60a49ae211f6e492f6ebe8340f.jpg'"></el-option>
+                    <el-select style="width: 100px;" size="mini" placeholder="工具" v-model="backgroundImage"
+                      @change="onSetBackgroundImage">
+                      <el-option label="美图1"
+                        v-bind:value="'https://main.qcloudimg.com/raw/36d31e0d6f9d24a9b5727ab5e21b4b8c.jpg'">
+                      </el-option>
+                      <el-option label="美图2"
+                        v-bind:value="'https://main.qcloudimg.com/raw/a748528fecffd13a466a3a6c23ad1f45.jpg'">
+                      </el-option>
+                      <el-option label="美图3"
+                        v-bind:value="'https://main.qcloudimg.com/raw/5e3f50336b85071ef09affcd967e679d.jpg'">
+                      </el-option>
+                      <el-option label="美图4"
+                        v-bind:value="'https://main.qcloudimg.com/raw/4a897d60a49ae211f6e492f6ebe8340f.jpg'">
+                      </el-option>
                     </el-select>
                   </el-col>
                   <el-col :span="7">
@@ -157,7 +171,8 @@
                     <el-button size="mini" @click="onclearDraws" v-text="'清空涂鸦'"></el-button>
                   </el-col>
                   <el-col :span="9">
-                    <el-select style="width: 100px;" size="mini" placeholder="工具" v-model="backgroundImageH5" @change="onSetBackgroundH5">
+                    <el-select style="width: 100px;" size="mini" placeholder="工具" v-model="backgroundImageH5"
+                      @change="onSetBackgroundH5">
                       <el-option label="QQ" v-bind:value="'https://www.qq.com/'"></el-option>
                       <el-option label="腾讯云" v-bind:value="'https://cloud.tencent.com'"></el-option>
                     </el-select>
@@ -174,11 +189,14 @@
                   </el-col>
                   <el-col :span="9">
                     <el-select style="width: 100px;" size="mini" placeholder="H5文件" @change="onAddH5File">
-                      <el-option label="Light Animation-blue" v-bind:value="'https://test04-1257240443.cos.ap-shanghai.myqcloud.com/2019-05-08-15-38-54/index.html'">
+                      <el-option label="Light Animation-blue"
+                        v-bind:value="'https://test04-1257240443.cos.ap-shanghai.myqcloud.com/2019-05-08-15-38-54/index.html'">
                       </el-option>
-                      <el-option label="欢迎新同学" v-bind:value="'https://ppt2h5-1259648581.cos.ap-shanghai.myqcloud.com/00c71am880jcqc5p5rkb/index.html'">
+                      <el-option label="欢迎新同学"
+                        v-bind:value="'https://ppt2h5-1259648581.cos.ap-shanghai.myqcloud.com/00c71am880jcqc5p5rkb/index.html'">
                       </el-option>
-                      <el-option label="341-国立教学方案" v-bind:value="'https://test04-1257240443.cos.ap-shanghai.myqcloud.com/0o5stagbd6b264ei59jb/index.html'">
+                      <el-option label="341-国立教学方案"
+                        v-bind:value="'https://test04-1257240443.cos.ap-shanghai.myqcloud.com/0o5stagbd6b264ei59jb/index.html'">
                       </el-option>
                     </el-select>
                   </el-col>
@@ -201,8 +219,9 @@
           <el-main id="sketchpad" style="padding: 0; z-index:5; height: 100%;"></el-main>
 
           <el-footer style="height: 70px; bottom: 0px;">
-            <el-pagination style="padding-top: 0px; padding-bottom: 0px;" :page-size="1" :pager-count="3" layout="total, prev, pager, next" :total.sync="boardData.total"
-              :current-page.sync="boardData.current" @prev-click="prevBoard" @current-change="onGotoBoard" @next-click="nextBoard">
+            <el-pagination style="padding-top: 0px; padding-bottom: 0px;" :page-size="1" :pager-count="3"
+              layout="total, prev, pager, next" :total.sync="boardData.total" :current-page.sync="boardData.current"
+              @prev-click="prevBoard" @current-change="onGotoBoard" @next-click="nextBoard">
             </el-pagination>
           </el-footer>
         </el-container>
@@ -210,7 +229,8 @@
       <el-tab-pane label="IM" style="height: 100%;">
         <el-container>
           <el-main>
-            <div id="msg_box" class="im-log-box" style="position: relative; height: 20vh; max-height: 40vh; overflow-y: scroll;">
+            <div id="msg_box" class="im-log-box"
+              style="position: relative; height: 20vh; max-height: 40vh; overflow-y: scroll;">
               <ul>
                 <li v-for="msg in msgs">
                   <span class="send">{{msg.send}}</span>
@@ -242,18 +262,18 @@
   <link href="https://resources-tiw.qcloudtrtc.com/thirdpart/videojs/video-js.min.css" rel="stylesheet">
   <script src="https://resources-tiw.qcloudtrtc.com/thirdpart/videojs/video.min.js"></script>
 
-  <!-- AXIOS SDK 白板SDK依赖axios（后续版本会去掉该依赖） -->
+  <!-- AXIOS SDK 白板SDK依赖axios-->
   <script src="https://resources-tiw.qcloudtrtc.com/thirdpart/axios/axios.min.js"></script>
 
-  <!-- WebIM SDK -->
-  <script src="https://resources-tiw.qcloudtrtc.com/webim/webim.min.js"></script>
   <!-- COS SDK -->
-  <script src="https://resources-tiw.qcloudtrtc.com/thirdpart/cos/5.1.0/cos.min.js"></script>
+  <script src="./libs/cos-js-sdk-v5.min.js"></script>
+  <!-- WebIM SDK -->
+  <script src="./libs/tim-js.js"></script>
   <!-- 白板SDK -->
-  <script src="https://resources-tiw.qcloudtrtc.com/board/2.4.4/TEduBoard.min.js"></script>
+  <script src="https://resources-tiw.qcloudtrtc.com/board/2.4.8/TEduBoard.min.js"></script>
 
   <!-- TIC SDK 可根据开源代码自行编译TIC-->
-  <script src="https://resources-tiw.qcloudtrtc.com/tic/2.4.3/TIC.min.js"></script>
+  <script src="https://resources-tiw.qcloudtrtc.com/tic/2.5.0/TIC.min.js"></script>
 
   <script src="libs/thirdpart/purl.js"></script>
   <script src="libs/thirdpart/vconsole.min.js"></script>

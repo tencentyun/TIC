@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 55 (78076) - https://sketchapp.com -->
+    <title>图标状态</title>
+    <desc>Created with Sketch.</desc>
+    <g id="PC-端设计稿" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="图标状态" transform="translate(-1429.000000, -358.000000)">
+            <g id="切片" transform="translate(286.000000, 221.000000)"></g>
+            <g id="麦克风" transform="translate(1432.000000, 360.000000)" fill="#888888">
+                <g id="编组-7">
+                    <rect id="矩形" x="4" y="0" width="6" height="12" rx="3"></rect>
+                    <path d="M14,9 L14,9.64705882 C14,13.1556914 10.8659932,16 7,16 C3.13400675,16 -3.46944695e-18,13.1556914 -3.46944695e-18,9.64705882 L-3.46944695e-18,9 L0.998565674,9 L2,9 L2,9.33333333 C2,11.9106622 4.23857625,14 7,14 C9.76142375,14 12,11.9106622 12,9.33333333 L12,9 L12.0045471,9 L13.0058899,9 L14,9 Z" id="形状结合" fill-rule="nonzero"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

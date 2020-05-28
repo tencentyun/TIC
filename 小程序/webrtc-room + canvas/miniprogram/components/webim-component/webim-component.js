@@ -64,7 +64,7 @@ module.exports = {
         }
         break;
       case 255:
-        this.messageListener.fireEvent('onTICRecvGroupSystemNotify', 255, event.data.message);
+        MessageListener.fireEvent('onTICRecvGroupSystemNotify', 255, event.data.message);
         break;
     }
   },
@@ -136,7 +136,7 @@ module.exports = {
 
           if (!isBoardMessage) { // 如果不是白板消息，则需要将消息抛出来
             try {
-              this.messageListener.fireEvent('onTICRecvMessage', message);
+              MessageListener.fireEvent('onTICRecvMessage', message);
             } catch (error) {}
           }
         } else {

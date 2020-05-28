@@ -3,7 +3,6 @@
     <web-view class="tedu-webpage-container" wx:if="{{loadClass}}" src="{{classUrl}}" bindload="webviewLoad" binderror="webviewError"></web-view>
   </view>
   <view class="tedu-camera-chat__box" style="width:{{videoSize}}px;height:{{videoSize}}px;">
-    <webrtc-room class="tedu-camera__box" wx:if="{{loadClass}}" id="webrtcroom" template="{{template}}" roomID="{{roomID}}" userID="{{userID}}" 
-    userSig="{{userSig}}" sdkAppID="{{sdkAppId}}" pusherBackgroundImg="{{pusherBackgroundImg}}" playerBackgroundImg="{{playerBackgroundImg}}" waitingImg="{{waitingImg}}" enableIM="{{false}}" bindRoomEvent="onRoomEvent"></webrtc-room>
+    <trtc-room id="trtcroom" class="tedu-camera__box" wx:if="{{loadClass}}" config="{{trtcConfig}}"></trtc-room>
   </view>
 </view>

@@ -23,29 +23,23 @@
   background-color: #2A2C2F;
 }
 
+.tedu-camera__box {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 /* 竖屏*/
 @media (orientation: portrait) {
   .tedu-camera-chat__box {
-    background: red;
     width: 100vw !important;
-  }
-
-  .tedu-camera__box {
-    width: 100%;
-    height: 100%;
   }
 }
 
 /* 横屏*/
 @media (orientation: landscape) {
   .tedu-camera-chat__box {
-    background: yellow;
     flex-direction: column;
     height: 100vh !important;
-  }
-
-  .tedu-camera__box {
-    width: 100%;
-    height: 100%;
   }
 }

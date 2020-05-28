@@ -7,11 +7,11 @@
 
 ##  集成 TIC SDK
 
->? 本文档适用于使用webrtcroom + canvas方式(不推荐，推荐使用[webrtcroom + webview方式](互动课堂接入文档.md))；小程序端 TIC 将以组件的方式集成，接入过程中只需要关注 tic-component 和 webrtc-room。
+>? 本文档适用于使用trtc-room + canvas方式(不推荐，推荐使用[trtc-room + webview方式](互动课堂接入文档.md))；小程序端 TIC 将以组件的方式集成，接入过程中只需要关注 tic-component 和 trtc--room。
 
 > 两种方式能力对比
 
-|      白板功能点         |     【webrtcroom + canvas方式】支持  | 【webrtcroom + webview方式】支持 | 说明 |
+|      白板功能点         |     【trtc-room + canvas方式】支持  | 【trtc-room + webview方式】支持 | 说明 |
 | ------------------ | -------- |------|------|
 | 画笔 | ✔ |  ✔ | |
 | 橡皮 | ✔ |  ✔ | |
@@ -43,19 +43,15 @@
 ### 源码简介
 
 ```
-- constant 常量
 - components
   - tic-component tic 组件
   - board-component 白板组件
   - libs 依赖库
   - webim-component IM 组件
-  - webrtc-room webrtc 组件
+  - trtc-room trtc 组件
   - event 事件监听
+  - elk-component 日志组件
 ```
-
-#### constant
-
-constant 常量。
 
 #### tic-component
 
@@ -77,9 +73,9 @@ TIC 组件：统一对外提供服务和接口的组件。
 
  IM 组件：白板之间实时同步数据与课堂内互动聊天的通道。
 
-####  webrtc-room
+####  trtc-room
 
-webrtc-room 组件：与其他端音视频互通的组件。
+trtc-room 组件：与其他端音视频互通的组件。
 
 ### 配置合法域名
 
@@ -92,8 +88,7 @@ webrtc-room 组件：与其他端音视频互通的组件。
 | `https://yun.tim.qq.com` |        白板服务器域名     |
 | `https://aegis.qq.com` |   日志服务域名          |
 | `https://report-log-lv0.api.qcloud.com` |   日志服务域名          |
-| `https://official.opensso.tencent-cloud.com` |     WebRTC 音视频鉴权服务域名 [2]        |
-| `https://cloud.tencent.com` |     WebRTC 推拉流服务域名        |
+| `https://cloud.tencent.com` |     trtc 推拉流服务域名        |
 | `https://webim.tim.qq.com` |     IM 服务域名        |
 | `https://pingtas.qq.com` |     IM 服务域名        |
 
@@ -119,8 +114,8 @@ TIC 使用的一般流程如下：
 onLoad: function (options) {
   // 获取 tic 组件
   var tic = this.selectComponent('#tx_board');
-  // 获取 webrtc 组件
-  var webrtc = this.selectComponent('#webrtcroom');
+  // 获取 trtc-room 组件
+  let trtcRoomContext = this.selectComponent('#trtcroom')
 }
 ```
 
@@ -484,100 +479,9 @@ tic.removeTICStatusListener(listener)
 listener | Function | 否 | 移除 addTICStatusListener 设置的监听，为空表示，移除所有
 
 
-###   使用音视频
+###   使用音视频trtc-room
 
-#### webrtc-room 属性
-
-属性	| 类型	| 值	| 说明
----| ---- | --- | -----
-useCloud	| Boolean	| -	| 必填，云上环境 true；非云环境 false，推荐 true。
-roomID | Number | - |必填，房间号。
-userID | String | - |必填，用户 ID。
-userSig | String | - | 必填，身份签名，相当于登录密码的作用。
-sdkAppID | Number | - | 必填，开通实时音视频服务创建应用后分配的 sdkAppID。
-privateMapKey | String | - | 必填，房间权限 key，相当于进入指定房间 roomID 的钥匙。
-template | String |- | 必填，1v1bigsmall，1v1horizontal。
-whiteness | String | 5 | 美白指数，取值0 - 9，数值越大效果越明显。
-beauty | String | 5 | 美颜指数，取值0 - 9，数值越大效果越明显。
-aspect | String | '3:4' | 画面比例3:4，9:16。
-minBitrate | Number | 400 | 最小码率，该数值决定了画面最差的清晰度表现。
-maxBitrate | Number | 800 | 最大码率，该数值决定了画面最好的清晰度表现。
-muted | Boolean | false | 是否静音。
-debug | Boolean | false | 是否开启调试模式。
-enableIM | Boolean | true | 是否启用 IM。<br/>**结合 tic 使用时，请设置为 false。**
-enableCamera | Boolean | true | 开启 / 关闭摄像头。
-smallViewLeft | String | '1vw' | 小窗口距离大画面左边的距离，只在 template 设置为 1v1bigsmall 有效。
-smallViewTop | String | '1vw' | 小窗口距离大画面顶部的距离，只在 template 设置为 1v1bigsmall 有效。
-smallViewWidth | String | '30vw' | 小窗口宽度，只在 template 设置为 1v1bigsmall 有效。
-smallViewHeight | String | '40vw' | 小窗口高度，只在 template 设置为 1v1bigsmall 有效。
-waitingImg | String | - | 当微信切到后台时的垫片图片。
-playerBackgroundImg | String |- | 拉流画面的背景图。
-pusherBackgroundImg | String | -| 推流画面的背景图。
-loadingImg | String |-  | 画面 loading 图片。
-pureAudioPushMod | Number |- | 可选，纯音频推流模式，需要旁路直播和录制时需要带上此参数。 <br/>1：本次是纯音频推流,不需要录制 mp3 文件。 <br/>2：本次是纯音频推流，录制文件为 mp3。
-recordId | Number |- | 可选，自动录制时业务自定义 ID，将在录制完成后通过 [直播录制回调](https://console.cloud.tencent.com/live/livecodemanage) 接口通知业务方。<br/>**如果任意 Web 端或小程序端用户传了 recordId，必须保证其他 Web 端和小程序传递的值一致。**
-
-#### webrtc-room 主要接口
-
-| 方法名	| 描述 |
-| ----  | --- |
-| start | 启动推流 |
-| pause | 暂停推流 |
-| resume | 恢复推流 |
-| stop | 停止推流 |
-| switchCamera | 切换摄像头 |
-
-
-####   webrtc-room 动态操作音视频
-
-通过切换属性来完成关闭/打开麦克风，关闭/打开摄像头等。
-```
-// 如切换关闭/打开麦克风
-this.setData({
-  muted: !this.data.muted
-});
-```
-其他属性都可以进行类似的操作。
-
-#### webrtc-room 主要事件
-
-将 enableIM 设置为 false 后，则只会触发音视频房间事件 bindRoomEvent。
-
-```
-onRoomEvent(e) {
-  const {tag, code} = e.detail;
-  switch (tag) {
-      case 'error':
-        // 打开摄像头失败
-        if(code === CONSTANT.ROOM.ERROR_OPEN_CAMERA) {
-
-        }
-      break;
-  }
-}
-```
-
-事件名 | 必要监听 | 说明
----| ---- | ----
-CONSTANT.ROOM.ERROR_OPEN_CAMERA |是 | 打开摄像头失败
-CONSTANT.ROOM.ERROR_OPEN_MIC | 是| 打开麦克风失败
-CONSTANT.ROOM.ERROR_PUSH_DISCONNECT | 是 | 推流连接断开
-CONSTANT.ROOM.ERROR_CAMERA_MIC_PERMISSION | 是 | 获取不到摄像头或者麦克风权限
-CONSTANT.ROOM.ERROR_EXCEEDS_THE_MAX_MEMBER | 是 |  超过最大成员数
-CONSTANT.ROOM.ERROR_REQUEST_ROOM_SIG | 是|  获取推流 sig 失败
-CONSTANT.ROOM.ERROR_JOIN_ROOM | 是 |  进房失败
-CONSTANT.ROOM.SUCC_PUSH | 否 | 推流成功
-CONSTANT.ROOM.SUCC_JOIN_ROOM | 否 | 进房成功
-CONSTANT.ROOM.SUCC_MEMBERS_LIST | 否 | 成员列表
-CONSTANT.ROOM.NETWORK_CHANGE | 否 | 网络改变
-CONSTANT.ROOM.PUSHER_LOADING | 否 | 推流端 loading
-CONSTANT.ROOM.PUSHER_PLAY | 否 | 推流端 play
-CONSTANT.ROOM.PLAYER_LOADING | 否 | 对端 loading
-CONSTANT.ROOM.PLAYER_PLAY | 否 | 对端 play
-CONSTANT.ROOM.PLAYER_DISCONNECT | 否 | 对端断开连接
-CONSTANT.ROOM.EXIT_ROOM  | 否 | 正常退房
-
-关于 webrtc-room 组件的属性和接口以及事件回调等更多资料，请参考 [webrtc-room 标签](https://cloud.tencent.com/document/product/647/17018)。
+> [trtc-room文档](https://cloud.tencent.com/document/product/647/32183)
 
 
 ### 使用互动白板
