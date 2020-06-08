@@ -186,7 +186,7 @@ tic.createClassroom(classId, callback);
 
 参数 | 类型 | 必填 | 说明
 --------- | --------- | -----| ---
-classId | Integer | 是 | 课堂 ID
+classId | Integer | 是 | 课堂 ID，32位整型，取值范围[1, 2147483647]
 callback | Function | 是 | 回调
 
 - callback 回调参数：
@@ -207,7 +207,7 @@ tic.destroyClassroom(classId, callback)
 ```
 参数 | 类型 | 必填 | 说明
 --------- | --------- | -----| ---
-classId | Integer | 是 | 课堂 ID
+classId | Integer | 是 | 课堂 ID，32位整型，取值范围[1, 2147483647]
 callback | Function | 是 | 回调
 
 - callback 回调参数：
@@ -226,7 +226,7 @@ tic.joinClassroom(classId, boardOption, callback);
 
 参数 | 类型 | 必填 | 说明
 --------- | --------- | -----| ---
-classId | Integer | 是 | 由业务方下发，并保证每次下发的 classId 是唯一不重复的
+classId | Integer | 是 | 课堂 ID，32位整型，取值范围[1, 2147483647]，由业务方下发，并保证每次下发的 classId 是唯一不重复的
 boardOption | Integer | 是 | boardOption 参数
 callback | Function | 是 | 回调
 
