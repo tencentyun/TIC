@@ -331,6 +331,7 @@ BEGIN_MESSAGE_MAP(CBoardTabDlg, CDialogEx)
 	ON_CBN_SELCHANGE(IDC_COMBO_RATIO, &CBoardTabDlg::OnCbnSelchangeComboRatio)
 	ON_CBN_SELCHANGE(IDC_COMBO_FIT_MODE, &CBoardTabDlg::OnCbnSelchangeComboFitMode)
 	ON_BN_CLICKED(IDC_BTN_SNAPSHOT, &CBoardTabDlg::OnBnClickedBtnSnapshot)
+	ON_BN_CLICKED(IDC_BTN_SYNC_AND_RELOAD, &CBoardTabDlg::OnBnClickedBtnSyncAndReload)
 END_MESSAGE_MAP()
 
 CBoardTabDlg::CBoardTabDlg(CWnd* pParent /*= nullptr*/)
@@ -1462,4 +1463,14 @@ void CBoardTabDlg::OnBnClickedBtnSnapshot()
 	TEduBoardSnapshotInfo info;
 	info.path = imagePath.c_str();
 	boardCtrl->Snapshot(info);
+}
+
+
+void CBoardTabDlg::OnBnClickedBtnSyncAndReload()
+{
+	auto *boardCtrl = TICManager::GetInstance().GetBoardController();
+	if (!boardCtrl) {
+		return;
+	}
+	boardCtrl->SyncAndReload();
 }

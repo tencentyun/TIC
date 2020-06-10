@@ -121,6 +121,7 @@ private:
 	CComboBox comboFitMode_;
 public:
 	afx_msg void OnBnClickedBtnSnapshot();
+	afx_msg void OnBnClickedBtnSyncAndReload();
 };
 
 //文件操作标签页
