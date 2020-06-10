@@ -330,6 +330,7 @@ BEGIN_MESSAGE_MAP(CBoardTabDlg, CDialogEx)
 	ON_LBN_SELCHANGE(IDC_LIST_BOARD, &CBoardTabDlg::OnLbnSelchangeListBoard)
 	ON_CBN_SELCHANGE(IDC_COMBO_RATIO, &CBoardTabDlg::OnCbnSelchangeComboRatio)
 	ON_CBN_SELCHANGE(IDC_COMBO_FIT_MODE, &CBoardTabDlg::OnCbnSelchangeComboFitMode)
+	ON_BN_CLICKED(IDC_BTN_SNAPSHOT, &CBoardTabDlg::OnBnClickedBtnSnapshot)
 END_MESSAGE_MAP()
 
 CBoardTabDlg::CBoardTabDlg(CWnd* pParent /*= nullptr*/)
@@ -1009,6 +1010,12 @@ void CBoardDlg::onTEBGotoBoard(const char * boardId, const char * fileId)
 	}
 }
 
+void CBoardDlg::onTEBSnapshot(const char * path)
+{
+	std::wstring msg = L"½ØÍ¼ÒÑ±£´æµ½: " + a2w(path, CP_UTF8);
+	AfxMessageBox(msg.c_str(), MB_OK);
+}
+
 void CBoardDlg::onTEBFileTranscodeProgress(const char *path, const char *errorCode, const char *errorMsg, const TEduBoardTranscodeFileResult &result)
 {
 	if (std::string(errorCode) != "") {
@@ -1432,4 +1439,27 @@ void CRecordDlg::OnBnClickedBtnPauseRecord()
 void CRecordDlg::OnBnClickedBtnResumeRecord()
 {
 	resumeRecord();
+}
+
+
+void CBoardTabDlg::OnBnClickedBtnSnapshot()
+{
+	auto *boardCtrl = TICManager::GetInstance().GetBoardController();
+	if (!boardCtrl) {
+		return;
+	}
+	// get exe dir
+	HMODULE module = GetModuleHandle(0);
+	std::wstring exeDir;
+	exeDir.resize(MAX_PATH);
+	GetModuleFileName(module, &exeDir[0], exeDir.size());
+	size_t pos = exeDir.rfind(L'\\');
+	assert(pos == std::wstring::npos);
+	exeDir = exeDir.substr(0, pos);
+	// make a image path
+	std::string imagePath = w2a(exeDir + L"\\snapshots\\" + a2w(boardCtrl->GetCurrentBoard(), CP_UTF8) + L".png", CP_UTF8);
+	// call snapshot method
+	TEduBoardSnapshotInfo info;
+	info.path = imagePath.c_str();
+	boardCtrl->Snapshot(info);
 }

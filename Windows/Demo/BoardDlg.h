@@ -119,6 +119,8 @@ private:
 
 	CComboBox comboRatio_;
 	CComboBox comboFitMode_;
+public:
+	afx_msg void OnBnClickedBtnSnapshot();
 };
 
 //文件操作标签页
@@ -282,6 +284,7 @@ private:
 	virtual void onTEBDeleteBoard(const TEduBoardStringList *boardList, const char * fileId) override;
 	virtual void onTEBGotoBoard(const char * boardId, const char * fileId) override;
 	virtual void onTEBGotoStep(uint32_t currentStep, uint32_t totalStep) {};
+	virtual void onTEBSnapshot(const char *path) override;
 	//文件操作回调
 	virtual void onTEBFileTranscodeProgress(const char *path, const char *errorCode, const char *errorMsg, const TEduBoardTranscodeFileResult &result);
 	virtual void onTEBAddTranscodeFile(const char *fileId);
