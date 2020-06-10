@@ -9,6 +9,7 @@ iOS/Demo/TICDemo/TICDemo.xcworkspace/xcuserdata
 macOS/Demo/TICDemo_Mac/TICDemo_Mac.xcodeproj/xcuserdata
 macOS/Demo/TICDemo_Mac/TICDemo_Mac.xcworkspace/xcuserdata
 macOS/Demo/TICDemo_Mac/TICDemo_Mac.xcworkspace/xcshareddata
+Web/Demo/libs/TEduBoard.min.js
 *.iml
 local.properties
 Podfile.lock
