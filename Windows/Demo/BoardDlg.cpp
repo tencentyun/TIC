@@ -101,7 +101,7 @@ BOOL CDrawTabDlg::OnInitDialog()
 	sliderScale_.SetRange(100, 300);
 
 	editBackH5_.SetWindowText(_T("https://cloud.tencent.com/product/tiw"));
-	editAddImage_.SetWindowText(_T("https://tic-res-1259648581.cos.ap-shanghai.myqcloud.com/demo/qcloud.jpg"));
+	editAddImage_.SetWindowText(_T("https://res.qcloudtiw.com/demo/qcloud.jpg"));
 
 	return TRUE;
 }
@@ -543,7 +543,7 @@ BOOL CFileTabDlg::OnInitDialog()
 
 	editAddH5_.SetWindowText(_T("https://cloud.tencent.com/solution/tic"));
 
-	editAddVideo_.SetWindowText(_T("https://tic-res-1259648581.cos.ap-shanghai.myqcloud.com/demo/tiw-vod.mp4"));
+	editAddVideo_.SetWindowText(_T("https://res.qcloudtiw.com/demo/tiw-vod.mp4"));
 
 	return TRUE;
 }
