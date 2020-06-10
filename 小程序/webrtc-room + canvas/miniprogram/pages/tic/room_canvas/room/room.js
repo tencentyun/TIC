@@ -53,6 +53,7 @@ Page({
   },
 
   onUnload() {
+    wx.offNetworkStatusChange();
     this.tim.off(TIM.EVENT.SDK_READY, this.imSDKReady);
     // 如果在课堂中 && 是登录态，则退出课堂
     if (this.data.isJoinClassroom && this.data._isLogined) {
@@ -153,6 +154,13 @@ Page({
         this.data.teduBoard = this.txTic.getBoardInstance();
         this.initBoardEvent();
         this.startRTC();
+
+        wx.onNetworkStatusChange((res)=>{
+          // 网络连接后重新同步和刷新一次白板
+          if(res.isConnected){
+            this.data.teduBoard && this.data.teduBoard.syncAndReload();
+          }
+        })
       }
     });
   },
@@ -362,7 +370,7 @@ Page({
     });
 
     this.data.teduBoard.on(TEduBoard.EVENT.TEB_TRANSCODEPROGRESS, (res) => {
-      console.log('=======  TEB_TRANSCODEPROGRESS 转码进度：', res);
+      console.log('======================:  TEB_TRANSCODEPROGRESS 转码进度：', res);
       if (res.code) {
         this.showErrorToast('转码失败code:' + res.code + ' message:' + res.message);
       } else {

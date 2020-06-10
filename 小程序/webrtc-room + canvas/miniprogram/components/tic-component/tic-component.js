@@ -352,7 +352,12 @@ Component({
          * 监听到实时涂鸦数据后，通过im将数据同步到各端
          */
         txBoard.getBoardInstance().on(TEduBoard.EVENT.TEB_SYNCDATA, data => {
-          webimComponent.sendBoardGroupCustomMessage(data).then((content) => {}, (error) => {
+          webimComponent.sendBoardGroupCustomMessage(data).then((content) => {
+            let teduBoard = this.getBoardInstance();
+            if(teduBoard){
+              teduBoard.addAckData(content);
+            }
+          }, (error) => {
             // 同步到远端增加失败日志
             try {
               logReport.report(logReport.EVENT_NAME.ONTEBADDSYNCTOREMOTEERROR, {
