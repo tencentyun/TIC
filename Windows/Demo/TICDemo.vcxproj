@@ -124,7 +124,7 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PreBuildEvent>
-      <Command>wscript getsdk.vbs
+      <Command>$(ProjectDir)..\SDK\Updater\sdk_update.exe -t $(ProjectDir)..\SDK\Temp -r $(ProjectDir)..\SDK
 XCOPY /Y /E $(ProjectDir)..\SDK\TEduBoard\lib\x86 $(OutDir) 
 COPY /Y $(ProjectDir)..\SDK\TIM\lib\Win32\$(Configuration) $(OutDir) 
 COPY /Y $(ProjectDir)..\SDK\TRTC\Win32\lib $(OutDir) 
@@ -159,7 +159,7 @@ XCOPY /Y /E $(ProjectDir)..\SDK\TIC\localrecord\lib $(OutDir)</Command>
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PreBuildEvent>
-      <Command>wscript getsdk.vbs
+      <Command>$(ProjectDir)..\SDK\Updater\sdk_update.exe -t $(ProjectDir)..\SDK\Temp -r $(ProjectDir)..\SDK
 XCOPY /Y /E $(ProjectDir)..\SDK\TEduBoard\lib\x64 $(OutDir) 
 COPY /Y $(ProjectDir)..\SDK\TIM\lib\Win64\$(Configuration) $(OutDir) 
 COPY /Y $(ProjectDir)..\SDK\TRTC\Win64\lib $(OutDir) </Command>
@@ -197,7 +197,7 @@ COPY /Y $(ProjectDir)..\SDK\TRTC\Win64\lib $(OutDir) </Command>
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PreBuildEvent>
-      <Command>wscript getsdk.vbs
+      <Command>$(ProjectDir)..\SDK\Updater\sdk_update.exe -t $(ProjectDir)..\SDK\Temp -r $(ProjectDir)..\SDK
 XCOPY /Y /E $(ProjectDir)..\SDK\TEduBoard\lib\x86 $(OutDir) 
 COPY /Y $(ProjectDir)..\SDK\TIM\lib\Win32\$(Configuration) $(OutDir) 
 COPY /Y $(ProjectDir)..\SDK\TRTC\Win32\lib $(OutDir) 
@@ -236,7 +236,7 @@ XCOPY /Y /E $(ProjectDir)..\SDK\TIC\localrecord\lib $(OutDir)</Command>
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PreBuildEvent>
-      <Command>wscript getsdk.vbs
+      <Command>$(ProjectDir)..\SDK\Updater\sdk_update.exe -t $(ProjectDir)..\SDK\Temp -r $(ProjectDir)..\SDK
 XCOPY /Y /E $(ProjectDir)..\SDK\TEduBoard\lib\x64 $(OutDir) 
 COPY /Y $(ProjectDir)..\SDK\TIM\lib\Win64\$(Configuration) $(OutDir) 
 COPY /Y $(ProjectDir)..\SDK\TRTC\Win64\lib $(OutDir) </Command>

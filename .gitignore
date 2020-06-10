@@ -14,3 +14,14 @@ local.properties
 Podfile.lock
 iOS/Demo/TICDemo/TICDemo.xcworkspace/xcshareddata
 iOS/Demo/TICDemo/TICDemo.xcodeproj/project.xcworkspace/xcshareddata
+.idea
+*.user
+.DS_Store
+Windows/Demo/.vs
+Windows/Demo/Release
+Windows/Demo/Debug
+Windows/SDK/__MACOSX
+Windows/SDK/TEduBoard
+Windows/SDK/TIM
+Windows/SDK/TRTC
+Windows/SDK/Temp

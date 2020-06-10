@@ -8,8 +8,8 @@
 
 ## 运行Demo
 
-使用Visual Studio打开"Windows\Demo\TICDemo.sln",编译运行TICDemo项目即可;
+使用Visual Studio打开"Windows\Demo\TICDemo.sln",编译运行TICDemo项目即可。
 
 ## SDK下载
 
-运行"Windows\Demo\getsdk.vbs"，脚本会自动下载SDK到"Windows\SDK"目录下；
+当您使用Visual Studio编译Demo工程时，会自动下载SDK压缩包到"Windows\SDK\Temp"目录下，然后解压到"Windows\SDK"目录下，因此多数时候无需您手动下载SDK。若您需要手动下载SDK，可以从"Windows\SDK\sdk_url.txt"文件内获取SDK压缩包下载地址，使用浏览器或者下载工具下载。
