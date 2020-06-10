@@ -63,6 +63,12 @@ WebBoard.prototype.addSyncDataEventCallback = function (callback) {
   });
 }
 
+WebBoard.prototype.addAckData = function (data) {
+  if (this.board) {
+    this.board.addAckData && this.board.addAckData(data);
+  }
+}
+
 WebBoard.prototype.quit = function () {
   if (this.board) {
     this.board.destroy && this.board.destroy();

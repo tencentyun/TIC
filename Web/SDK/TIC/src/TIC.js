@@ -371,7 +371,9 @@ TIC.prototype = {
 
         // 设置白板的监听回调
         this.ticBoard.addSyncDataEventCallback((data) => {
-          this.ticWebIm.sendBoardGroupCustomMessage(data)
+          this.ticWebIm.sendBoardGroupCustomMessage(data).then(data => {
+            this.ticBoard.addAckData(data); // 发送成功后则调用ackData，告诉sdk，发送成功了
+          })
         });
 
         callback && callback({
@@ -429,7 +431,9 @@ TIC.prototype = {
 
             // 设置白板的监听回调
             this.ticBoard.addSyncDataEventCallback((data) => {
-              this.ticWebIm.sendBoardGroupCustomMessage(data)
+              this.ticWebIm.sendBoardGroupCustomMessage(data).then(data => {
+                this.ticBoard.addAckData(data); // 发送成功后则调用ackData，告诉sdk，发送成功了
+              })
             });
 
             callback && callback({

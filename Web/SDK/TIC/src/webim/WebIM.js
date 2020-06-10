@@ -345,6 +345,14 @@ class TICWebIM {
    * 发送C2C自定义消息
    */
   sendC2CCustomMessage(userId, msg) {
+    // 如果不是对象
+    if (Object.prototype.toString.call(msg) !== '[object Object]') {
+      msg = {
+        data: msg,
+        description: '',
+        extension: ''
+      }
+    }
     let message = this.tim.createCustomMessage({
       to: userId,
       conversationType: window.TIM.TYPES.CONV_C2C,
@@ -384,6 +392,14 @@ class TICWebIM {
    * 发送群组自定义消息
    */
   sendGroupCustomMessage(msg) {
+    // 如果不是对象
+    if (Object.prototype.toString.call(msg) !== '[object Object]') {
+      msg = {
+        data: msg,
+        description: '',
+        extension: ''
+      }
+    }
     let toGroupId = this.compatSaas ? this.groupChatId : this.groupBoardId;
     let message = this.tim.createCustomMessage({
       to: toGroupId,
@@ -409,51 +425,15 @@ class TICWebIM {
     } catch (error) {
       contentStr = content;
     }
-    if (contentStr.length > 7000) {
-      return this.sendBoardGroupFileMessage(content)
-    } else {
-      let toGroupId = this.groupBoardId;
-      let message = this.tim.createCustomMessage({
-        to: toGroupId,
-        conversationType: window.TIM.TYPES.CONV_GROUP,
-        payload: {
-          data: JSON.stringify(content),
-          description: '',
-          extension: 'TXWhiteBoardExt'
-        }
-      })
-      return this.tim.sendMessage(message).then(() => {
-        return Promise.resolve(content);
-      }, () => {
-        // 失败重试一次
-        return this.tim.resendMessage(message).then(() => {
-          return Promise.resolve(content);
-        }, error => {
-          return Promise.reject(error);
-        });
-      });
-    }
-  }
-
-  /**
-   * 发送文件
-   * @param {*} content 
-   */
-  sendBoardGroupFileMessage(content) {
     let toGroupId = this.groupBoardId;
-    var blob = new Blob([JSON.stringify(content)], {
-      type: 'application/json'
-    });
-    var myFile = new File([blob], 'TXWhiteBoardExt', {
-      type: "text/plain"
-    });
-    let message = this.tim.createFileMessage({
+    let message = this.tim.createCustomMessage({
       to: toGroupId,
       conversationType: window.TIM.TYPES.CONV_GROUP,
       payload: {
-        file: myFile
-      },
-      onProgress() {}
+        data: JSON.stringify(content),
+        description: '',
+        extension: 'TXWhiteBoardExt'
+      }
     })
     return this.tim.sendMessage(message).then(() => {
       return Promise.resolve(content);

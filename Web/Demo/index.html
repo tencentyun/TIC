@@ -25,6 +25,8 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
 
     .title {
@@ -87,6 +89,7 @@
     }
 
     .el-container {
+      flex: 1;
       height: 100%;
       overflow: hidden;
     }
@@ -104,19 +107,35 @@
       font-size: 14px;
       color: #606266;
     }
+
+    .tiw-tips {
+      border-left: 10px solid #50bfff;
+      background-color: #ecf8ff;
+      padding: 10px 10px;
+    }
+
+    .tiw-tips p {
+      font-size: 14px;
+      color: #5e6d82;
+      line-height: 30px;
+    }
   </style>
 
 
 </head>
 
 <body>
+
   <div id="app_box" class="container-fluid">
-
+    <div class="tiw-tips">
+      <p>
+        1. 本Demo仅用于演示互动白板产品功能，源码对外开放，可供您接入时参考，但是Demo本身未经过严格测试，若您计划将Demo代码用于生产环境，请确保发布前自行进行充分测试，避免发生潜在问题可能给您造成损失。
+      </p>
+      <p>2. 实时音视频Web端所依赖的WebRTC技术由于各浏览器实现差异，在移动端兼容性较差，不建议您在移动端使用。本Demo只针对桌面端浏览器做过适配，若需要在移动端使用，需要您自行做移动端适配工作。</p>
+    </div>
     <el-container style="display: none;" v-show="isShow">
-
       <!--左边栏  -->
       <el-aside width="300px">
-
         <!-- 左边栏 用户登录和登出 -->
         <el-row>
           <el-col>
@@ -392,6 +411,12 @@
                   </el-option>
                 </el-select>
               </el-form-item>
+
+
+              <el-form-item label="添加H5资源">
+                <el-input id="h5Url" v-model.trim="h5Url" placeholder="h5 url" style="width: 50%;"></el-input>
+                <el-button @click="onAddH5Element" v-text="'添加'"></el-button>
+              </el-form-item>
             </el-form>
 
           </el-tab-pane>
@@ -505,9 +530,10 @@
   <script src="./libs/tim-js.js"></script>
 
   <!-- 白板SDK -->
-  <script src="https://res.qcloudtiw.com/board/2.4.8/TEduBoard.min.js"></script>
+  <script src="https://res.qcloudtiw.com/board/2.4.9/TEduBoard.min.js"></script>
   <!-- <script src="./libs/TEduBoard.min.js"></script> -->
-  <script src="https://res.qcloudtiw.com/tic/2.5.0/TIC.min.js"></script>
+  <script src="https://res.qcloudtiw.com/tic/2.5.1/TIC.min.js"></script>
+  <!-- <script src="./libs/TIC.js"></script> -->
 
   <script src="libs/thirdpart/purl.js"></script>
   <script src="libs/thirdpart/vconsole.min.js"></script>

@@ -14,6 +14,7 @@ window.app = new Vue({
       //房间信息
       roomInfo: '',
       roomID: purl().param('roomid') * 1 || null,
+      h5Url: purl().param('h5Url') * 1 || null,
 
       //音视频及设备
       enableCamera: true,
@@ -554,8 +555,16 @@ window.app = new Vue({
       });
 
       // 框选如果有选中内容则会触发此事件
-      teduBoard.on(TEduBoard.EVENT.TEB_RECTSELECTED, () => {
-        this.teduBoard.clear(false, true); // 清空选中的内容
+      // teduBoard.on(TEduBoard.EVENT.TEB_RECTSELECTED, () => {
+      //   this.teduBoard.clear(false, true); // 清空选中的内容
+      // });
+
+      // 监听增加元素事件
+      teduBoard.on(TEduBoard.EVENT.TEB_ADDELEMENT, ({
+        id,
+        userData
+      }) => {
+        console.log('id:', id, ' userData:', userData);
       });
     },
 
@@ -593,7 +602,17 @@ window.app = new Vue({
         let remoteVideoWrapEl = document.createElement('div');
         remoteVideoWrapEl.id = remoteStream.getId();
         document.querySelector("#video_wrap").insertBefore(remoteVideoWrapEl, null);
-        remoteStream.play(remoteVideoWrapEl);
+        remoteStream.play(remoteVideoWrapEl).catch((e) => {
+          const errorCode = e.getCode();
+          if (errorCode === 0x4043) { // safari浏览器限制播放必须手动触发，引导用户手势操作恢复音视频播放
+            this.$confirm('请您对音视频播放进行授权', '提示', {
+              confirmButtonText: '授权',
+              type: 'warning'
+            }).then(() => {
+              remoteStream.resume()
+            })
+          }
+        });
       });
 
       this.trtcClient.on('connection-state-changed', event => {
@@ -992,7 +1011,7 @@ window.app = new Vue({
      */
     uploadFile() {
       var file = document.getElementById('file_input').files[0];
-      if (/\.(bmp|jpg|jpeg|png|gif|webp|svg|psd|ai)/i.test(file.name)) {
+      if (/\.(bmp|jpg|jpeg|png|gif)/i.test(file.name)) {
         // this.teduBoard.setBackgroundImage({
         //   data: file,
         //   userData: 'image'
@@ -1011,6 +1030,7 @@ window.app = new Vue({
           thumbnailResolution: '200x200'
         });
       }
+      document.getElementById('file_input').value = null;
     },
 
     onAddH5File(url) {
@@ -1024,6 +1044,12 @@ window.app = new Vue({
 
     onAddImageElement(url) {
       this.teduBoard.addImageElement(url);
+    },
+
+    onAddH5Element() {
+      if (this.h5Url) {
+        this.teduBoard.addH5Element(this.h5Url);
+      }
     },
 
     // 动画上一步
@@ -1114,6 +1140,9 @@ window.app = new Vue({
 
 
     onSetToolType(toolType) {
+      if(toolType > 3){
+        this.teduBoard.setCursorIcon(toolType, {cursor: 'default', url: ''});
+      }
       this.teduBoard.setToolType(toolType);
     },
 
