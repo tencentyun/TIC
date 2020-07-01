@@ -154,13 +154,6 @@ Page({
         this.data.teduBoard = this.txTic.getBoardInstance();
         this.initBoardEvent();
         this.startRTC();
-
-        wx.onNetworkStatusChange((res)=>{
-          // 网络连接后重新同步和刷新一次白板
-          if(res.isConnected){
-            this.data.teduBoard && this.data.teduBoard.syncAndReload();
-          }
-        })
       }
     });
   },
