@@ -1,1 +1,1 @@
-https://sdk.qcloudtiw.com/win32/demo_sdk_20200615@1.zip
+https://sdk.qcloudtiw.com/win32/demo_sdk_20200702@1.zip
