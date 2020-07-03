@@ -70,8 +70,8 @@
 
     #paint_box {
       position: relative;
-      width: 800px;
-      height: 450px;
+      width: 100%;
+      height: 100%;
       border: 1px solid #888;
       overflow: hidden;
       box-sizing: content-box;
@@ -143,9 +143,7 @@
               <el-tab-pane label="账号">
                 <el-form ref="form" label-width="80px" size="mini">
                   <el-form-item label="用户名">
-                    <el-select :disabled="status >= STATUS_LOGINED" v-model="account" placeholder="请选择帐号">
-                      <el-option v-for="user in users" v-bind:value="user.userId" v-text="user.userId"></el-option>
-                    </el-select>
+                    <el-input v-model.trim="userId" maxlength="16" placeholder="请输入用户名"></el-input>
                   </el-form-item>
 
                   <el-form-item>
@@ -407,7 +405,7 @@
               <el-form-item label="添加图片资源">
                 <el-select placeholder="图片url" @change="onAddImageElement">
                   <el-option label="腾讯云"
-                    v-bind:value="'https://tic-res-1259648581.cos.ap-shanghai.myqcloud.com/demo/qcloud.jpg'">
+                    v-bind:value="'https://res.qcloudtiw.com/demo/qcloud.jpg'">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -474,7 +472,7 @@
               <el-form-item label="新增视频文件">
                 <el-select placeholder="视频文件" @change="onAddVideoFile">
                   <el-option label="腾讯教育"
-                    v-bind:value="'https://tic-res-1259648581.cos.ap-shanghai.myqcloud.com/demo/tiw-vod.mp4'">
+                    v-bind:value="'https://res.qcloudtiw.com/demo/tiw-vod.mp4'">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -515,9 +513,8 @@
 
   </div>
 
-
-  <link href="https://res.qcloudtiw.com/thirdpart/videojs/video-js.min.css" rel="stylesheet">
-  <script src="https://res.qcloudtiw.com/thirdpart/videojs/video.min.js"></script>
+  <link href="https://res.qcloudtiw.com/board/third/videojs/1.0.0/video-js.min.css" rel="stylesheet">
+  <script src="https://res.qcloudtiw.com/board/third/videojs/1.0.0/video.min.js"></script>
 
   <script src="https://res.qcloudtiw.com/thirdpart/axios/axios.min.js"></script>
 
@@ -530,18 +527,21 @@
   <script src="./libs/tim-js.js"></script>
 
   <!-- 白板SDK -->
-  <script src="https://res.qcloudtiw.com/board/2.4.9/TEduBoard.min.js"></script>
-  <!-- <script src="./libs/TEduBoard.min.js"></script> -->
+  <script src="https://res.qcloudtiw.com/board/2.5.0/TEduBoard.min.js"></script>
+  <!-- <script src="./tiwsdk/TEduBoard.min.js"></script> -->
   <script src="https://res.qcloudtiw.com/tic/2.5.1/TIC.min.js"></script>
-  <!-- <script src="./libs/TIC.js"></script> -->
+  <!-- <script src="./tiwsdk/TIC.js"></script> -->
+
+  <!--  生成测试账号，只建议在开发中过程中使用，应用到生产环境时，请由服务端生成  -->
+  <script src="./js/generateusersig/lib-generate-test-usersig.min.js"></script>
+  <script src="./js/generateusersig/GenerateTestUserSig.js"></script>
+  <!--  生成测试账号，只建议在开发中过程中使用，应用到生产环境时，请由服务端生成   -->
 
   <script src="libs/thirdpart/purl.js"></script>
-  <script src="libs/thirdpart/vconsole.min.js"></script>
-  <script src="js/account_dev.js"></script>
   <script src="js/main.js"></script>
 
   <script>
-    if (location.href.indexOf('dev') > -1) {
+    if (location.href.indexOf('vconsole') > -1) {
       var vConsole = new VConsole();
     }
   </script>

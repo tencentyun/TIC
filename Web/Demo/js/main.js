@@ -2,13 +2,8 @@ window.app = new Vue({
   el: '#app_box',
   data() {
     return {
-
-      //可选用户账号列表
-      users: TEST_ACCOUNT.users,
-
-      //账号信息
-      account: purl().param('userid') || localStorage.getItem('IIC_USERID') || TEST_ACCOUNT.users[0]['userId'],
-      sdkAppId: TEST_ACCOUNT.sdkappid,
+      sdkAppId: null,
+      userId: `tiw_web_${Math.ceil(Math.random() * 1000)}`,
       userSig: '',
 
       //房间信息
@@ -134,8 +129,6 @@ window.app = new Vue({
       this.ration = "16:9";
       this.canRedo = 0;
       this.canUndo = 0;
-
-      localStorage.setItem('IIC_USERID', this.account);
     },
 
     clearClassInfo() {
@@ -164,6 +157,10 @@ window.app = new Vue({
 
     // 初始化SDK
     init() {
+      var res = window.genTestUserSig(this.userId) // 生成测试账号，只建议在开发中过程中使用，应用到生产环境时，请由服务端生成
+      this.sdkAppId = res.sdkAppId;
+      this.userSig = res.userSig;
+
       if (this.status == this.STATUS_UNINIT) {
         this.initData();
         this.tic = null;
@@ -197,8 +194,8 @@ window.app = new Vue({
     // 登录
     login() {
       this.tic.login({
-        userId: this.account,
-        userSig: this.findUserSig(this.account)
+        userId: this.userId,
+        userSig: this.userSig
       }, (res) => {
         if (res.code) {
           this.showErrorTip('登录失败');
@@ -208,7 +205,7 @@ window.app = new Vue({
           this.status = this.STATUS_LOGINED;
 
           this.showTip('登录成功');
-          this.showMessageInBox('TIC', "login Succ,userid=" + this.account);
+          this.showMessageInBox('TIC', "login Succ,userid=" + this.userId);
           // 增加事件监听
           this.addTICMessageListener();
           this.addTICEventListener();
@@ -745,8 +742,24 @@ window.app = new Vue({
     // IM状态监听回调
     addTICStatusListener() {
       this.tic.addTICStatusListener({
-        onTICForceOffline: () => {
-          this.showErrorTip(`帐号其他地方登录，被T了`);
+        onTICForceOffline: (event) => {
+          if (event.data) {
+            if(event.data.type) {
+              if(event.data.type == window.TIM.TYPES.KICKED_OUT_MULT_ACCOUNT) {
+                this.showErrorTip(`同一账号，多页面登录被踢`);
+              } else if(event.data.type == window.TIM.TYPES.KICKED_OUT_MULT_DEVICE){
+                this.showErrorTip(`同一账号，多端登录被踢`);
+              } else if(event.data.type == window.TIM.TYPES.KICKED_OUT_USERSIG_EXPIRED){
+                this.showErrorTip(`userSig过期`);
+              } else {
+                this.showErrorTip(`帐号其他地方登录，被T了`);
+              }
+            } else {
+              this.showErrorTip(`帐号其他地方登录，被T了`);
+            }
+          } else {
+            this.showErrorTip(`帐号其他地方登录，被T了`);
+          }
           this.status = this.STATUS_UNLOGIN;
           this.clearClassInfo();
           this.showMessageInBox('TIC', "onTICForceOffline " + this.roomID);
@@ -905,7 +918,7 @@ window.app = new Vue({
           if (res.code !== 0) {
             this.showMessageInBox('TIC', 'sendTextMessage failed, code=' + res.code + " content:" + text);
           } else {
-            this.showMessageInBox(this.account, text);
+            this.showMessageInBox(this.userId, text);
           }
           console.log('===sendTextMessage:', res);
         });
@@ -919,7 +932,7 @@ window.app = new Vue({
           if (res.code !== 0) {
             this.showMessageInBox('TIC', 'sendGroupTextMessage failed, code=' + res.code + " content:" + text);
           } else {
-            this.showMessageInBox(this.account, text);
+            this.showMessageInBox(this.userId, text);
           }
           console.log('===sendTextMessage:', res);
         });
@@ -1140,9 +1153,6 @@ window.app = new Vue({
 
 
     onSetToolType(toolType) {
-      if(toolType > 3){
-        this.teduBoard.setCursorIcon(toolType, {cursor: 'default', url: ''});
-      }
       this.teduBoard.setToolType(toolType);
     },
 
@@ -1194,17 +1204,6 @@ window.app = new Vue({
         message: title,
         type: 'success'
       });
-    },
-
-    findUserSig() {
-      var userSig = null;
-      for (var i = 0, len = this.users.length; i < len; i++) {
-        if (this.account === this.users[i].userId) {
-          userSig = this.users[i].userToken;
-          break;
-        }
-      }
-      return userSig;
     },
 
     showMessageInBox(fromUserId, text) {

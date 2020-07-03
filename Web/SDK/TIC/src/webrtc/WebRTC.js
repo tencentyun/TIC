@@ -104,7 +104,7 @@ TICWebRTC.prototype.initEvent = function () {
   });
 
   this.trtcClient.on('client-banned', error => {
-    this.statusListener.fireEvent('onTICForceOffline');
+    this.statusListener.fireEvent('onTICForceOffline', error);
     this._reportTRTCEvent('client-banned', error);
   });
 

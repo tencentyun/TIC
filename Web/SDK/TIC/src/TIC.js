@@ -461,7 +461,7 @@ TIC.prototype = {
         }, (error) => {
           // 加入AV房间-end
           this.log.report(LogReport.EVENT_NAME.ENTERROOM_END, {
-            errorCode: error.errorCode,
+            errorCode: error.getCode(),
             errorDesc: error.message,
             timeCost: Date.now() - startTime,
             data: '',
@@ -473,7 +473,7 @@ TIC.prototype = {
 
           callback && callback({
             module: Constant.TICModule.TICMODULE_TRTC,
-            code: error.errorCode,
+            code: error.getCode(),
             desc: error.message
           });
         });

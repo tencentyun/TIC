@@ -26,11 +26,4 @@ module.exports = {
       options: {}
     }]
   },
-
-  plugins: [
-    new CopyWebpackPlugin([{
-      from: './dist/TIC.js',
-      to: '../demo/libs/'
-    }])
-  ]
 };

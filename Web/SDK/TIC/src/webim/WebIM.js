@@ -202,7 +202,7 @@ class TICWebIM {
   }
 
   onKickedOut(event) {
-    this.statusListener.fireEvent('onTICForceOffline');
+    this.statusListener.fireEvent('onTICForceOffline', event);
   }
 
   onGroupSystemNoticeReceived(event) {
