@@ -484,12 +484,14 @@ window.app = new Vue({
             this.showTip('转码中，当前进度:' + res.progress + '%');
           } else if (status === 'FINISHED') {
             this.showTip('转码完成');
-            this.teduBoard.addTranscodeFile({
+            let config = {
               url: res.resultUrl,
               title: res.title,
               pages: res.pages,
               resolution: res.resolution
-            });
+            }
+            console.log('transcodeFile:', config);
+            this.teduBoard.addTranscodeFile(config);
           }
         }
       });
@@ -684,10 +686,22 @@ window.app = new Vue({
      */
     uploadFile() {
       var file = document.getElementById('file_input').files[0];
-      this.teduBoard.addFile({
-        data: file,
-        userData: 'hello'
-      });
+      if (/\.(bmp|jpg|jpeg|png|gif)/i.test(file.name)) {
+        this.teduBoard.addImageElement({
+          data: file,
+          userData: 'image'
+        });
+      } else {
+        this.teduBoard.applyFileTranscode({
+          data: file,
+          userData: 'tiw'
+        }, {
+          minResolution: '960x540',
+          isStaticPPT: false,
+          thumbnailResolution: '200x200'
+        });
+      }
+      document.getElementById('file_input').value = null;
     },
 
     onAddH5File(url) {

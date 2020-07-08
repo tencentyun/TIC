@@ -187,19 +187,6 @@
                   <el-col :span="8">
                     <el-button size="mini" @click="onClear" v-text="'清空白板'"></el-button>
                   </el-col>
-                  <el-col :span="9">
-                    <el-select style="width: 100px;" size="mini" placeholder="H5文件" @change="onAddH5File">
-                      <el-option label="Light Animation-blue"
-                        v-bind:value="'https://test04-1257240443.cos.ap-shanghai.myqcloud.com/2019-05-08-15-38-54/index.html'">
-                      </el-option>
-                      <el-option label="欢迎新同学"
-                        v-bind:value="'https://ppt2h5-1259648581.cos.ap-shanghai.myqcloud.com/00c71am880jcqc5p5rkb/index.html'">
-                      </el-option>
-                      <el-option label="341-国立教学方案"
-                        v-bind:value="'https://test04-1257240443.cos.ap-shanghai.myqcloud.com/0o5stagbd6b264ei59jb/index.html'">
-                      </el-option>
-                    </el-select>
-                  </el-col>
                   <el-col :span="7">
                     <input id="file_input" hidden type="file" @change="uploadFile"
                       accept="image/*, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.openxmlformats-officedocument.presentationml.presentation, application/vnd.ms-powerpoint, application/vnd.ms-excel">

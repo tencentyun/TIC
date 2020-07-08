@@ -288,6 +288,14 @@ module.exports = {
    * 发送C2C自定义消息
    */
   sendC2CCustomMessage(toUserIdentifier, msg) {
+    // 如果不是对象
+    if (Object.prototype.toString.call(msg) !== '[object Object]') {
+      msg = {
+        data: msg,
+        description: '',
+        extension: ''
+      }
+    }
     let message = this.tim.createCustomMessage({
       to: toUserIdentifier,
       conversationType: TIM.TYPES.CONV_C2C,
@@ -318,6 +326,14 @@ module.exports = {
    * 发送群组自定义消息
    */
   sendGroupCustomMessage(msg) {
+    // 如果不是对象
+    if (Object.prototype.toString.call(msg) !== '[object Object]') {
+      msg = {
+        data: msg,
+        description: '',
+        extension: ''
+      }
+    }
     let message = this.tim.createCustomMessage({
       to: this.groupId,
       conversationType: TIM.TYPES.CONV_GROUP,
