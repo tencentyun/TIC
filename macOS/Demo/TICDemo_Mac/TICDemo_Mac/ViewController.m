@@ -819,7 +819,7 @@
     }
     else if(result.status == TEDU_BOARD_FILE_TRANSCODE_FINISHED){
         statusStr = @"转码完成";
-        [[[TICManager sharedInstance] getBoardController] addTranscodeFile:result];
+        [[[TICManager sharedInstance] getBoardController] addTranscodeFile:result needSwitch:true];
         
     }
     else if(result.status == TEDU_BOARD_FILE_TRANSCODE_ERROR){
