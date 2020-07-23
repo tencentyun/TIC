@@ -147,7 +147,9 @@
                   </el-form-item>
 
                   <el-form-item>
-                    <el-button @click="start" :disabled="status >= STATUS_LOGINED" v-text="'登录'"></el-button>
+                    <el-tooltip class="item" effect="dark" content="Demo的登录态只有10分钟" placement="bottom">
+                      <el-button @click="start" :disabled="status >= STATUS_LOGINED" v-text="'登录'"></el-button>
+                    </el-tooltip>
                   </el-form-item>
 
                   <el-form-item>
@@ -527,10 +529,8 @@
   <script src="./libs/tim-js.js"></script>
 
   <!-- 白板SDK -->
-  <script src="https://res.qcloudtiw.com/board/2.5.0/TEduBoard.min.js"></script>
-  <!-- <script src="./tiwsdk/TEduBoard.min.js"></script> -->
+  <script src="https://res.qcloudtiw.com/board/2.5.1/TEduBoard.min.js"></script>
   <script src="https://res.qcloudtiw.com/tic/2.5.1/TIC.min.js"></script>
-  <!-- <script src="./tiwsdk/TIC.js"></script> -->
 
   <!--  生成测试账号，只建议在开发中过程中使用，应用到生产环境时，请由服务端生成  -->
   <script src="./js/generateusersig/lib-generate-test-usersig.min.js"></script>

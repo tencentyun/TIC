@@ -211,7 +211,7 @@ class TICWebIM {
     switch (payload.operationType) {
       case 4: // 被踢出群组
         if (event.data.message.to == this.groupBoardId || event.data.message.to == this.groupChatId) {
-          this.eventListener.fireEvent('onTICClassroomDestroy');
+          this.eventListener.fireEvent('onTICMemberQuit', [event.data.message.payload.groupProfile.to]);
         }
         break;
       case 5: // 群组被解散
