@@ -1,423 +1,464 @@
+ï»¿//
+//  Copyright Â© 2019 Tencent. All rights reserved.
+//
+
 #pragma once
 
+#include <TEduBoard.h>
 #include <TIMCloud.h>
 #include <TRTC/ITRTCCloud.h>
-#include <TEduBoard.h>
-
-#include <stdint.h>
-#include <functional>
-#include <vector>
-#include <string>
 #include <Windows.h>
+#include <stdint.h>
+
+#include <functional>
+#include <string>
+#include <vector>
 
 #include "./jsoncpp/json.h"
 
-#ifdef TIC_EXPORTS //ÈôÒª½«TICµ¼³öÎªDLL,ÔÚDLLÏîÄ¿ÊôĞÔÖĞÔö¼ÓÔ¤´¦ÀíÆ÷TIC_EXPORTS¼´¿É
+#ifdef TIC_EXPORTS  // TICå¯¼å‡ºä¸ºDLL,åœ¨DLLé¡¹ç›®å±æ€§ä¸­å¢åŠ é¢„å¤„ç†å™¨TIC_EXPORTSå³å¯
 #define TIC_API __declspec(dllexport)
 #else
 #define TIC_API
 #endif
 
 /**
- * ÄÚ²¿Ä£¿é
- */ 
-enum TICModule{
-	TICMODULE_IMSDK = 0,		//IMSDKÄ£¿é
-	TICMODULE_TRTC  = 1,		//TRTCÄ£¿é
-	TICMODULE_BOARD = 2,		//BOARDÄ£¿é
-	TICMODULE_TIC   = 3,		//TICÄ£¿é
-	TICMODULE_RECORD = 4,		//±¾µØÂ¼ÖÆºÍÍÆÁ÷
+ * å†…éƒ¨æ¨¡å—
+ */
+enum TICModule {
+  TICMODULE_IMSDK = 0,   // IMSDKæ¨¡å—
+  TICMODULE_TRTC = 1,    // TRTCæ¨¡å—
+  TICMODULE_BOARD = 2,   // BOARDæ¨¡å—
+  TICMODULE_TIC = 3,     // TICæ¨¡å—
+  TICMODULE_RECORD = 4,  //æœ¬åœ°å½•åˆ¶å’Œæ¨æµ
 };
 
 /**
- * ¿ÎÌÃ³¡¾°
+ * è¯¾å ‚åœºæ™¯
  **/
-enum TICClassScene{
-	TIC_CLASS_SCENE_VIDEO_CALL = 0,	//ÊµÊ±Í¨»°Ä£Ê½£¬Ö§³Ö1000ÈËÒÔÏÂ³¡¾°£¬µÍÑÓÊ±
-	TIC_CLASS_SCENE_LIVE = 1,		//Ö±²¥Ä£Ê½£¬Ö§³Ö1000ÈËÒÔÉÏ³¡¾°£¬»áÔö¼Ó600ms×óÓÒÑÓÊ±
+enum TICClassScene {
+  TIC_CLASS_SCENE_VIDEO_CALL = 0,  // å®æ—¶é€šè¯æ¨¡å¼ï¼Œæ”¯æŒ1000äººä»¥ä¸‹åœºæ™¯ï¼Œä½å»¶æ—¶
+  TIC_CLASS_SCENE_LIVE =
+      1,  // ç›´æ’­æ¨¡å¼ï¼Œæ”¯æŒ1000äººä»¥ä¸Šåœºæ™¯ï¼Œä¼šå¢åŠ 600mså·¦å³å»¶æ—¶
 };
 
 /**
- * ·¿¼ä½ÇÉ«
- * @brief ½öÊÊÓÃÓÚÖ±²¥Ä£Ê½(TIC_CLASS_SCENE_LIVE)£¬½ÇÉ«TIC_ROLE_TYPE_ANCHOR¾ßÓĞÉÏĞĞÈ¨ÏŞ
+ * æˆ¿é—´è§’è‰²
+ * @brief
+ * ä»…é€‚ç”¨äºç›´æ’­æ¨¡å¼(TIC_CLASS_SCENE_LIVE)ï¼Œè§’è‰²TIC_ROLE_TYPE_ANCHORå…·æœ‰ä¸Šè¡Œæƒé™
  **/
-enum TICRoleType{
-	TIC_ROLE_TYPE_ANCHOR = 20,		//Ö÷²¥
-	TIC_ROLE_TYPE_AUDIENCE = 21,	//¹ÛÖÚ
+enum TICRoleType {
+  TIC_ROLE_TYPE_ANCHOR = 20,    // ä¸»æ’­
+  TIC_ROLE_TYPE_AUDIENCE = 21,  // è§‚ä¼—
 };
 
 /**
- * ½ûÓÃÄ£¿é
- * @brief Èç¹ûÍâ²¿Ê¹ÓÃÁËTRTC£¬¿ÉÒÔ½ûÓÃTICÄÚ²¿µÄTRTCÄ£¿é¡£
- * @brief Èç¹û½ûÓÃTRTC£¬TRTCÏà¹Ø³õÊ¼»¯²ÎÊı¶¼ÎŞĞ§
+ * ç¦ç”¨æ¨¡å—
+ * @brief å¦‚æœå¤–éƒ¨ä½¿ç”¨äº†TRTCï¼Œå¯ä»¥ç¦ç”¨TICå†…éƒ¨çš„TRTCæ¨¡å—ã€‚
+ * @brief å¦‚æœç¦ç”¨TRTCï¼ŒTRTCç›¸å…³åˆå§‹åŒ–å‚æ•°éƒ½æ— æ•ˆ
  **/
 enum TICDisableModule {
-	TIC_DISABLE_MODULE_NONE = 0,		//Ä¬ÈÏÈ«²¿ÆôÓÃ
-	TIC_DISABLE_MODULE_TRTC = (1 << 1), //½ûÓÃTRTC
+  TIC_DISABLE_MODULE_NONE = 0,         // é»˜è®¤å…¨éƒ¨å¯ç”¨
+  TIC_DISABLE_MODULE_TRTC = (1 << 1),  // ç¦ç”¨TRTC
 };
 
 /**
- * TICÍ¨ÓÃ»Øµ÷
- * @param module	³ö´íµÄÄ£¿é
- * @param code		´íÎóÂë
- * @param desc		´íÎóÃèÊö
- */ 
-typedef std::function<void(TICModule /*module*/, int /*code*/, const char * /*desc*/)> TICCallback;
-
+ * TICé€šç”¨å›è°ƒ
+ * @param module	å‡ºé”™çš„æ¨¡å—
+ * @param code		é”™è¯¯ç 
+ * @param desc		é”™è¯¯æè¿°
+ */
+typedef std::function<void(TICModule /*module*/, int /*code*/,
+                           const char* /*desc*/)>
+    TICCallback;
 
 /**
- * IMÏûÏ¢»Øµ÷
- */ 
-struct TICMessageListener
-{
-	/**
-	 * ÊÕµ½C2CÎÄ±¾ÏûÏ¢
-	 * @param fromUserId		·¢ËÍ´ËÏûÏ¢µÄÓÃ»§id
-	 * @param text				ÊÕµ½ÏûÏ¢µÄÄÚÈİ
-	 */ 
-	virtual void onTICRecvTextMessage(const std::string& fromUserId, const std::string& text) {}
+ * IMæ¶ˆæ¯å›è°ƒ
+ */
+struct TICMessageListener {
+  /**
+   * æ”¶åˆ°C2Cæ–‡æœ¬æ¶ˆæ¯
+   * @param fromUserId		å‘é€æ­¤æ¶ˆæ¯çš„ç”¨æˆ·id
+   * @param text				æ”¶åˆ°æ¶ˆæ¯çš„å†…å®¹
+   */
+  virtual void onTICRecvTextMessage(const std::string& fromUserId,
+                                    const std::string& text) {}
 
-	/**
-	 * ÊÕµ½C2C×Ô¶¨ÒåÏûÏ¢
-	 * @param fromUserId		·¢ËÍ´ËÏûÏ¢µÄÓÃ»§id
-	 * @param data				ÊÕµ½ÏûÏ¢µÄÄÚÈİ
-	 */ 
-	virtual void onTICRecvCustomMessage(const std::string& fromUserId, const std::string& data) {}
-	
-	/**
-	 * ÊÕµ½ÈºÎÄ±¾ÏûÏ¢
-	 * @param fromUserId		·¢ËÍ´ËÏûÏ¢µÄÓÃ»§id
-	 * @param text				ÊÕµ½ÏûÏ¢µÄÄÚÈİ
-	 */ 
-	virtual void onTICRecvGroupTextMessage(const std::string& fromUserId, const std::string& text) {}
+  /**
+   * æ”¶åˆ°C2Cè‡ªå®šä¹‰æ¶ˆæ¯
+   * @param fromUserId		å‘é€æ­¤æ¶ˆæ¯çš„ç”¨æˆ·id
+   * @param data				æ”¶åˆ°æ¶ˆæ¯çš„å†…å®¹
+   */
+  virtual void onTICRecvCustomMessage(const std::string& fromUserId,
+                                      const std::string& data) {}
 
-	/**
-	 * ÊÕµ½Èº×Ô¶¨ÒåÏûÏ¢
-	 * @param fromUserId		·¢ËÍ´ËÏûÏ¢µÄÓÃ»§id
-	 * @param data				ÊÕµ½ÏûÏ¢µÄÄÚÈİ
-	 */ 
-	virtual void onTICRecvGroupCustomMessage(const std::string& fromUserId, const std::string& data) {}
-	
-	/**
-	 * ËùÓĞÏûÏ¢
-	 * @param jsonMsg			ÊÕµ½µÄIMÏûÏ¢ÄÚÈİ
-	 * @note ËùÓĞÊÕµ½µÄÏûÏ¢¶¼»áÔÚ´Ë»Øµ÷½øĞĞÍ¨Öª£¬°üÀ¨Ç°ÃæÒÑ¾­·â×°µÄÎÄ±¾ºÍ×Ô¶¨ÒåÏûÏ¢;
-	 */ 
-	virtual void onTICRecvMessage(const std::string& jsonMsg) {}
+  /**
+   * æ”¶åˆ°ç¾¤æ–‡æœ¬æ¶ˆæ¯
+   * @param fromUserId		å‘é€æ­¤æ¶ˆæ¯çš„ç”¨æˆ·id
+   * @param text				æ”¶åˆ°æ¶ˆæ¯çš„å†…å®¹
+   */
+  virtual void onTICRecvGroupTextMessage(const std::string& fromUserId,
+                                         const std::string& text) {}
+
+  /**
+   * æ”¶åˆ°ç¾¤è‡ªå®šä¹‰æ¶ˆæ¯
+   * @param fromUserId		å‘é€æ­¤æ¶ˆæ¯çš„ç”¨æˆ·id
+   * @param data				æ”¶åˆ°æ¶ˆæ¯çš„å†…å®¹
+   */
+  virtual void onTICRecvGroupCustomMessage(const std::string& fromUserId,
+                                           const std::string& data) {}
+
+  /**
+   * æ‰€æœ‰æ¶ˆæ¯
+   * @param jsonMsg			æ”¶åˆ°çš„IMæ¶ˆæ¯å†…å®¹
+   * @note
+   * æ‰€æœ‰æ”¶åˆ°çš„æ¶ˆæ¯éƒ½ä¼šåœ¨æ­¤å›è°ƒè¿›è¡Œé€šçŸ¥ï¼ŒåŒ…æ‹¬å‰é¢å·²ç»å°è£…çš„æ–‡æœ¬å’Œè‡ªå®šä¹‰æ¶ˆæ¯;
+   */
+  virtual void onTICRecvMessage(const std::string& jsonMsg) {}
 };
 
 /**
- * IM×´Ì¬»Øµ÷
- */ 
-struct TICIMStatusListener
-{
-	/**
-	 * ±»ÌßÏÂÏß(ÕËºÅÔÚÆäËûÉè±¸µÇÂ¼)
-	 */ 
-	virtual void onTICForceOffline() {}
+ * IMçŠ¶æ€å›è°ƒ
+ */
+struct TICIMStatusListener {
+  /**
+   * è¢«è¸¢ä¸‹çº¿(è´¦å·åœ¨å…¶ä»–è®¾å¤‡ç™»å½•)
+   */
+  virtual void onTICForceOffline() {}
 
-	/**
-	 * Sig¹ıÆÚ
-	 */ 
-	virtual void onTICUserSigExpired() {}
+  /**
+   * Sigè¿‡æœŸ
+   */
+  virtual void onTICUserSigExpired() {}
 };
 
 /**
- * ÊÂ¼ş»Øµ÷
- */ 
-struct TICEventListener
-{
-	/**
-	 * userId¶ÔÓ¦µÄÔ¶¶ËÖ÷Â·»­Ãæ(¼´ÉãÏñÍ·)µÄ×´Ì¬Í¨Öª
-	 * @param userId			ÓÃ»§±êÊ¶
-	 * @param available			true:ÊÓÆµ¿É²¥·Å£¬false:ÊÓÆµ±»¹Ø±Õ
-	 */ 
-	virtual void onTICUserVideoAvailable(const std::string& userId, bool available) {}
+ * äº‹ä»¶å›è°ƒ
+ */
+struct TICEventListener {
+  /**
+   * userIdå¯¹åº”çš„è¿œç«¯ä¸»è·¯ç”»é¢(å³æ‘„åƒå¤´)çš„çŠ¶æ€é€šçŸ¥
+   * @param userId			ç”¨æˆ·æ ‡è¯†
+   * @param available			true:è§†é¢‘å¯æ’­æ”¾ï¼Œfalse:è§†é¢‘è¢«å…³é—­
+   */
+  virtual void onTICUserVideoAvailable(const std::string& userId,
+                                       bool available) {}
 
-	/**
-	 * userId¶ÔÓ¦µÄÔ¶¶Ë¸¨Â·»­Ãæ(¼´ÆÁÄ»·ÖÏí\²¥Æ¬µÈ)µÄ×´Ì¬Í¨Öª
-	 * @param userId			ÓÃ»§±êÊ¶
-	 * @param available			true:ÊÓÆµ¿É²¥·Å£¬false:ÊÓÆµ±»¹Ø±Õ
-	 */ 
-	virtual void onTICUserSubStreamAvailable(const std::string& userId, bool available) {}
+  /**
+   * userIdå¯¹åº”çš„è¿œç«¯è¾…è·¯ç”»é¢(å³å±å¹•åˆ†äº«\æ’­ç‰‡ç­‰)çš„çŠ¶æ€é€šçŸ¥
+   * @param userId			ç”¨æˆ·æ ‡è¯†
+   * @param available			true:è§†é¢‘å¯æ’­æ”¾ï¼Œfalse:è§†é¢‘è¢«å…³é—­
+   */
+  virtual void onTICUserSubStreamAvailable(const std::string& userId,
+                                           bool available) {}
 
-	/**
-	 * userId¶ÔÓ¦µÄÔ¶¶ËÒôÆµµÄ×´Ì¬Í¨Öª
-	 * @param userId			ÓÃ»§±êÊ¶
-	 * @param available			true:ÒôÆµ¿É²¥·Å£¬false:ÒôÆµ±»¹Ø±Õ
-	 */ 
-	virtual void onTICUserAudioAvailable(const std::string& userId, bool available) {}
+  /**
+   * userIdå¯¹åº”çš„è¿œç«¯éŸ³é¢‘çš„çŠ¶æ€é€šçŸ¥
+   * @param userId			ç”¨æˆ·æ ‡è¯†
+   * @param available			true:éŸ³é¢‘å¯æ’­æ”¾ï¼Œfalse:éŸ³é¢‘è¢«å…³é—­
+   */
+  virtual void onTICUserAudioAvailable(const std::string& userId,
+                                       bool available) {}
 
-	/**
-	 * ÓÃ»§½øÈë·¿¼ä
-	 * @param userIds			½øÈë·¿¼äµÄÓÃ»§idÁĞ±í
-	 */
-	virtual void onTICMemberJoin(const std::vector<std::string>& userIds) {}
+  /**
+   * ç”¨æˆ·è¿›å…¥æˆ¿é—´
+   * @param userIds			è¿›å…¥æˆ¿é—´çš„ç”¨æˆ·idåˆ—è¡¨
+   */
+  virtual void onTICMemberJoin(const std::vector<std::string>& userIds) {}
 
-	/**
-	 * ÓÃ»§ÍË³ö·¿¼ä
-	 * @param userIds			ÍË³ö·¿¼äµÄÓÃ»§idÁĞ±í
-	 */
-	virtual void onTICMemberQuit(const std::vector<std::string>& userIds) {}
+  /**
+   * ç”¨æˆ·é€€å‡ºæˆ¿é—´
+   * @param userIds			é€€å‡ºæˆ¿é—´çš„ç”¨æˆ·idåˆ—è¡¨
+   */
+  virtual void onTICMemberQuit(const std::vector<std::string>& userIds) {}
 
-	/**
-	 * ¿ÎÌÃ±»Ïú»Ù
-	 */
-	virtual void onTICClassroomDestroy() {}
+  /**
+   * è¯¾å ‚è¢«é”€æ¯
+   */
+  virtual void onTICClassroomDestroy() {}
 
-	/**
-	 * Éè±¸ÊÂ¼şÍ¨Öª
-	 * @param deviceId			Éè±¸ID
-	 * @param type				Éè±¸ÀàĞÍ
-	 * @param state				ÊÂ¼şÀàĞÍ
-	 */ 
-	virtual void onTICDevice(const std::string& deviceId, TRTCDeviceType type, TRTCDeviceState state) {}
+  /**
+   * è®¾å¤‡äº‹ä»¶é€šçŸ¥
+   * @param deviceId			è®¾å¤‡ID
+   * @param type				è®¾å¤‡ç±»å‹
+   * @param state				äº‹ä»¶ç±»å‹
+   */
+  virtual void onTICDevice(const std::string& deviceId, TRTCDeviceType type,
+                           TRTCDeviceState state) {}
 
-	/**
-	 * ·¢ËÍÀëÏßÂ¼ÖÆ¶ÔÊ±ĞÅÏ¢Í¨Öª
-	 * @param code				´íÎóÂë;0±íÊ¾³É¹¦£¬ÆäËûÖµÎªÊ§°Ü;
-	 * @param desc				´íÎóĞÅÏ¢;
-	 * @note ½ø·¿³É¹¦ºó,TIC»á×Ô¶¯·¢ËÍÀëÏßÂ¼ÖÆĞèÒªµÄ¶ÔÊ±ĞÅÏ¢;Ö»ÓĞ³É¹¦·¢ËÍ¶ÔÊ±ĞÅÏ¢µÄ¿ÎÌÃ²ÅÄÜ½øĞĞ¿ÎºóÀëÏßÂ¼ÖÆ; ×¢: ¿ÉÄÜÔÚ×ÓÏß³ÌÖĞÖ´ĞĞ´Ë»Øµ÷;
-	 */
-	virtual void onTICSendOfflineRecordInfo(int code, const char* desc) {}
+  /**
+   * å‘é€ç¦»çº¿å½•åˆ¶å¯¹æ—¶ä¿¡æ¯é€šçŸ¥
+   * @param code				é”™è¯¯ç ;0è¡¨ç¤ºæˆåŠŸï¼Œå…¶ä»–å€¼ä¸ºå¤±è´¥;
+   * @param desc				é”™è¯¯ä¿¡æ¯;
+   * @note
+   * è¿›æˆ¿æˆåŠŸå,TICä¼šè‡ªåŠ¨å‘é€ç¦»çº¿å½•åˆ¶éœ€è¦çš„å¯¹æ—¶ä¿¡æ¯;åªæœ‰æˆåŠŸå‘é€å¯¹æ—¶ä¿¡æ¯çš„è¯¾å ‚æ‰èƒ½è¿›è¡Œè¯¾åç¦»çº¿å½•åˆ¶;
+   * æ³¨: å¯èƒ½åœ¨å­çº¿ç¨‹ä¸­æ‰§è¡Œæ­¤å›è°ƒ;
+   */
+  virtual void onTICSendOfflineRecordInfo(int code, const char* desc) {}
 };
 
 /**
- * ¿ÎÌÃ²ÎÊıÅäÖÃ
- */ 
-struct TICClassroomOption
-{
-	uint32_t classId		= 0;		//¿ÎÌÃID£¬32Î»ÕûĞÍ£¬È¡Öµ·¶Î§[1, 4294967294]£¬ÓÉÒµÎñ²àÎ¬»¤
+ * è¯¾å ‚å‚æ•°é…ç½®
+ */
+struct TICClassroomOption {
+  uint32_t classId =
+      0;  // è¯¾å ‚IDï¼Œ32ä½æ•´å‹ï¼Œå–å€¼èŒƒå›´[1, 4294967294]ï¼Œç”±ä¸šåŠ¡ä¾§ç»´æŠ¤
 
-	bool openCamera			= false;	//Ö¸Ê¾½ø·¿³É¹¦ºóÊÇ·ñ×Ô¶¯´ò¿ªÉãÏñÍ·
-	std::string cameraId	= "";		//Ö¸Ê¾Òª´ò¿ªµÄÉãÏñÍ·ID£¬´«""±íÊ¾´ò¿ªÄ¬ÈÏÉãÏñÍ·		
-	
-	bool openMic			= false;	//Ö¸Ê¾½ø·¿³É¹¦ºóÊÇ·ñ×Ô¶¯´ò¿ªÂó¿Ë·ç
-	std::string micId		= "";		//Ö¸Ê¾Òª´ò¿ªµÄÂó¿Ë·çID£¬´«""±íÊ¾´ò¿ªÄ¬ÈÏÂó¿Ë·ç		
-	
-	HWND rendHwnd			= nullptr;	//Ö¸Ê¾ÓÃÓÚäÖÈ¾±¾µØ»­ÃæµÄ´°¿ÚHWND
+  bool openCamera = false;  // æŒ‡ç¤ºè¿›æˆ¿æˆåŠŸåæ˜¯å¦è‡ªåŠ¨æ‰“å¼€æ‘„åƒå¤´
+  std::string cameraId = "";  // æŒ‡ç¤ºè¦æ‰“å¼€çš„æ‘„åƒå¤´IDï¼Œä¼ ""è¡¨ç¤ºæ‰“å¼€é»˜è®¤æ‘„åƒå¤´
 
-	std::string	ntpServer	= "time1.cloud.tencent.com";		//ntp·şÎñÆ÷;½ø·¿³É¹¦ºó´Óntp·şÎñÆ÷»ñÈ¡·şÎñÆ÷Ê±¼ä´Á×÷Îª¿ÎºóÂ¼ÖÆµÄ¶ÔÊ±ĞÅÏ¢,Ä¬ÈÏÊ¹ÓÃtime1.cloud.tencent.com;Îª±£Ö¤¶ÔÊ±ĞÅÏ¢µÄ¸ß¶ÈÒ»ÖÂ,½¨Òé¸÷¶ËÊ¹ÓÃÏàÍ¬¶ÔÊ±µØÖ·;
-	
-	TEduBoardInitParam boardInitParam;	//³õÊ¼»¯°×°å²ÎÊı
-	TEduBoardCallback* boardCallback = nullptr; //°×°åÊÂ¼ş»Øµ÷¼àÌı;ÇëÔÚ´ËÉèÖÃ°×°åÊÂ¼ş¼àÌı,²»ÍÆ¼ö×Ô¼ºÊ¹ÓÃ°×°åsdkµÄAddCallback()º¯Êı;
-	
-	TICClassScene classScene = TIC_CLASS_SCENE_VIDEO_CALL; //¿ÎÌÃ³¡¾°;Ä¬ÈÏTIC_CLASS_SCENE_VIDEO_CALL
-	TICRoleType roleType = TIC_ROLE_TYPE_ANCHOR; //¿ÎÌÃ½ÇÉ«;Ö»ÓĞÔÚclassSceneÎªTIC_CLASS_SCENE_LIVEÊ±ÓĞĞ§£¬Ä¬ÈÏTIC_ROLE_TYPE_ANCHOR
-	
-	bool compatSaas = false; //ÊÇ·ñ¼æÈİSaaS; ¿ªÆôSaaS¼æÈİÄ£Ê½£¬ÄÚ²¿»á¶à¼ÓÈëÒ»¸öÁÄÌìÈº×é;
+  bool openMic = false;  // æŒ‡ç¤ºè¿›æˆ¿æˆåŠŸåæ˜¯å¦è‡ªåŠ¨æ‰“å¼€éº¦å…‹é£
+  std::string micId = "";  // æŒ‡ç¤ºè¦æ‰“å¼€çš„éº¦å…‹é£IDï¼Œä¼ ""è¡¨ç¤ºæ‰“å¼€é»˜è®¤éº¦å…‹é£
+
+  HWND rendHwnd = nullptr;  // æŒ‡ç¤ºç”¨äºæ¸²æŸ“æœ¬åœ°ç”»é¢çš„çª—å£HWND
+
+  std::string ntpServer =
+      "time1.cloud.tencent.com";  // ntpæœåŠ¡å™¨;è¿›æˆ¿æˆåŠŸåä»ntpæœåŠ¡å™¨è·å–æœåŠ¡å™¨æ—¶é—´æˆ³ä½œä¸ºè¯¾åå½•åˆ¶çš„å¯¹æ—¶ä¿¡æ¯,é»˜è®¤ä½¿ç”¨time1.cloud.tencent.com;ä¸ºä¿è¯å¯¹æ—¶ä¿¡æ¯çš„é«˜åº¦ä¸€è‡´,å»ºè®®å„ç«¯ä½¿ç”¨ç›¸åŒå¯¹æ—¶åœ°å€;
+
+  TEduBoardInitParam boardInitParam;  // åˆå§‹åŒ–ç™½æ¿å‚æ•°
+  TEduBoardCallback* boardCallback =
+      nullptr;  // ç™½æ¿äº‹ä»¶å›è°ƒç›‘å¬;è¯·åœ¨æ­¤è®¾ç½®ç™½æ¿äº‹ä»¶ç›‘å¬,ä¸æ¨èè‡ªå·±ä½¿ç”¨ç™½æ¿sdkçš„AddCallback()å‡½æ•°;
+
+  TICClassScene classScene =
+      TIC_CLASS_SCENE_VIDEO_CALL;  // è¯¾å ‚åœºæ™¯;é»˜è®¤TIC_CLASS_SCENE_VIDEO_CALL
+  TICRoleType roleType =
+      TIC_ROLE_TYPE_ANCHOR;  // è¯¾å ‚è§’è‰²;åªæœ‰åœ¨classSceneä¸ºTIC_CLASS_SCENE_LIVEæ—¶æœ‰æ•ˆï¼Œé»˜è®¤TIC_ROLE_TYPE_ANCHOR
+
+  bool compatSaas =
+      false;  // æ˜¯å¦å…¼å®¹SaaS; å¼€å¯SaaSå…¼å®¹æ¨¡å¼ï¼Œå†…éƒ¨ä¼šå¤šåŠ å…¥ä¸€ä¸ªèŠå¤©ç¾¤ç»„;
 };
 
 /**
- * TICÒµÎñ¹ÜÀíÀà£¬Ö÷Òª¸ºÔğ¿ÎÌÃ×ÊÔ´¹ÜÀí£¬»¥¶¯¹ÜÀí
- */ 
-class TIC_API TICManager
-{
-public:
-	/**
-	 * »ñÈ¡TICµ¥Àı¶ÔÏó
-	 */
-	static TICManager& GetInstance();
-	
-	/*********************************************************************************************
-	 *
-	 *										Ò»¡¢»ù±¾Á÷³Ì½Ó¿Ú
-	 *
-	 *********************************************************************************************/ 
+ * TICä¸šåŠ¡ç®¡ç†ç±»ï¼Œä¸»è¦è´Ÿè´£è¯¾å ‚èµ„æºç®¡ç†ï¼Œäº’åŠ¨ç®¡ç†
+ */
+class TIC_API TICManager {
+ public:
+  /**
+   * è·å–TICå•ä¾‹å¯¹è±¡
+   */
+  static TICManager& GetInstance();
 
-	/**
-	 * ³õÊ¼»¯;
-	 * @param sdkAppId			ÔÚÌÚÑ¶ÔÆÉêÇëµÄsdkAppId
-	 * @param callback			»Øµ÷
-	 * @return ´íÎóÂë,0±íÊ¾³É¹¦
-	 */ 
-	virtual void Init(int sdkAppId, TICCallback callback, uint32_t disableModule = TIC_DISABLE_MODULE_NONE) = 0;
+  /*********************************************************************************************
+   *
+   *										ä¸€ã€åŸºæœ¬æµç¨‹æ¥å£
+   *
+   *********************************************************************************************/
 
-	/**
-	 * ÊÍ·Å;
-	 * @param callback			»Øµ÷
-	 * @return ´íÎóÂë,0±íÊ¾³É¹¦
-	 */ 
-	virtual void Uninit(TICCallback callback) = 0;
+  /**
+   * åˆå§‹åŒ–;
+   * @param sdkAppId			åœ¨è…¾è®¯äº‘ç”³è¯·çš„sdkAppId
+   * @param callback			å›è°ƒ
+   * @return é”™è¯¯ç ,0è¡¨ç¤ºæˆåŠŸ
+   */
+  virtual void Init(int sdkAppId, TICCallback callback,
+                    uint32_t disableModule = TIC_DISABLE_MODULE_NONE) = 0;
 
-	/**
-	 * µÇÂ¼
-	 * @param userId			ÓÃ»§id
-	 * @param userSig			IMÓÃ»§¼øÈ¨Æ±¾İ
-	 * @param callback			»Øµ÷
-	 */ 
-	virtual void Login(const std::string& userId, const std::string& userSig, TICCallback callback) = 0;
+  /**
+   * é‡Šæ”¾;
+   * @param callback			å›è°ƒ
+   * @return é”™è¯¯ç ,0è¡¨ç¤ºæˆåŠŸ
+   */
+  virtual void Uninit(TICCallback callback) = 0;
 
-	/**
-	 * µÇ³ö
-	 * @param callback			»Øµ÷
-	 */ 
-	virtual void Logout(TICCallback callback) = 0;
+  /**
+   * ç™»å½•
+   * @param userId			ç”¨æˆ·id
+   * @param userSig			IMç”¨æˆ·é‰´æƒç¥¨æ®
+   * @param callback			å›è°ƒ
+   */
+  virtual void Login(const std::string& userId, const std::string& userSig,
+                     TICCallback callback) = 0;
 
-	/**
-	 * ´´½¨¿ÎÌÃ
-	 * @param classId			¿ÎÌÃID£¬32Î»ÕûĞÍ£¬È¡Öµ·¶Î§[1, 4294967294]£¬ÓÉÒµÎñÉú³ÉºÍÎ¬»¤
-	 * @param callback			»Øµ÷
-	 */ 
-	virtual void CreateClassroom(uint32_t classId, TICClassScene classScene, TICCallback callback) = 0;
+  /**
+   * ç™»å‡º
+   * @param callback			å›è°ƒ
+   */
+  virtual void Logout(TICCallback callback) = 0;
 
-	/**
-	 * Ïú»Ù¿ÎÌÃ
-	 * @param classId			¿ÎÌÃID£¬32Î»ÕûĞÍ£¬È¡Öµ·¶Î§[1, 4294967294]£¬ÓÉÒµÎñÉú³ÉºÍÎ¬»¤
-	 * @param callback			»Øµ÷
-	 */ 
-	virtual void DestroyClassroom(uint32_t classId, TICCallback callback) = 0;
+  /**
+   * åˆ›å»ºè¯¾å ‚
+   * @param classId			è¯¾å ‚IDï¼Œ32ä½æ•´å‹ï¼Œå–å€¼èŒƒå›´[1,
+   * 4294967294]ï¼Œç”±ä¸šåŠ¡ç”Ÿæˆå’Œç»´æŠ¤
+   * @param callback			å›è°ƒ
+   */
+  virtual void CreateClassroom(uint32_t classId, TICClassScene classScene,
+                               TICCallback callback) = 0;
 
-	/**
-	 * ¼ÓÈë¿ÎÌÃ
-	 * @param option			¼ÓÈë¿ÎÌÃ²ÎÊıÑ¡Ïî£¬²Î¼ûTICClassroomOption
-	 * @param callback			»Øµ÷
-	 * @note ·¿¼äÈËÊı³¬¹ı200ÈË£¬½¨ÒéÆôÓÃ´ó·¿¼äÄ£Ê½£¬ÏêÏ¸ÅäÖÃÇë²Î¿¼ https://cloud.tencent.com/document/product/680/35954#.E4.B8.87.E4.BA.BA.E5.A4.A7.E6.88.BF.E9.97.B4
-	 */ 
-	virtual void JoinClassroom(const TICClassroomOption& option, TICCallback callback) = 0;
+  /**
+   * é”€æ¯è¯¾å ‚
+   * @param classId			è¯¾å ‚IDï¼Œ32ä½æ•´å‹ï¼Œå–å€¼èŒƒå›´[1,
+   * 4294967294]ï¼Œç”±ä¸šåŠ¡ç”Ÿæˆå’Œç»´æŠ¤
+   * @param callback			å›è°ƒ
+   */
+  virtual void DestroyClassroom(uint32_t classId, TICCallback callback) = 0;
 
-	/**
-	 * ÍË³ö¿ÎÌÃ
-	 * @param clearBoard		ÊÇ·ñÇå¿Õ°×°å
-	 * @param callback			»Øµ÷
-	 */ 
-	virtual void QuitClassroom(bool clearBoard, TICCallback callback) = 0;
+  /**
+   * åŠ å…¥è¯¾å ‚
+   * @param option			åŠ å…¥è¯¾å ‚å‚æ•°é€‰é¡¹ï¼Œå‚è§TICClassroomOption
+   * @param callback			å›è°ƒ
+   * @note æˆ¿é—´äººæ•°è¶…è¿‡200äººï¼Œå»ºè®®å¯ç”¨å¤§æˆ¿é—´æ¨¡å¼ï¼Œè¯¦ç»†é…ç½®è¯·å‚è€ƒ
+   * https://cloud.tencent.com/document/product/680/35954#.E4.B8.87.E4.BA.BA.E5.A4.A7.E6.88.BF.E9.97.B4
+   */
+  virtual void JoinClassroom(const TICClassroomOption& option,
+                             TICCallback callback) = 0;
 
-	/**
-	 * ÇĞ»»½ÇÉ«
-	 * @param role ½ÇÉ«
-	 * @brief Ö»ÔÚclassSceneÎªTIC_CLASS_SCENE_LIVEÊ±ÓĞĞ§
-	 **/
-	virtual void SwitchRole(TICRoleType role) = 0;
+  /**
+   * é€€å‡ºè¯¾å ‚
+   * @param clearBoard		æ˜¯å¦æ¸…ç©ºç™½æ¿
+   * @param callback			å›è°ƒ
+   */
+  virtual void QuitClassroom(bool clearBoard, TICCallback callback) = 0;
 
-	/*********************************************************************************************
-	 *
-	 *										¶ş¡¢IMÏûÏ¢½Ó¿Ú
-	 *
-	 *********************************************************************************************/
+  /**
+   * åˆ‡æ¢è§’è‰²
+   * @param role è§’è‰²
+   * @brief åªåœ¨classSceneä¸ºTIC_CLASS_SCENE_LIVEæ—¶æœ‰æ•ˆ
+   **/
+  virtual void SwitchRole(TICRoleType role) = 0;
 
-	/**
-	 * ·¢ËÍC2CÎÄ±¾ÏûÏ¢
-	 * @param userId			ÏûÏ¢½ÓÊÕÕß
-	 * @param text				ÎÄ±¾ÏûÏ¢ÄÚÈİ
-	 * @param callback			»Øµ÷
-	 */ 
-	virtual void SendTextMessage(const std::string& userId, const std::string& text, TICCallback callback) = 0;
+  /*********************************************************************************************
+   *
+   *										äºŒã€IMæ¶ˆæ¯æ¥å£
+   *
+   *********************************************************************************************/
 
-	/**
-	 * ·¢ËÍC2C×Ô¶¨ÒåÏûÏ¢
-	 * @param userId			ÏûÏ¢½ÓÊÕÕß
-	 * @param data				×Ô¶¨ÒåÏûÏ¢ÄÚÈİ
-	 * @param callback			»Øµ÷
-	 */ 
-	virtual void SendCustomMessage(const std::string& userId, const std::string& data, TICCallback callback) = 0;
+  /**
+   * å‘é€C2Cæ–‡æœ¬æ¶ˆæ¯
+   * @param userId			æ¶ˆæ¯æ¥æ”¶è€…
+   * @param text				æ–‡æœ¬æ¶ˆæ¯å†…å®¹
+   * @param callback			å›è°ƒ
+   */
+  virtual void SendTextMessage(const std::string& userId,
+                               const std::string& text,
+                               TICCallback callback) = 0;
 
-	/**
-	 * ·¢ËÍC2CÏûÏ¢
-	 * @param userId			ÏûÏ¢½ÓÊÕÕß
-	 * @param jsonMsg			IMÏûÏ¢(Json×Ö·û´®)
-	 * @param callback			»Øµ÷
-	 */ 
-	virtual void SendMessage(const std::string& userId, const std::string& jsonMsg, TICCallback callback) = 0;
+  /**
+   * å‘é€C2Cè‡ªå®šä¹‰æ¶ˆæ¯
+   * @param userId			æ¶ˆæ¯æ¥æ”¶è€…
+   * @param data				è‡ªå®šä¹‰æ¶ˆæ¯å†…å®¹
+   * @param callback			å›è°ƒ
+   */
+  virtual void SendCustomMessage(const std::string& userId,
+                                 const std::string& data,
+                                 TICCallback callback) = 0;
 
-	/**
-	 * ·¢ËÍÈºÎÄ±¾ÏûÏ¢
-	 * @param text				ÎÄ±¾ÏûÏ¢ÄÚÈİ
-	 * @param callback			»Øµ÷
-	 */
-	virtual void SendGroupTextMessage(const std::string& text, TICCallback callback) = 0;
+  /**
+   * å‘é€C2Cæ¶ˆæ¯
+   * @param userId			æ¶ˆæ¯æ¥æ”¶è€…
+   * @param jsonMsg			IMæ¶ˆæ¯(Jsonå­—ç¬¦ä¸²)
+   * @param callback			å›è°ƒ
+   */
+  virtual void SendMessage(const std::string& userId,
+                           const std::string& jsonMsg,
+                           TICCallback callback) = 0;
 
-	/**
-	 * ·¢ËÍÈº×Ô¶¨ÒåÏûÏ¢
-	 * @param data				×Ô¶¨ÒåÏûÏ¢ÄÚÈİ
-	 * @param callback			»Øµ÷
-	 */
-	virtual void SendGroupCustomMessage(const std::string& data, TICCallback callback) = 0;
+  /**
+   * å‘é€ç¾¤æ–‡æœ¬æ¶ˆæ¯
+   * @param text				æ–‡æœ¬æ¶ˆæ¯å†…å®¹
+   * @param callback			å›è°ƒ
+   */
+  virtual void SendGroupTextMessage(const std::string& text,
+                                    TICCallback callback) = 0;
 
-	/**
-	 * ·¢ËÍÈºÏûÏ¢
-	 * @param jsonMsg			IMÏûÏ¢(Json×Ö·û´®)
-	 * @param callback			»Øµ÷
-	 */
-	virtual void SendGroupMessage(const std::string& jsonMsg, TICCallback callback) = 0;
+  /**
+   * å‘é€ç¾¤è‡ªå®šä¹‰æ¶ˆæ¯
+   * @param data				è‡ªå®šä¹‰æ¶ˆæ¯å†…å®¹
+   * @param callback			å›è°ƒ
+   */
+  virtual void SendGroupCustomMessage(const std::string& data,
+                                      TICCallback callback) = 0;
 
+  /**
+   * å‘é€ç¾¤æ¶ˆæ¯
+   * @param jsonMsg			IMæ¶ˆæ¯(Jsonå­—ç¬¦ä¸²)
+   * @param callback			å›è°ƒ
+   */
+  virtual void SendGroupMessage(const std::string& jsonMsg,
+                                TICCallback callback) = 0;
 
-	/*********************************************************************************************
-	 *
-	 *										Èı¡¢ÄÚ²¿Ä£¿é¹ÜÀí½Ó¿Ú
-	 *
-	 *********************************************************************************************/
+  /*********************************************************************************************
+   *
+   *										ä¸‰ã€å†…éƒ¨æ¨¡å—ç®¡ç†æ¥å£
+   *
+   *********************************************************************************************/
 
-	 /**
-	  * »ñÈ¡°×°å¿ØÖÆÆ÷
-	  * @return °×°å¿ØÖÆÆ÷
-	  * @note Ö»ÓĞ½ø·¿ºó²ÅÄÜ»ñÈ¡£¬·ñÔò·µ»ØÖµÎª¿Õ;
-	  */
-	virtual TEduBoardController *GetBoardController() = 0;
+  /**
+   * è·å–ç™½æ¿æ§åˆ¶å™¨
+   * @return ç™½æ¿æ§åˆ¶å™¨
+   * @note åªæœ‰è¿›æˆ¿åæ‰èƒ½è·å–ï¼Œå¦åˆ™è¿”å›å€¼ä¸ºç©º;
+   */
+  virtual TEduBoardController* GetBoardController() = 0;
 
-	/**
-	 * »ñÈ¡ÒôÊÓÆµÊµÀı
-	 * @return TRTCÒôÊÓÆµÊµÀı
-	 */
-	virtual ITRTCCloud *GetTRTCCloud() = 0;
+  /**
+   * è·å–éŸ³è§†é¢‘å®ä¾‹
+   * @return TRTCéŸ³è§†é¢‘å®ä¾‹
+   */
+  virtual ITRTCCloud* GetTRTCCloud() = 0;
 
-	/*********************************************************************************************
-	 *
-	 *										ËÄ¡¢»Øµ÷¼àÌı¹ÜÀí½Ó¿Ú
-	 *
-	 *********************************************************************************************/
-	
-	/**
-	 * Ìí¼ÓIMÏûÏ¢¼àÌı»Øµ÷
-	 * @param listener			»Øµ÷
-	 * @note ²»ÄÜÔÚTICMessageListenerµÄ»Øµ÷ÖĞµ÷ÓÃAddMessageListener()\RemoveMessageListener(),·ñÔòËÀËø;
-	 */ 
-	virtual void AddMessageListener(TICMessageListener *listener) = 0;
+  /*********************************************************************************************
+   *
+   *										å››ã€å›è°ƒç›‘å¬ç®¡ç†æ¥å£
+   *
+   *********************************************************************************************/
 
-	/**
-	 * ÒÆ³ıIMÏûÏ¢¼àÌı»Øµ÷
-	 * @param listener			»Øµ÷
-	 * @note ²»ÄÜÔÚTICMessageListenerµÄ»Øµ÷ÖĞµ÷ÓÃAddMessageListener()\RemoveMessageListener(),·ñÔòËÀËø;
-	 */ 
-	virtual void RemoveMessageListener(TICMessageListener *listener) = 0;
+  /**
+   * æ·»åŠ IMæ¶ˆæ¯ç›‘å¬å›è°ƒ
+   * @param listener			å›è°ƒ
+   * @note
+   * ä¸èƒ½åœ¨TICMessageListenerçš„å›è°ƒä¸­è°ƒç”¨AddMessageListener()\RemoveMessageListener(),å¦åˆ™æ­»é”;
+   */
+  virtual void AddMessageListener(TICMessageListener* listener) = 0;
 
-	/**
-	 * Ìí¼ÓÊÂ¼ş¼àÌı»Øµ÷
-	 * @param listener			»Øµ÷
-	 * @note ²»ÄÜÔÚTICEventListenerµÄ»Øµ÷ÖĞµ÷ÓÃAddEventListener()\RemoveEventListener(),·ñÔòËÀËø;
-	 */
-	virtual void AddEventListener(TICEventListener *listener) = 0;
+  /**
+   * ç§»é™¤IMæ¶ˆæ¯ç›‘å¬å›è°ƒ
+   * @param listener			å›è°ƒ
+   * @note
+   * ä¸èƒ½åœ¨TICMessageListenerçš„å›è°ƒä¸­è°ƒç”¨AddMessageListener()\RemoveMessageListener(),å¦åˆ™æ­»é”;
+   */
+  virtual void RemoveMessageListener(TICMessageListener* listener) = 0;
 
-	/**
-	 * ÒÆ³ıÊÂ¼ş¼àÌı»Øµ÷
-	 * @param listener			»Øµ÷
-	 * @note ²»ÄÜÔÚTICEventListenerµÄ»Øµ÷ÖĞµ÷ÓÃAddEventListener()\RemoveEventListener(),·ñÔòËÀËø;
-	 */
-	virtual void RemoveEventListener(TICEventListener *listener) = 0;
+  /**
+   * æ·»åŠ äº‹ä»¶ç›‘å¬å›è°ƒ
+   * @param listener			å›è°ƒ
+   * @note
+   * ä¸èƒ½åœ¨TICEventListenerçš„å›è°ƒä¸­è°ƒç”¨AddEventListener()\RemoveEventListener(),å¦åˆ™æ­»é”;
+   */
+  virtual void AddEventListener(TICEventListener* listener) = 0;
 
-	/**
-	 * Ìí¼ÓIM×´Ì¬¼àÌı»Øµ÷
-	 * @param listener			»Øµ÷
-	 * @note ²»ÄÜÔÚTICIMStatusListenerµÄ»Øµ÷ÖĞµ÷ÓÃAddStatusListener()\RemoveStatusListener(),·ñÔòËÀËø;
-	 */ 
-	virtual void AddStatusListener(TICIMStatusListener *listener) = 0;
+  /**
+   * ç§»é™¤äº‹ä»¶ç›‘å¬å›è°ƒ
+   * @param listener			å›è°ƒ
+   * @note
+   * ä¸èƒ½åœ¨TICEventListenerçš„å›è°ƒä¸­è°ƒç”¨AddEventListener()\RemoveEventListener(),å¦åˆ™æ­»é”;
+   */
+  virtual void RemoveEventListener(TICEventListener* listener) = 0;
 
-	/**
-	 * ÒÆ³ıIM×´Ì¬¼àÌı»Øµ÷
-	 * @param listener			»Øµ÷
-	 * @note ²»ÄÜÔÚTICIMStatusListenerµÄ»Øµ÷ÖĞµ÷ÓÃAddStatusListener()\RemoveStatusListener(),·ñÔòËÀËø;
-	 */ 
-	virtual void RemoveStatusListener(TICIMStatusListener *listener) = 0;
+  /**
+   * æ·»åŠ IMçŠ¶æ€ç›‘å¬å›è°ƒ
+   * @param listener			å›è°ƒ
+   * @note
+   * ä¸èƒ½åœ¨TICIMStatusListenerçš„å›è°ƒä¸­è°ƒç”¨AddStatusListener()\RemoveStatusListener(),å¦åˆ™æ­»é”;
+   */
+  virtual void AddStatusListener(TICIMStatusListener* listener) = 0;
 
-	/*********************************************************************************************
-	 *
-	 *										Îå¡¢Â¼ÖÆÏà¹Ø
-	 *
-	 *********************************************************************************************/
+  /**
+   * ç§»é™¤IMçŠ¶æ€ç›‘å¬å›è°ƒ
+   * @param listener			å›è°ƒ
+   * @note
+   * ä¸èƒ½åœ¨TICIMStatusListenerçš„å›è°ƒä¸­è°ƒç”¨AddStatusListener()\RemoveStatusListener(),å¦åˆ™æ­»é”;
+   */
+  virtual void RemoveStatusListener(TICIMStatusListener* listener) = 0;
 
-	 /**
-	  * ·¢ËÍÀëÏßÂ¼ÖÆ¶ÔÊ±ĞÅÏ¢
-	  * @note TICÄÚ²¿½ø·¿³É¹¦ºó»á×Ô¶¯·¢ËÍÀëÏßÂ¼ÖÆ¶ÔÊ±ĞÅÏ¢,Èç¹û·¢ËÍÊ§°Ü»Øµ÷onTICSendOfflineRecordInfo½Ó¿ÚÇÒcode!=0,¿ÉÒÔµ÷ÓÃ´Ë½Ó¿Ú´¥·¢ÖØÊÔ;
-	  */
-	virtual void SendOfflineRecordInfo() = 0;
+  /*********************************************************************************************
+   *
+   *										äº”ã€å½•åˆ¶ç›¸å…³
+   *
+   *********************************************************************************************/
+
+  /**
+   * å‘é€ç¦»çº¿å½•åˆ¶å¯¹æ—¶ä¿¡æ¯
+   * @note
+   * TICå†…éƒ¨è¿›æˆ¿æˆåŠŸåä¼šè‡ªåŠ¨å‘é€ç¦»çº¿å½•åˆ¶å¯¹æ—¶ä¿¡æ¯,å¦‚æœå‘é€å¤±è´¥å›è°ƒonTICSendOfflineRecordInfoæ¥å£ä¸”code!=0,å¯ä»¥è°ƒç”¨æ­¤æ¥å£è§¦å‘é‡è¯•;
+   */
+  virtual void SendOfflineRecordInfo() = 0;
 };

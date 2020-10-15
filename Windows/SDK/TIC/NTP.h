@@ -1,20 +1,27 @@
+ï»¿//
+//  Copyright Â© 2019 Tencent. All rights reserved.
+//
+
 #pragma once
 
+#include <string>
+
 /*******************************************************************
-* @purpose	NTP¶ÔÊ±Ğ­ÒéÊµÏÖ
-* @details	·â×°NTP¶ÔÊ±Ğ­Òé
-********************************************************************/
+ * @purpose	NTPå¯¹æ—¶åè®®å®ç°
+ * @details	å°è£…NTPå¯¹æ—¶åè®®
+ ********************************************************************/
 
 #include <functional>
 
-typedef std::function<void(int code, const char* desc, int64_t serverTime)> NTPCallback;
+typedef std::function<void(int code, const char* desc, int64_t serverTime)>
+    NTPCallback;
 
-class NTP
-{
-public:
-	static void getNTPServerTime(const std::string& ntpServer, int nRetry, NTPCallback cb);
+class NTP {
+ public:
+  static void getNTPServerTime(const std::string& ntpServer, int nRetry,
+                               NTPCallback cb);
 
-private:
-	static uint64_t _getCurrentNTPTime();
-	static uint64_t _NTPTime2UTCTime(uint64_t ntpTime);
+ private:
+  static uint64_t _getCurrentNTPTime();
+  static uint64_t _NTPTime2UTCTime(uint64_t ntpTime);
 };

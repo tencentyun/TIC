@@ -1,25 +1,29 @@
+Ôªø//
+//  Copyright ¬© 2019 Tencent. All rights reserved.
+//
+
+#include "TICLocalRecord.h"
+
 #include <mutex>
+
 #include "TICLocalRecordImpl.h"
 /**
-* ªÒ»°TICLocalRecordµ•¿˝∂‘œÛ
-*/
-static TICLocalRecorder *g_pTICRecorder = nullptr;
+ * Ëé∑ÂèñTICLocalRecordÂçï‰æãÂØπË±°
+ */
+static TICLocalRecorder* g_pTICRecorder = nullptr;
 static std::mutex ticRecord_mex;
 
-TICLocalRecorder* TICLocalRecorder::GetInstance()
-{
-	if (g_pTICRecorder == NULL) {
-		ticRecord_mex.lock();
-		if (g_pTICRecorder == NULL)
-		{
-			g_pTICRecorder = new TICLocalRecorderImpl();
-		}
-		ticRecord_mex.unlock();
-	}
-	return (TICLocalRecorder*)g_pTICRecorder;
-
+TICLocalRecorder* TICLocalRecorder::GetInstance() {
+  if (g_pTICRecorder == NULL) {
+    ticRecord_mex.lock();
+    if (g_pTICRecorder == NULL) {
+      g_pTICRecorder = new TICLocalRecorderImpl();
+    }
+    ticRecord_mex.unlock();
+  }
+  return (TICLocalRecorder*)g_pTICRecorder;
 }
 
 void TICLocalRecorder::setListener(std::weak_ptr<TEduRecordCallback> listen) {
-	mCallback = listen;
+  mCallback = listen;
 }

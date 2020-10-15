@@ -1,195 +1,205 @@
-#ifndef _TIC_LOCAL_RECORD_H_
-#define _TIC_LOCAL_RECORD_H_
+ï»¿//
+//  Copyright Â© 2019 Tencent. All rights reserved.
+//
+
+#pragma once
 
 #include <stdio.h>
-#include <string>
+
 #include <functional>
+#include <memory>
+#include <string>
+#include <vector>
+
 #include "../TICManager.h"
 
 /**
-*  ÊÚÈ¨²ÎÊı
-*/
+ *  æˆæƒå‚æ•°
+ */
 struct TEduRecordAuthParam {
-	TEduRecordAuthParam() {}
-	TEduRecordAuthParam(int appId, std::string userId, std::string userSig) {
-		this->appId = appId;
-		this->userId = userId;
-		this->userSig = userSig;
-	}
+  TEduRecordAuthParam() {}
+  TEduRecordAuthParam(int appId, std::string userId, std::string userSig) {
+    this->appId = appId;
+    this->userId = userId;
+    this->userSig = userSig;
+  }
 
-	int appId = 0;
-	std::string userId;
-	std::string userSig;
+  int appId = 0;
+  std::string userId;
+  std::string userSig;
 };
 
 struct RecordKey {
-	RecordKey() {}
-	RecordKey(int appid, int classid, std::string& userid, std::string& taskid, int index, int size) {
-		this->appid = appid;
-		this->class_id = classid;
-		this->user_id = userid;
-		this->task_id = taskid;
+  RecordKey() {}
+  RecordKey(int appid, int classid, std::string& userid, std::string& taskid,
+            int index, int size) {
+    this->appid = appid;
+    this->class_id = classid;
+    this->user_id = userid;
+    this->task_id = taskid;
 
-		this->index = index;
-		this->size = size;
-	}
-	int appid = 0;
-	int class_id = 0;	  //²»ÌîĞ´£¬±íÊ¾È«²¿
-	std::string user_id;  //²»ÌîĞ´£¬±íÊ¾È«²¿
-	std::string task_id; //²»ÌîĞ´£¬±íÊ¾È«²¿
+    this->index = index;
+    this->size = size;
+  }
+  int appid = 0;
+  int class_id = 0;     // ä¸å¡«å†™ï¼Œè¡¨ç¤ºå…¨éƒ¨
+  std::string user_id;  // ä¸å¡«å†™ï¼Œè¡¨ç¤ºå…¨éƒ¨
+  std::string task_id;  // ä¸å¡«å†™ï¼Œè¡¨ç¤ºå…¨éƒ¨
 
-	int index = 0; //´ÓµÚ0×é¿ªÊ¼À­Æğ
-	int size = 30; //Ã¿´ÎÀ­È¡30¸ö
+  int index = 0;  // ä»ç¬¬0ç»„å¼€å§‹æ‹‰èµ·
+  int size = 30;  // æ¯æ¬¡æ‹‰å–30ä¸ª
 };
 
-
-
 /**
-*  ÊÓÆµ²ÎÊı
-*/
+ *  è§†é¢‘å‚æ•°
+ */
 struct TEduRecordParam {
-	//¡¾×Ö¶Îº¬Òå¡¿ÊÓÆµ²É¼¯Ö¡ÂÊ
-	//¡¾ÍÆ¼öÈ¡Öµ¡¿10fps »ò 20fps£¬10fps ÒÔÏÂ»áÓĞÇáÎ¢¿¨¶Ù¸Ğ£¬5fps ÒÔÏÂ¿¨¶Ù¸ĞÃ÷ÏÔ£¬20fps ÒÔÉÏµÄÖ¡ÂÊÔò¹ıÓÚÀË·Ñ£¨µçÓ°µÄÖ¡ÂÊÒ²Ö»ÓĞ 24fps£©¡£
-	int videoFps = 10;
+  // ã€å­—æ®µå«ä¹‰ã€‘è§†é¢‘é‡‡é›†å¸§ç‡
+  // ã€æ¨èå–å€¼ã€‘10fps æˆ– 20fpsï¼Œ10fps ä»¥ä¸‹ä¼šæœ‰è½»å¾®å¡é¡¿æ„Ÿï¼Œ5fps
+  // ä»¥ä¸‹å¡é¡¿æ„Ÿæ˜æ˜¾ï¼Œ20fps ä»¥ä¸Šçš„å¸§ç‡åˆ™è¿‡äºæµªè´¹ï¼ˆç”µå½±çš„å¸§ç‡ä¹Ÿåªæœ‰ 24fpsï¼‰ã€‚
+  int videoFps = 10;
 
-	//¡¾×Ö¶Îº¬Òå¡¿ÊÓÆµ·¢ËÍÂëÂÊ
-	int videoBps = 1000; //1000kpbs
+  // ã€å­—æ®µå«ä¹‰ã€‘è§†é¢‘å‘é€ç ç‡
+  int videoBps = 1000;  // 1000kpbs
 
-	//¡¾×Ö¶Îº¬Òå¡¿ÊÓÆµÂ¼ÖÆ´°¿ÚxÎ»ÖÃ
-	int x = 0;
+  // ã€å­—æ®µå«ä¹‰ã€‘è§†é¢‘å½•åˆ¶çª—å£xä½ç½®
+  int x = 0;
 
-	//¡¾×Ö¶Îº¬Òå¡¿ÊÓÆµÂ¼ÖÆ´°¿ÚY
-	int y = 0;
+  // ã€å­—æ®µå«ä¹‰ã€‘è§†é¢‘å½•åˆ¶çª—å£Y
+  int y = 0;
 
-	//¡¾×Ö¶Îº¬Òå¡¿ÊÓÆµÂ¼ÖÆ´°¿Ú¿í¶È£¬0±íÊ¾Õû¸ö´°¿Ú¿í¶È
-	int width = 0;
+  // ã€å­—æ®µå«ä¹‰ã€‘è§†é¢‘å½•åˆ¶çª—å£å®½åº¦ï¼Œ0è¡¨ç¤ºæ•´ä¸ªçª—å£å®½åº¦
+  int width = 0;
 
-	//¡¾×Ö¶Îº¬Òå¡¿ÊÓÆµÂ¼ÖÆ´°¿Ú¸ß¶È, 0±íÊ¾Õû¸ö´°¿Ú¸ß¶È
-	int Height = 0;
+  // ã€å­—æ®µå«ä¹‰ã€‘è§†é¢‘å½•åˆ¶çª—å£é«˜åº¦, 0è¡¨ç¤ºæ•´ä¸ªçª—å£é«˜åº¦
+  int Height = 0;
 
-	//±»Â¼ÖÆ½ø³ÌÃû³Æ
-	std::string AppProc;  //ÈçQQMusic.exe
+  // è¢«å½•åˆ¶è¿›ç¨‹åç§°
+  std::string AppProc;  // å¦‚QQMusic.exe
 
-	 //±»Â¼ÖÆ´°¿ÚwndId
-	int Wnd = 0;
+  // è¢«å½•åˆ¶çª—å£wndId
+  int Wnd = 0;
 
-	//ÊÇ·ñÂ¼ÖÆÒôÆµ
-	bool enableAudio = true;
+  // æ˜¯å¦å½•åˆ¶éŸ³é¢‘
+  bool enableAudio = true;
 
-	//ÊÇ·ñÉÏ´«µ½ºóÌ¨
-	bool enableUpload = true;
+  // æ˜¯å¦ä¸Šä¼ åˆ°åå°
+  bool enableUpload = true;
 
-	//Â¼ÖÆµÄ¿ÎÌÃID
-	int classId = 0;
+  // å½•åˆ¶çš„è¯¾å ‚ID
+  int classId = 0;
 };
 
 class AuthState {
-public:
-	std::string UserId;
-	std::string State;
+ public:
+  std::string UserId;
+  std::string State;
 };
 
 class RecordingState {
-public:
-	std::string RecordId;
-	std::string State;
-	int Duration = 0;
+ public:
+  std::string RecordId;
+  std::string State;
+  int Duration = 0;
 };
 
 class UploadState {
-public:
-	std::string RecordId;
-	std::string State;
-	int Duration = 0;  //ÒÑÉÏ´«Ê±³¤
-	int Total = 0;    //Â¼ÖÆ×ÜÊ±³¤
-	bool IsCurrentRecoding = false;
+ public:
+  std::string RecordId;
+  std::string State;
+  int Duration = 0;  // å·²ä¸Šä¼ æ—¶é•¿
+  int Total = 0;     // å½•åˆ¶æ€»æ—¶é•¿
+  bool IsCurrentRecoding = false;
 };
 
 class RecordState {
-public:
-	AuthState auth;
-	RecordingState recording;
-	std::vector<UploadState> upload;
+ public:
+  AuthState auth;
+  RecordingState recording;
+  std::vector<UploadState> upload;
 };
 
 /**
-* Â¼ÖÆÊÂ¼ş»Øµ÷½Ó¿Ú
-*/
+ * å½•åˆ¶äº‹ä»¶å›è°ƒæ¥å£
+ */
 class TEduRecordCallback {
-public:
-	virtual void onGotStatus(const RecordState& state) = 0;
+ public:
+  virtual void onGotStatus(const RecordState& state) = 0;
 };
 
 class TICLocalRecorder {
-public:
-	virtual ~TICLocalRecorder() {};
-	const std::string RecordExe = "TXCloudRecord.exe";
-public:
+ public:
+  virtual ~TICLocalRecorder() {}
+  const std::string RecordExe = "TXCloudRecord.exe";
 
-	/**
-	* »ñÈ¡TICLocalRecordµ¥Àı¶ÔÏó
-	*/
-	static TICLocalRecorder* GetInstance();
+ public:
+  /**
+   * è·å–TICLocalRecordå•ä¾‹å¯¹è±¡
+   */
+  static TICLocalRecorder* GetInstance();
 
-	void setListener(std::weak_ptr<TEduRecordCallback> listen);
+  void setListener(std::weak_ptr<TEduRecordCallback> listen);
 
-	/**
-	* Æô¶¯±¾µØÂ¼ÖÆ·şÎñ
-	* @param path 		Â¼ÖÆ·şÎñµÄ¿ÉÖ´ĞĞÎÄ¼şexeÂ·¾¶
-	*/
-	virtual bool startService(const std::string& path) = 0;
+  /**
+   * å¯åŠ¨æœ¬åœ°å½•åˆ¶æœåŠ¡
+   * @param path 		å½•åˆ¶æœåŠ¡çš„å¯æ‰§è¡Œæ–‡ä»¶exeè·¯å¾„
+   */
+  virtual bool startService(const std::string& path) = 0;
 
-	/**
-	* ³õÊ¼»¯
-	* @param authParam 		ÊÚÈ¨²ÎÊı
-	*/
-	virtual int init(const TEduRecordAuthParam& authParam, TICCallback callback) = 0;
+  /**
+   * åˆå§‹åŒ–
+   * @param authParam 		æˆæƒå‚æ•°
+   */
+  virtual int init(const TEduRecordAuthParam& authParam,
+                   TICCallback callback) = 0;
 
-	/**
-	* ÊÓÆµ±¾µØÂ¼ÖÆ, Ö§³Ö²»ÍÆÁ÷Â¼ÖÆ¡£
-	* @param szRecordPath:ÊÓÆµÂ¼ÖÆºó´æ´¢Â·¾¶£¬Ä¿Ç°´«flvºó×ºÎÄ¼ş¡£
-	* @return
-	*          0 ³É¹¦£»
-	*          -1 Â·¾¶·Ç·¨
-	*          -2 ÉÏ´ÎÂ¼ÖÆÎ´½áÊø£¬ÇëÏÈstopRecord
-	*/
-	virtual int startLocalRecord(const TEduRecordParam& para, const char * szRecordPath, TICCallback callback) = 0;
+  /**
+   * è§†é¢‘æœ¬åœ°å½•åˆ¶, æ”¯æŒä¸æ¨æµå½•åˆ¶ã€‚
+   * @param szRecordPath:è§†é¢‘å½•åˆ¶åå­˜å‚¨è·¯å¾„ï¼Œç›®å‰ä¼ flvåç¼€æ–‡ä»¶ã€‚
+   * @return
+   *          0 æˆåŠŸï¼›
+   *          -1 è·¯å¾„éæ³•
+   *          -2 ä¸Šæ¬¡å½•åˆ¶æœªç»“æŸï¼Œè¯·å…ˆstopRecord
+   */
+  virtual int startLocalRecord(const TEduRecordParam& para,
+                               const char* szRecordPath,
+                               TICCallback callback) = 0;
 
-	/**
-	* ½áÊøÂ¼ÖÆ¶ÌÊÓÆµ£¬Í£Ö¹ÍÆÁ÷ºó£¬Èç¹ûÊÓÆµ»¹ÔÚÂ¼ÖÆÖĞ£¬SDKÄÚ²¿»á×Ô¶¯½áÊøÂ¼ÖÆ
-	* @return
-	*       0 ³É¹¦£»
-	*      -1 ²»´æÔÚÂ¼ÖÆÈÎÎñ£»
-	*/
-	virtual int stopLocalRecord(TICCallback callback) = 0;
+  /**
+   * ç»“æŸå½•åˆ¶çŸ­è§†é¢‘ï¼Œåœæ­¢æ¨æµåï¼Œå¦‚æœè§†é¢‘è¿˜åœ¨å½•åˆ¶ä¸­ï¼ŒSDKå†…éƒ¨ä¼šè‡ªåŠ¨ç»“æŸå½•åˆ¶
+   * @return
+   *       0 æˆåŠŸï¼›
+   *      -1 ä¸å­˜åœ¨å½•åˆ¶ä»»åŠ¡ï¼›
+   */
+  virtual int stopLocalRecord(TICCallback callback) = 0;
 
-	/**
-	* ÔİÍ£±¾µØÂ¼ÖÆ£¬ÔİÍ£ÆÚ¼äµÄÒôÊÓÆµ²»»áÂ¼ÖÆ
-	* @return£º³É¹¦ or Ê§°Ü£¬ÄÚ´æ·ÖÅä¡¢×ÊÔ´ÉêÇëÊ§°ÜµÈÔ­Òò¿ÉÄÜ»áµ¼ÖÂ·µ»ØÊ§°Ü
-	*/
-	virtual int pauseLocalRecord(TICCallback callback) = 0;
+  /**
+   * æš‚åœæœ¬åœ°å½•åˆ¶ï¼Œæš‚åœæœŸé—´çš„éŸ³è§†é¢‘ä¸ä¼šå½•åˆ¶
+   * @returnï¼šæˆåŠŸ or å¤±è´¥ï¼Œå†…å­˜åˆ†é…ã€èµ„æºç”³è¯·å¤±è´¥ç­‰åŸå› å¯èƒ½ä¼šå¯¼è‡´è¿”å›å¤±è´¥
+   */
+  virtual int pauseLocalRecord(TICCallback callback) = 0;
 
-	/**
-	*  »Ö¸´±¾µØÂ¼ÖÆ
-	*/
-	virtual int resumeLocalRecord(TICCallback callback) = 0;
+  /**
+   *  æ¢å¤æœ¬åœ°å½•åˆ¶
+   */
+  virtual int resumeLocalRecord(TICCallback callback) = 0;
 
-	/**
-	* Í£Ö¹ËùÓĞÂ¼ÖÆºÍÍÆÁ÷²¢ÍË³ö½ø³Ì
-	*/
-	virtual int exit(TICCallback callback) = 0;
+  /**
+   * åœæ­¢æ‰€æœ‰å½•åˆ¶å’Œæ¨æµå¹¶é€€å‡ºè¿›ç¨‹
+   */
+  virtual int exit(TICCallback callback) = 0;
 
-	/**
-	* »ñÈ¡Â¼ÖÆµÄ×´Ì¬
-	*/
-	virtual int getState(TICCallback callback) = 0;
+  /**
+   * è·å–å½•åˆ¶çš„çŠ¶æ€
+   */
+  virtual int getState(TICCallback callback) = 0;
 
-	/**
-	* »ñÈ¡Â¼ÖÆµÄ½á¹û
-	*/
-	virtual int getRecordResult(const TEduRecordAuthParam& authParam, const RecordKey& key, TICCallback callback) = 0;
-protected:
-	std::weak_ptr<TEduRecordCallback> mCallback;
+  /**
+   * è·å–å½•åˆ¶çš„ç»“æœ
+   */
+  virtual int getRecordResult(const TEduRecordAuthParam& authParam,
+                              const RecordKey& key, TICCallback callback) = 0;
+
+ protected:
+  std::weak_ptr<TEduRecordCallback> mCallback;
 };
-
-#endif //_TIC_LOCAL_RECORD_H_
