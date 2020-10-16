@@ -1,114 +1,102 @@
-Ôªø//
-//  Copyright ¬© 2019 Tencent. All rights reserved.
-//
-
 #pragma once
 
 #include <memory>
-#include <string>
-#include <utility>
-#include <vector>
 
-enum class UserState {
-  Unknown,  //Êú™Áü•Áä∂ÊÄÅ
-  NotInit,  //Êú™ÂàùÂßãÂåñÁä∂ÊÄÅ
-  Init,     //ÂàùÂßãÂåñÁä∂ÊÄÅ
-  Login,    //ÁôªÂΩïÁä∂ÊÄÅ
-  InRoom,   //ÊàøÈó¥ÂÜÖÁä∂ÊÄÅ
+enum class UserState
+{
+	Unknown,	//Œ¥÷™◊¥Ã¨
+	NotInit,	//Œ¥≥ı ºªØ◊¥Ã¨
+	Init,		//≥ı ºªØ◊¥Ã¨
+	Login,		//µ«¬º◊¥Ã¨
+	InRoom,		//∑øº‰ƒ⁄◊¥Ã¨
 };
 
-class CVideoDlg : public CDialogEx,
-                  public TICEventListener,
-                  public TICMessageListener,
-                  public std::enable_shared_from_this<CVideoDlg> {
-  DECLARE_MESSAGE_MAP()
- public:
-  CVideoDlg(CWnd* pParent = nullptr);
+class CVideoDlg
+	: public CDialogEx
+	, public TICEventListener
+	, public TICMessageListener
+	, public std::enable_shared_from_this<CVideoDlg>
+{
+	DECLARE_MESSAGE_MAP()
+public:
+	CVideoDlg(CWnd* pParent = nullptr);
 
-  // ÂØπËØùÊ°ÜÊï∞ÊçÆ
+	// ∂‘ª∞øÚ ˝æ›
 #ifdef AFX_DESIGN_TIME
-  enum { IDD = IDD_VIDEO_DIALOG };
+	enum { IDD = IDD_VIDEO_DIALOG };
 #endif
 
-  void UpdateUI(UserState state = UserState::Unknown);
+	void UpdateUI(UserState state = UserState::Unknown);
 
- private:
-  BOOL OnInitDialog() override;
-  void DoDataExchange(CDataExchange* pDX) override;
+private:
+	virtual BOOL OnInitDialog() override;
+	virtual void DoDataExchange(CDataExchange* pDX) override;
 
-  // Ê∂àÊÅØÊò†Â∞ÑÂáΩÊï∞
-  afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+	// œ˚œ¢”≥…‰∫Ø ˝
+	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 
-  afx_msg void OnBtnOpenCamera();
-  afx_msg void OnBtnCloseCamera();
+	afx_msg void OnBtnOpenCamera();
+	afx_msg void OnBtnCloseCamera();
 
-  afx_msg void OnBtnOpenMic();
-  afx_msg void OnBtnCloseMic();
+	afx_msg void OnBtnOpenMic();
+	afx_msg void OnBtnCloseMic();
 
-  afx_msg void OnBtnOpenScreen();
-  afx_msg void OnBtnCloseScreen();
+	afx_msg void OnBtnOpenScreen();
+	afx_msg void OnBtnCloseScreen();
 
-  afx_msg void OnBtnSendMsg();
-  void updateCameraList();
+	afx_msg void OnBtnSendMsg();
+	void updateCameraList();
 
-  HWND getRemoteViewWnd(const std::string& userId);
-  void resetRemoteViewWnd(const std::string& userId);
-  void restAllRemoteViewWnd();
+	HWND getRemoteViewWnd(const std::string& userId);
+	void resetRemoteViewWnd(const std::string& userId);
+	void restAllRemoteViewWnd();
 
-  // TICEventListener
-  void onTICClassroomDestroy() override;
+	//TICEventListener
+	virtual void onTICClassroomDestroy() override;
 
-  void onTICMemberJoin(const std::vector<std::string>& userIds) override;
-  void onTICMemberQuit(const std::vector<std::string>& userIds) override;
+	virtual void onTICMemberJoin(const std::vector<std::string>& userIds) override;
+	virtual void onTICMemberQuit(const std::vector<std::string>& userIds) override;
 
-  void onTICUserVideoAvailable(const std::string& userId,
-                               bool available) override;
-  void onTICUserSubStreamAvailable(const std::string& userId,
-                                   bool available) override;
-  void onTICUserAudioAvailable(const std::string& userId,
-                               bool available) override;
+	virtual void onTICUserVideoAvailable(const std::string& userId, bool available) override;
+	virtual void onTICUserSubStreamAvailable(const std::string& userId, bool available) override;
+	virtual void onTICUserAudioAvailable(const std::string& userId, bool available) override;
 
-  void onTICDevice(const std::string& deviceId, TRTCDeviceType type,
-                   TRTCDeviceState state) override;
+	virtual void onTICDevice(const std::string& deviceId, TRTCDeviceType type, TRTCDeviceState state) override;
 
-  void onTICSendOfflineRecordInfo(int code, const char* desc) override;
+	virtual void onTICSendOfflineRecordInfo(int code, const char* desc) override;
 
-  // TICMessageListener
-  void onTICRecvTextMessage(const std::string& fromUserId,
-                            const std::string& text) override;
-  void onTICRecvCustomMessage(const std::string& fromUserId,
-                              const std::string& data) override;
-  void onTICRecvGroupTextMessage(const std::string& fromUserId,
-                                 const std::string& text) override;
-  void onTICRecvGroupCustomMessage(const std::string& fromUserId,
-                                   const std::string& data) override;
-  void onTICRecvMessage(const std::string& jsonMsg) override;
+	//TICMessageListener
+	virtual void onTICRecvTextMessage(const std::string& fromUserId, const std::string& text) override;
+	virtual void onTICRecvCustomMessage(const std::string& fromUserId, const std::string& data) override;
+	virtual void onTICRecvGroupTextMessage(const std::string& fromUserId, const std::string& text) override;
+	virtual void onTICRecvGroupCustomMessage(const std::string& fromUserId, const std::string& data) override;
+	virtual void onTICRecvMessage(const std::string& jsonMsg) override;
 
- private:
-  HWND localView_ = NULL;
-  HWND subStreamView_ = NULL;
-  std::vector<std::pair<HWND /*hwnd*/, std::string /*userId*/>> remoteViews_;
+private:
+	HWND	localView_ = NULL;
+	HWND	subStreamView_ = NULL;
+	std::vector< std::pair< HWND /*hwnd*/, std::string /*userId*/> > remoteViews_;
 
-  CComboBox cbCamera_;
+	CComboBox cbCamera_;
 
-  CButton btnOpenCamera_;
-  CButton btnCloseCamera_;
+	CButton btnOpenCamera_;
+	CButton btnCloseCamera_;
 
-  CButton btnOpenMic_;
-  CButton btnCloseMic_;
+	CButton btnOpenMic_;
+	CButton btnCloseMic_;
 
-  CButton btnOpenScreen_;
-  CButton btnCloseScreen_;
+	CButton btnOpenScreen_;
+	CButton btnCloseScreen_;
 
-  CEdit editMsgList_;
-  CEdit editSendMsg_;
-  CButton btnSendMsg_;
+	CEdit editMsgList_;
+	CEdit editSendMsg_;
+	CButton btnSendMsg_;
 
-  std::vector<std::pair<std::string /*id*/, std::string /*name*/>> cameraList_;
+	std::vector<std::pair<std::string /*id*/, std::string /*name*/>> cameraList_;
 
-  BOOL isCameraOpen_ = FALSE;
-  BOOL isMicOpen_ = FALSE;
-  BOOL isScreenOpen_ = FALSE;
+	BOOL isCameraOpen_ = FALSE;
+	BOOL isMicOpen_ = FALSE;
+	BOOL isScreenOpen_ = FALSE;
 
-  UserState state_ = UserState::NotInit;
+	UserState state_ = UserState::NotInit;
 };

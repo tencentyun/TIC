@@ -1,36 +1,31 @@
-ï»¿//
-//  Copyright Â© 2019 Tencent. All rights reserved.
-//
-
 #pragma once
 
 #ifndef __AFXWIN_H__
-#error "åœ¨åŒ…å«æ­¤æ–‡ä»¶ä¹‹å‰åŒ…å«â€œstdafx.hâ€ä»¥ç”Ÿæˆ PCH æ–‡ä»¶"
+	#error "ÔÚ°üº¬´ËÎÄ¼şÖ®Ç°°üº¬¡°stdafx.h¡±ÒÔÉú³É PCH ÎÄ¼ş"
 #endif
-
-#include <string>
 
 #include "resource.h"
 
-class CTICDemoApp : public CWinApp {
-  DECLARE_MESSAGE_MAP()
- public:
-  CTICDemoApp();
+class CTICDemoApp : public CWinApp
+{
+	DECLARE_MESSAGE_MAP()
+public:
+	CTICDemoApp();
 
-  virtual BOOL InitInstance();
+	virtual BOOL InitInstance();
 
-  void setUserId(const std::string& uid) { this->uid_ = uid; }
-  void setUserSig(const std::string& sig) { this->usig_ = sig; }
-  void setClassId(int cls) { this->clsid_ = cls; }
+	void setUserId(const std::string& uid) { this->uid_ = uid; };
+	void setUserSig(const std::string& sig) { this->usig_ = sig; };
+	void setClassId(int cls) { this->clsid_ = cls; }
 
-  std::string getUserId() { return uid_; }
-  std::string getUserSig() { return usig_; }
-  int getClassId() { return clsid_; }
+	std::string getUserId() { return uid_; };
+	std::string getUserSig() { return usig_; }
+	int getClassId() { return clsid_; }
 
- private:
-  std::string uid_;
-  std::string usig_;
-  int clsid_ = 0;
+private:
+	std::string uid_;
+	std::string usig_;
+	int clsid_ = 0;
 };
 
 extern CTICDemoApp theApp;

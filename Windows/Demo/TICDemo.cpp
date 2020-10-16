@@ -1,68 +1,69 @@
-ï»¿//
-//  Copyright Â© 2019 Tencent. All rights reserved.
-//
-
-#include "TICDemo.h"
-
-#include <memory>
-
-#include "Config.h"
-#include "TICDemoDlg.h"
 #include "stdafx.h"
+#include "TICDemo.h"
+#include "TICDemoDlg.h"
+#include "Config.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
 BEGIN_MESSAGE_MAP(CTICDemoApp, CWinApp)
-ON_COMMAND(ID_HELP, &CWinApp::OnHelp)
+	ON_COMMAND(ID_HELP, &CWinApp::OnHelp)
 END_MESSAGE_MAP()
 
-CTICDemoApp::CTICDemoApp() {}
+CTICDemoApp::CTICDemoApp()
+{
 
-BOOL CTICDemoApp::InitInstance() {
-  // è¯»å–é…ç½®æ–‡ä»¶
-  bool bRet = Config::GetInstance().ReadConfig();
-  if (!bRet) {
-    ::MessageBox(NULL, _T("è¯»å–é…ç½®ä¿¡æ¯å‡ºé”™"), _T("é”™è¯¯"), MB_OK);
-    return FALSE;
-  }
+}
 
-  CWinApp::InitInstance();
+BOOL CTICDemoApp::InitInstance()
+{
+	// ¶ÁÈ¡ÅäÖÃÎÄ¼ş
+	bool bRet =	Config::GetInstance().ReadConfig();
+	if (!bRet)
+	{
+		::MessageBox(NULL, _T("¶ÁÈ¡ÅäÖÃĞÅÏ¢³ö´í"), _T("´íÎó"), MB_OK);
+		return FALSE;
+	}
 
-  // åˆ›å»º shell ç®¡ç†å™¨ï¼Œä»¥é˜²å¯¹è¯æ¡†åŒ…å«
-  // ä»»ä½• shell æ ‘è§†å›¾æ§ä»¶æˆ– shell åˆ—è¡¨è§†å›¾æ§ä»¶ã€‚
-  CShellManager *pShellManager = new CShellManager;
+	CWinApp::InitInstance();
 
-  // æ¿€æ´»â€œWindows Nativeâ€è§†è§‰ç®¡ç†å™¨ï¼Œä»¥ä¾¿åœ¨ MFC æ§ä»¶ä¸­å¯ç”¨ä¸»é¢˜
-  // CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows));
+	// ´´½¨ shell ¹ÜÀíÆ÷£¬ÒÔ·À¶Ô»°¿ò°üº¬
+	// ÈÎºÎ shell Ê÷ÊÓÍ¼¿Ø¼ş»ò shell ÁĞ±íÊÓÍ¼¿Ø¼ş¡£
+	CShellManager *pShellManager = new CShellManager;
 
-  auto dlg = std::make_shared<CTICDemoDlg>();
-  m_pMainWnd = dlg.get();
-  INT_PTR nResponse = dlg->DoModal();
-  if (nResponse == IDOK) {
-  } else if (nResponse == IDCANCEL) {
-  } else if (nResponse == -1) {
-    TRACE(traceAppMsg, 0, "è­¦å‘Š: å¯¹è¯æ¡†åˆ›å»ºå¤±è´¥ï¼Œåº”ç”¨ç¨‹åºå°†æ„å¤–ç»ˆæ­¢ã€‚\n");
-    TRACE(traceAppMsg, 0,
-          "è­¦å‘Š: å¦‚æœæ‚¨åœ¨å¯¹è¯æ¡†ä¸Šä½¿ç”¨ MFC æ§ä»¶ï¼Œåˆ™æ— æ³• #define "
-          "_AFX_NO_MFC_CONTROLS_IN_DIALOGSã€‚\n");
-  }
+	// ¼¤»î¡°Windows Native¡±ÊÓ¾õ¹ÜÀíÆ÷£¬ÒÔ±ãÔÚ MFC ¿Ø¼şÖĞÆôÓÃÖ÷Ìâ
+	//CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows));
 
-  // åˆ é™¤ä¸Šé¢åˆ›å»ºçš„ shell ç®¡ç†å™¨ã€‚
-  if (pShellManager != nullptr) {
-    delete pShellManager;
-  }
+	auto dlg = std::make_shared<CTICDemoDlg>();
+	m_pMainWnd = dlg.get();
+	INT_PTR nResponse = dlg->DoModal();
+	if (nResponse == IDOK)
+	{
+	}
+	else if (nResponse == IDCANCEL)
+	{
+	}
+	else if (nResponse == -1)
+	{
+		TRACE(traceAppMsg, 0, "¾¯¸æ: ¶Ô»°¿ò´´½¨Ê§°Ü£¬Ó¦ÓÃ³ÌĞò½«ÒâÍâÖÕÖ¹¡£\n");
+		TRACE(traceAppMsg, 0, "¾¯¸æ: Èç¹ûÄúÔÚ¶Ô»°¿òÉÏÊ¹ÓÃ MFC ¿Ø¼ş£¬ÔòÎŞ·¨ #define _AFX_NO_MFC_CONTROLS_IN_DIALOGS¡£\n");
+	}
+
+	// É¾³ıÉÏÃæ´´½¨µÄ shell ¹ÜÀíÆ÷¡£
+	if (pShellManager != nullptr)
+	{
+		delete pShellManager;
+	}
 
 #if !defined(_AFXDLL) && !defined(_AFX_NO_MFC_CONTROLS_IN_DIALOGS)
-  ControlBarCleanUp();
+	ControlBarCleanUp();
 #endif
 
-  return FALSE;
+	return FALSE;
 }
 
 CTICDemoApp theApp;
 
-int main() {
-  return _tWinMain(GetModuleHandle(NULL), NULL, _T(""), SW_SHOWDEFAULT);
-}
+
+int main() { return _tWinMain(GetModuleHandle(NULL), NULL, _T(""), SW_SHOWDEFAULT); }
