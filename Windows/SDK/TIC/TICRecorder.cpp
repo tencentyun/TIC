@@ -54,7 +54,8 @@ void TICRecorder::sendOfflineRecordInfo(const std::string& ntpServer,
             groupId.c_str(), kTIMConv_Group, jsonMsg.toStyledString().c_str(),
             [](int32_t code, const char* desc, const char* json_params,
                const void* user_data) {
-              TICCallback* pCB = (TICCallback*)user_data;
+              TICCallback* pCB =
+                  reinterpret_cast<TICCallback*>(const_cast<void*>(user_data));
               if (pCB) {
                 (*pCB)(TICMODULE_IMSDK, code, desc);
                 delete pCB;

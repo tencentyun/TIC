@@ -21,7 +21,7 @@ TICLocalRecorder* TICLocalRecorder::GetInstance() {
     }
     ticRecord_mex.unlock();
   }
-  return (TICLocalRecorder*)g_pTICRecorder;
+  return reinterpret_cast<TICLocalRecorder*>(g_pTICRecorder);
 }
 
 void TICLocalRecorder::setListener(std::weak_ptr<TEduRecordCallback> listen) {

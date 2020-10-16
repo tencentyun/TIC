@@ -18,7 +18,8 @@
  */
 struct TEduRecordAuthParam {
   TEduRecordAuthParam() {}
-  TEduRecordAuthParam(int appId, std::string userId, std::string userSig) {
+  TEduRecordAuthParam(int appId, const std::string& userId,
+                      const std::string& userSig) {
     this->appId = appId;
     this->userId = userId;
     this->userSig = userSig;
@@ -31,8 +32,8 @@ struct TEduRecordAuthParam {
 
 struct RecordKey {
   RecordKey() {}
-  RecordKey(int appid, int classid, std::string& userid, std::string& taskid,
-            int index, int size) {
+  RecordKey(int appid, int classid, const std::string& userid,
+            const std::string& taskid, int index, int size) {
     this->appid = appid;
     this->class_id = classid;
     this->user_id = userid;

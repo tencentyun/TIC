@@ -77,7 +77,7 @@ class HttpRequest {
                  DWORD* pdwBytesWritten = nullptr);
 
   void receiveResponse();
-  void receiveResponseHeaders(DWORD& dwStatusCode, HttpHeaders& rspHeaders);
+  void receiveResponseHeaders(DWORD* dwStatusCode, HttpHeaders* rspHeaders);
   int queryDataAvailable();  // 失败返回-1，同步模式成功返回可读字节数，异步模式成功始终返回0;
   void readData(void* buffer, DWORD dwBytesToRead,
                 DWORD* pdwBytesRead = nullptr);
@@ -119,13 +119,13 @@ class HttpClient {
   void enableRespEncodeConvert(
       bool bEnable);  // 是否将返回数据(仅text和json类型)转换为本地编码;
 
-  int get(const std::wstring& url, std::string& rspBody,
+  int get(const std::wstring& url, std::string* rspBody,
           const HttpHeaders* reqHeaders = nullptr,
           HttpHeaders* rspHeaders = nullptr,
           HttpProgressCallback progressCB = nullptr);
 
   int post(const std::wstring& url, const std::string& reqBody,
-           std::string& rspBody, const HttpHeaders* reqHeaders = nullptr,
+           std::string* rspBody, const HttpHeaders* reqHeaders = nullptr,
            HttpHeaders* rspHeaders = nullptr,
            HttpProgressCallback progressCB = nullptr);
 
@@ -148,7 +148,7 @@ class HttpClient {
                     const HttpHeaders* reqHeaders = nullptr);
 
   static void convertRespEncode(const HttpHeaders& headers,
-                                const std::string& src, std::string& dst);
+                                const std::string& src, std::string* dst);
   static std::wstring a2w(const std::string& str,
                           unsigned int codePage = CP_ACP);
   static std::string w2a(const std::wstring& wstr,

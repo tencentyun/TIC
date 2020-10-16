@@ -44,28 +44,32 @@ void TICManagerImpl::Init(int sdkappid, TICCallback callback,
 
   timRecvNewMsgCallback_ = [](const char *json_msg_array,
                               const void *user_data) {
-    TICManagerImpl *pThis = (TICManagerImpl *)user_data;
+    TICManagerImpl *pThis =
+        reinterpret_cast<TICManagerImpl *>(const_cast<void *>(user_data));
     pThis->OnIMNewMsg(json_msg_array);
   };
   TIMAddRecvNewMsgCallback(timRecvNewMsgCallback_, this);
 
   TIMSetKickedOfflineCallback(
       [](const void *user_data) {
-        TICManagerImpl *pThis = (TICManagerImpl *)user_data;
+        TICManagerImpl *pThis =
+            reinterpret_cast<TICManagerImpl *>(const_cast<void *>(user_data));
         pThis->OnIMKickedOffline();
       },
       this);
 
   TIMSetUserSigExpiredCallback(
       [](const void *user_data) {
-        TICManagerImpl *pThis = (TICManagerImpl *)user_data;
+        TICManagerImpl *pThis =
+            reinterpret_cast<TICManagerImpl *>(const_cast<void *>(user_data));
         pThis->OnIMUserSigExpired();
       },
       this);
 
   TIMSetGroupTipsEventCallback(
       [](const char *json_group_tip_array, const void *user_data) {
-        TICManagerImpl *pThis = (TICManagerImpl *)user_data;
+        TICManagerImpl *pThis =
+            reinterpret_cast<TICManagerImpl *>(const_cast<void *>(user_data));
         pThis->OnIMGroupTipsEvent(json_group_tip_array);
       },
       this);
@@ -131,7 +135,8 @@ void TICManagerImpl::Login(const std::string &userId,
       userId.c_str(), userSig.c_str(),
       [](int32_t code, const char *desc, const char *json_params,
          const void *user_data) {
-        TICCallbackUtil *util = (TICCallbackUtil *)user_data;
+        TICCallbackUtil *util =
+            reinterpret_cast<TICCallbackUtil *>(const_cast<void *>(user_data));
         util->IMCallback(code, desc);
         delete util;
       },
@@ -147,7 +152,8 @@ void TICManagerImpl::Logout(TICCallback callback) {
   int ret = TIMLogout(
       [](int32_t code, const char *desc, const char *json_params,
          const void *user_data) {
-        TICCallbackUtil *util = (TICCallbackUtil *)user_data;
+        TICCallbackUtil *util =
+            reinterpret_cast<TICCallbackUtil *>(const_cast<void *>(user_data));
         util->IMCallback(code, desc);
         delete util;
       },
@@ -176,7 +182,8 @@ void TICManagerImpl::CreateClassroom(uint32_t classId, TICClassScene classScene,
       json_value_param.toStyledString().c_str(),
       [](int32_t code, const char *desc, const char *json_params,
          const void *user_data) {
-        TICCallbackUtil *util = (TICCallbackUtil *)user_data;
+        TICCallbackUtil *util =
+            reinterpret_cast<TICCallbackUtil *>(const_cast<void *>(user_data));
         util->IMCallback(code, desc);
         delete util;
       },
@@ -194,7 +201,8 @@ void TICManagerImpl::DestroyClassroom(uint32_t classId, TICCallback callback) {
       groupId.c_str(),
       [](int32_t code, const char *desc, const char *json_params,
          const void *user_data) {
-        TICCallbackUtil *util = (TICCallbackUtil *)user_data;
+        TICCallbackUtil *util =
+            reinterpret_cast<TICCallbackUtil *>(const_cast<void *>(user_data));
         util->IMCallback(code, desc);
         delete util;
       },
@@ -305,7 +313,8 @@ void TICManagerImpl::SendTextMessage(const std::string &userId,
       userId.c_str(), kTIMConv_C2C, jsonMessage.toStyledString().c_str(),
       [](int32_t code, const char *desc, const char *json_params,
          const void *user_data) {
-        TICCallbackUtil *util = (TICCallbackUtil *)user_data;
+        TICCallbackUtil *util =
+            reinterpret_cast<TICCallbackUtil *>(const_cast<void *>(user_data));
         util->IMCallback(code, desc);
         delete util;
       },
@@ -336,7 +345,8 @@ void TICManagerImpl::SendCustomMessage(const std::string &userId,
       userId.c_str(), kTIMConv_C2C, jsonMessage.toStyledString().c_str(),
       [](int32_t code, const char *desc, const char *json_params,
          const void *user_data) {
-        TICCallbackUtil *util = (TICCallbackUtil *)user_data;
+        TICCallbackUtil *util =
+            reinterpret_cast<TICCallbackUtil *>(const_cast<void *>(user_data));
         util->IMCallback(code, desc);
         delete util;
       },
@@ -355,7 +365,8 @@ void TICManagerImpl::SendMessage(const std::string &userId,
       userId.c_str(), kTIMConv_C2C, jsonMsg.c_str(),
       [](int32_t code, const char *desc, const char *json_params,
          const void *user_data) {
-        TICCallbackUtil *util = (TICCallbackUtil *)user_data;
+        TICCallbackUtil *util =
+            reinterpret_cast<TICCallbackUtil *>(const_cast<void *>(user_data));
         util->IMCallback(code, desc);
         delete util;
       },
@@ -387,7 +398,8 @@ void TICManagerImpl::SendGroupTextMessage(const std::string &text,
       groupId.c_str(), kTIMConv_Group, jsonMessage.toStyledString().c_str(),
       [](int32_t code, const char *desc, const char *json_params,
          const void *user_data) {
-        TICCallbackUtil *util = (TICCallbackUtil *)user_data;
+        TICCallbackUtil *util =
+            reinterpret_cast<TICCallbackUtil *>(const_cast<void *>(user_data));
         util->IMCallback(code, desc);
         delete util;
       },
@@ -419,7 +431,8 @@ void TICManagerImpl::SendGroupCustomMessage(const std::string &data,
       groupId.c_str(), kTIMConv_Group, jsonMessage.toStyledString().c_str(),
       [](int32_t code, const char *desc, const char *json_params,
          const void *user_data) {
-        TICCallbackUtil *util = (TICCallbackUtil *)user_data;
+        TICCallbackUtil *util =
+            reinterpret_cast<TICCallbackUtil *>(const_cast<void *>(user_data));
         util->IMCallback(code, desc);
         delete util;
       },
@@ -438,7 +451,8 @@ void TICManagerImpl::SendGroupMessage(const std::string &jsonMsg,
       groupId.c_str(), kTIMConv_Group, jsonMsg.c_str(),
       [](int32_t code, const char *desc, const char *json_params,
          const void *user_data) {
-        TICCallbackUtil *util = (TICCallbackUtil *)user_data;
+        TICCallbackUtil *util =
+            reinterpret_cast<TICCallbackUtil *>(const_cast<void *>(user_data));
         util->IMCallback(code, desc);
         delete util;
       },
@@ -646,7 +660,8 @@ void TICManagerImpl::JoinIMGroup(const char *groupId, TICCallback callback) {
       groupId, NULL,
       [](int32_t code, const char *desc, const char *json_params,
          const void *user_data) {
-        TICCallbackUtil *util = (TICCallbackUtil *)user_data;
+        TICCallbackUtil *util =
+            reinterpret_cast<TICCallbackUtil *>(const_cast<void *>(user_data));
         if (code == 10013) {  // 已在房间，忽略
           code = TIM_SUCC;
         }
@@ -666,7 +681,8 @@ void TICManagerImpl::QuitIMGroup(const char *groupId, TICCallback callback) {
       groupId,
       [](int32_t code, const char *desc, const char *json_params,
          const void *user_data) {
-        TICCallbackUtil *util = (TICCallbackUtil *)user_data;
+        TICCallbackUtil *util =
+            reinterpret_cast<TICCallbackUtil *>(const_cast<void *>(user_data));
         // 群主不允许退出群(只能解散群)||群组已解散;
         if (code == ERR_SVR_GROUP_SUPER_NOT_ALLOW_QUIT ||
             code == ERR_SVR_GROUP_NOT_FOUND) {

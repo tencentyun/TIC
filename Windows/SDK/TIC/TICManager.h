@@ -201,31 +201,41 @@ struct TICEventListener {
  * 课堂参数配置
  */
 struct TICClassroomOption {
-  uint32_t classId =
-      0;  // 课堂ID，32位整型，取值范围[1, 4294967294]，由业务侧维护
+  // 课堂ID，32位整型，取值范围[1, 4294967294]，由业务侧维护
+  uint32_t classId = 0;
 
-  bool openCamera = false;  // 指示进房成功后是否自动打开摄像头
-  std::string cameraId = "";  // 指示要打开的摄像头ID，传""表示打开默认摄像头
+  // 指示进房成功后是否自动打开摄像头
+  bool openCamera = false;
 
-  bool openMic = false;  // 指示进房成功后是否自动打开麦克风
-  std::string micId = "";  // 指示要打开的麦克风ID，传""表示打开默认麦克风
+  // 指示要打开的摄像头ID，传""表示打开默认摄像头
+  std::string cameraId = "";
 
-  HWND rendHwnd = nullptr;  // 指示用于渲染本地画面的窗口HWND
+  // 指示进房成功后是否自动打开麦克风
+  bool openMic = false;
 
-  std::string ntpServer =
-      "time1.cloud.tencent.com";  // ntp服务器;进房成功后从ntp服务器获取服务器时间戳作为课后录制的对时信息,默认使用time1.cloud.tencent.com;为保证对时信息的高度一致,建议各端使用相同对时地址;
+  // 指示要打开的麦克风ID，传""表示打开默认麦克风
+  std::string micId = "";
 
-  TEduBoardInitParam boardInitParam;  // 初始化白板参数
-  TEduBoardCallback* boardCallback =
-      nullptr;  // 白板事件回调监听;请在此设置白板事件监听,不推荐自己使用白板sdk的AddCallback()函数;
+  // 指示用于渲染本地画面的窗口HWND
+  HWND rendHwnd = nullptr;
 
-  TICClassScene classScene =
-      TIC_CLASS_SCENE_VIDEO_CALL;  // 课堂场景;默认TIC_CLASS_SCENE_VIDEO_CALL
-  TICRoleType roleType =
-      TIC_ROLE_TYPE_ANCHOR;  // 课堂角色;只有在classScene为TIC_CLASS_SCENE_LIVE时有效，默认TIC_ROLE_TYPE_ANCHOR
+  // ntp服务器;进房成功后从ntp服务器获取服务器时间戳作为课后录制的对时信息,默认使用time1.cloud.tencent.com;为保证对时信息的高度一致,建议各端使用相同对时地址;
+  std::string ntpServer = "time1.cloud.tencent.com";
 
-  bool compatSaas =
-      false;  // 是否兼容SaaS; 开启SaaS兼容模式，内部会多加入一个聊天群组;
+  // 初始化白板参数
+  TEduBoardInitParam boardInitParam;
+
+  // 白板事件回调监听;请在此设置白板事件监听,不推荐自己使用白板sdk的AddCallback()函数;
+  TEduBoardCallback* boardCallback = nullptr;
+
+  // 课堂场景;默认TIC_CLASS_SCENE_VIDEO_CALL
+  TICClassScene classScene = TIC_CLASS_SCENE_VIDEO_CALL;
+
+  // 课堂角色;只有在classScene为TIC_CLASS_SCENE_LIVE时有效，默认TIC_ROLE_TYPE_ANCHOR
+  TICRoleType roleType = TIC_ROLE_TYPE_ANCHOR;
+
+  // 是否兼容SaaS; 开启SaaS兼容模式，内部会多加入一个聊天群组;
+  bool compatSaas = false;
 };
 
 /**

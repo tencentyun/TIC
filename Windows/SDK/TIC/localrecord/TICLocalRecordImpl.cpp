@@ -22,7 +22,7 @@ struct BaseCallback {
     this->callback = callback;
   }
   virtual void parse(const std::string& response,
-                     TICLocalRecorderImpl::Result& result) const {}
+                     TICLocalRecorderImpl::Result* result) const {}
   TICCallback callback;
 };
 
@@ -30,14 +30,14 @@ class CmdCallback : public BaseCallback {
  public:
   explicit CmdCallback(const TICCallback callback) : BaseCallback(callback) {}
   void parse(const std::string& response,
-             TICLocalRecorderImpl::Result& result) const override {
+             TICLocalRecorderImpl::Result* result) const override {
     std::string rspBuf = response;
     Json::Value Val;
     Json::Reader reader;
     if (!reader.parse(rspBuf.c_str(), rspBuf.c_str() + rspBuf.size(),
                       Val)) {  // 从ifs中读取数据到jsonRoot
-      result.msg = std::string("parse json error :");
-      result.code = -1;
+      result->msg = std::string("parse json error :");
+      result->code = -1;
       return;
     }
 
@@ -47,18 +47,18 @@ class CmdCallback : public BaseCallback {
       if (Response.isMember("Error")) {  // 失败，错误返回
         auto error = Response["Error"];
         if (error.isMember("Code")) {
-          result.code = error["Code"].asInt();
+          result->code = error["Code"].asInt();
         }
         if (error.isMember("Message")) {
-          result.msg = error["Message"].asString();
+          result->msg = error["Message"].asString();
         }
       } else {
-        result.code = 0;
-        result.msg = response;
+        result->code = 0;
+        result->msg = response;
       }
     } else {
-      result.msg = std::string("invalid response");
-      result.code = -1;
+      result->msg = std::string("invalid response");
+      result->code = -1;
     }
   }
 };
@@ -69,9 +69,9 @@ class ServerCallback : public BaseCallback {
       : BaseCallback(callback) {}
 
   void parse(const std::string& response,
-             TICLocalRecorderImpl::Result& result) const override {
-    result.code = 0;
-    result.msg = response;
+             TICLocalRecorderImpl::Result* result) const override {
+    result->code = 0;
+    result->msg = response;
   }
 };
 
@@ -260,7 +260,7 @@ void TICLocalRecorderImpl::sendRequest(const std::wstring& url,
                     }
 
                     if (mycallback) {
-                      mycallback->parse(std::string(rspBuf), res);
+                      mycallback->parse(std::string(rspBuf), &res);
                     }
 
                   myEXIT:

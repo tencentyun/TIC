@@ -211,15 +211,15 @@ void HttpRequest::receiveResponse() {
   }
 }
 
-void HttpRequest::receiveResponseHeaders(DWORD& dwStatusCode,
-                                         HttpHeaders& rspHeaders) {
+void HttpRequest::receiveResponseHeaders(DWORD* dwStatusCode,
+                                         HttpHeaders* rspHeaders) {
   if (m_dwErrorCode != 0) return;
 
-  DWORD dwSize = sizeof(dwStatusCode);
+  DWORD dwSize = sizeof(DWORD);
   if (FALSE == ::WinHttpQueryHeaders(
                    m_hRequest,
                    WINHTTP_QUERY_STATUS_CODE | WINHTTP_QUERY_FLAG_NUMBER, NULL,
-                   &dwStatusCode, &dwSize, NULL)) {
+                   dwStatusCode, &dwSize, NULL)) {
     m_dwErrorCode = GetLastError();
     return;
   }
@@ -243,7 +243,7 @@ void HttpRequest::receiveResponseHeaders(DWORD& dwStatusCode,
     return;
   }
 
-  rspHeaders.clear();
+  rspHeaders->clear();
   size_t pos = 0;
   const size_t len = responseHeader.length();
   const size_t delimLen = 2;
@@ -258,7 +258,7 @@ void HttpRequest::receiveResponseHeaders(DWORD& dwStatusCode,
       header.erase(colonPos);
     }
     if (!header.empty() && header[0] != L'\0') {
-      rspHeaders.emplace(header, value);
+      rspHeaders->emplace(header, value);
     }
     pos = delim_pos + delimLen;
   }
@@ -376,7 +376,7 @@ void HttpClient::enableRespEncodeConvert(bool bEnable) {
   m_bEnableEncodeConvert = bEnable;
 }
 
-int HttpClient::get(const std::wstring& url, std::string& rspBody,
+int HttpClient::get(const std::wstring& url, std::string* rspBody,
                     const HttpHeaders* reqHeaders /*= nullptr*/,
                     HttpHeaders* rspHeaders /*= nullptr*/,
                     HttpProgressCallback progressCB /*= nullptr*/) {
@@ -392,11 +392,11 @@ int HttpClient::get(const std::wstring& url, std::string& rspBody,
   if (reqHeaders) request.setRequestHeaders(*reqHeaders);
   request.sendRequest();
   request.receiveResponse();
-  request.receiveResponseHeaders(dwStatusCode, theRspHeaders);
+  request.receiveResponseHeaders(&dwStatusCode, &theRspHeaders);
 
   DWORD dwRspBodySize =
       static_cast<DWORD>(theRspHeaders.GetHeaderAsUInt64(L"Content-Length"));
-  rspBody.resize(dwRspBodySize);
+  rspBody->resize(dwRspBodySize);
   DWORD dwReceivedSize = 0;
   if (progressCB) progressCB(HttpAction::Response, 0, dwRspBodySize);
   while (true) {
@@ -408,7 +408,7 @@ int HttpClient::get(const std::wstring& url, std::string& rspBody,
           std::unique_ptr<char>(new char[nAvailable + 1]);
       ::ZeroMemory(ptr.get(), nAvailable + 1);
       request.readData(ptr.get(), nAvailable, &readSize);
-      rspBody.append(ptr.get(), readSize);
+      rspBody->append(ptr.get(), readSize);
     } else {
       request.readData(&rspBody[dwReceivedSize], nAvailable, &readSize);
     }
@@ -418,7 +418,7 @@ int HttpClient::get(const std::wstring& url, std::string& rspBody,
   }
 
   if (m_bEnableEncodeConvert)
-    convertRespEncode(theRspHeaders, rspBody, rspBody);
+    convertRespEncode(theRspHeaders, *rspBody, rspBody);
 
   if (request.errorCode() != 0) return request.errorCode();
   if (dwStatusCode != 200) return dwStatusCode;
@@ -426,7 +426,7 @@ int HttpClient::get(const std::wstring& url, std::string& rspBody,
 }
 
 int HttpClient::post(const std::wstring& url, const std::string& reqBody,
-                     std::string& rspBody,
+                     std::string* rspBody,
                      const HttpHeaders* reqHeaders /*= nullptr*/,
                      HttpHeaders* rspHeaders /*= nullptr*/,
                      HttpProgressCallback progressCB /*= nullptr*/) {
@@ -458,11 +458,11 @@ int HttpClient::post(const std::wstring& url, const std::string& reqBody,
   }
 
   request.receiveResponse();
-  request.receiveResponseHeaders(dwStatusCode, theRspHeaders);
+  request.receiveResponseHeaders(&dwStatusCode, &theRspHeaders);
 
   DWORD dwRspBodySize =
       static_cast<DWORD>(theRspHeaders.GetHeaderAsUInt64(L"Content-Length"));
-  rspBody.resize(dwRspBodySize);
+  rspBody->resize(dwRspBodySize);
   DWORD dwReceivedSize = 0;
   if (progressCB) progressCB(HttpAction::Response, 0, dwRspBodySize);
   while (true) {
@@ -474,7 +474,7 @@ int HttpClient::post(const std::wstring& url, const std::string& reqBody,
           std::unique_ptr<char>(new char[nAvailable + 1]);
       ::ZeroMemory(ptr.get(), nAvailable + 1);
       request.readData(ptr.get(), nAvailable, &readSize);
-      rspBody.append(ptr.get(), readSize);
+      rspBody->append(ptr.get(), readSize);
     } else {
       request.readData(&rspBody[dwReceivedSize], nAvailable, &readSize);
     }
@@ -484,7 +484,7 @@ int HttpClient::post(const std::wstring& url, const std::string& reqBody,
   }
 
   if (m_bEnableEncodeConvert)
-    convertRespEncode(theRspHeaders, rspBody, rspBody);
+    convertRespEncode(theRspHeaders, *rspBody, rspBody);
 
   if (request.errorCode() != 0) return request.errorCode();
   if (dwStatusCode != 200) return dwStatusCode;
@@ -507,7 +507,7 @@ int HttpClient::download(const std::wstring& url, const std::string& file,
   if (reqHeaders) request.setRequestHeaders(*reqHeaders);
   request.sendRequest();
   request.receiveResponse();
-  request.receiveResponseHeaders(dwStatusCode, theRspHeaders);
+  request.receiveResponseHeaders(&dwStatusCode, &theRspHeaders);
 
   FILE* fp;
   fopen_s(&fp, file.c_str(), "wb");
@@ -569,8 +569,8 @@ void HttpClient::asynGet(const std::wstring& url, HttpRspCallback rspCB,
           }
           case HttpAsynCBType::HeadersAvailable: {
             if (m_bEnableEncodeConvert)
-              request.receiveResponseHeaders(requestInfo->dwStatusCode,
-                                             requestInfo->rspHeaders);
+              request.receiveResponseHeaders(&requestInfo->dwStatusCode,
+                                             &requestInfo->rspHeaders);
             if (request.errorCode() == 0) {
               requestInfo->dwRspBodyTotalSize = static_cast<DWORD>(
                   requestInfo->rspHeaders.GetHeaderAsUInt64(L"Content-Length"));
@@ -586,7 +586,7 @@ void HttpClient::asynGet(const std::wstring& url, HttpRspCallback rspCB,
               if (code == 0) code = requestInfo->dwStatusCode;
               if (code == 200) code = 0;
               convertRespEncode(requestInfo->rspHeaders, requestInfo->rspBody,
-                                requestInfo->rspBody);
+                                &requestInfo->rspBody);
               if (rspCB)
                 rspCB(code, requestInfo->rspHeaders, requestInfo->rspBody);
               delete requestInfo;
@@ -681,8 +681,8 @@ void HttpClient::asynPost(const std::wstring& url, const std::string& reqBody,
             break;
           }
           case HttpAsynCBType::HeadersAvailable: {
-            request.receiveResponseHeaders(requestInfo->dwStatusCode,
-                                           requestInfo->rspHeaders);
+            request.receiveResponseHeaders(&requestInfo->dwStatusCode,
+                                           &requestInfo->rspHeaders);
             if (request.errorCode() == 0) {
               requestInfo->dwRspBodyTotalSize = static_cast<DWORD>(
                   requestInfo->rspHeaders.GetHeaderAsUInt64(L"Content-Length"));
@@ -699,7 +699,7 @@ void HttpClient::asynPost(const std::wstring& url, const std::string& reqBody,
               if (code == 200) code = 0;
               if (m_bEnableEncodeConvert)
                 convertRespEncode(requestInfo->rspHeaders, requestInfo->rspBody,
-                                  requestInfo->rspBody);
+                                  &requestInfo->rspBody);
               if (rspCB)
                 rspCB(code, requestInfo->rspHeaders, requestInfo->rspBody);
               delete requestInfo;
@@ -770,8 +770,8 @@ void HttpClient::asynDownload(const std::wstring& url, const std::string& file,
             break;
           }
           case HttpAsynCBType::HeadersAvailable: {
-            request.receiveResponseHeaders(requestInfo->dwStatusCode,
-                                           requestInfo->rspHeaders);
+            request.receiveResponseHeaders(&requestInfo->dwStatusCode,
+                                           &requestInfo->rspHeaders);
             if (request.errorCode() == 0) {
               requestInfo->dwRspBodyTotalSize = static_cast<DWORD>(
                   requestInfo->rspHeaders.GetHeaderAsUInt64(L"Content-Length"));
@@ -822,7 +822,7 @@ void HttpClient::asynDownload(const std::wstring& url, const std::string& file,
 }
 
 void HttpClient::convertRespEncode(const HttpHeaders& headers,
-                                   const std::string& src, std::string& dst) {
+                                   const std::string& src, std::string* dst) {
   if (src.empty()) return;
   std::wstring contentType = headers.GetHeader(L"Content-Type");
   if (contentType.empty()) return;
@@ -831,9 +831,9 @@ void HttpClient::convertRespEncode(const HttpHeaders& headers,
   if ((::wcsstr(contentType.c_str(), L"text") ||
        ::wcsstr(contentType.c_str(), L"json"))) {
     if (::wcsstr(contentType.c_str(), L"utf-8")) {
-      dst = w2a(a2w(src, CP_UTF8));
+      *dst = w2a(a2w(src, CP_UTF8));
     } else if (::wcsstr(contentType.c_str(), L"gbk")) {
-      dst = w2a(a2w(src));
+      *dst = w2a(a2w(src));
     }
   }
 }

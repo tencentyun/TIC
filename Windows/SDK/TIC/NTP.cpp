@@ -17,7 +17,7 @@
 const char* kDefaultNTPServer = "time1.cloud.tencent.com";  // 腾讯云NTP服务器
 const char* kDefaultNTPPort = "123";  // NTP协议默认端口
 
-const static uint64_t OFFSET_1900_TO_1970 =
+static const uint64_t OFFSET_1900_TO_1970 =
     ((365LL * 70LL) + 17LL) * 24LL * 60LL *
     60LL;  // 70 years plus 17 leap days;
 
@@ -89,7 +89,7 @@ void NTP::getNTPServerTime(const std::string& ntpServer, int nRetry,
           _XTIME_NSECS_PER_TICK / 1000000;
 
       int nRet = sendto(sock, (const char*)&data, sizeof(data), 0,
-                        (SOCKADDR*)&addr, sizeof(addr));
+                        reinterpret_cast<const SOCKADDR*>(&addr), sizeof(addr));
       if (nRet == SOCKET_ERROR) {
         errCode = nRet;
         errMsg = "Send data to NTP server failed.";
