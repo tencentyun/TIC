@@ -39,6 +39,7 @@ source:
     #第三方代码文件的正则表达式，若无统一标识格式，可以指定具体目录，样例可参考test_source举例
     filepath_regex:
       - "/Windows/SDK/TIC/jsoncpp/.*"
+      - "/Windows/SDK/Updater/.*"
 
 file:
   - path: /Windows/.*
