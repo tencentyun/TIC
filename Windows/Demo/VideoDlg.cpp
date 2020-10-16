@@ -1,446 +1,408 @@
-#include "stdafx.h"
+ï»¿//
+//  Copyright Â© 2019 Tencent. All rights reserved.
+//
+
 #include "VideoDlg.h"
+
 #include "resource.h"
+#include "stdafx.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
 BEGIN_MESSAGE_MAP(CVideoDlg, CDialogEx)
-	ON_WM_CTLCOLOR()
-	ON_BN_CLICKED(IDC_BTN_OPEN_CAMERA, &CVideoDlg::OnBtnOpenCamera)
-	ON_BN_CLICKED(IDC_BTN_CLOSE_CAMERA, &CVideoDlg::OnBtnCloseCamera)
-	ON_BN_CLICKED(IDC_BTN_OPEN_MIC, &CVideoDlg::OnBtnOpenMic)
-	ON_BN_CLICKED(IDC_BTN_CLOSE_MIC, &CVideoDlg::OnBtnCloseMic)
-	ON_BN_CLICKED(IDC_BTN_OPEN_SCREEN, &CVideoDlg::OnBtnOpenScreen)
-	ON_BN_CLICKED(IDC_BTN_CLOSE_SCREEN, &CVideoDlg::OnBtnCloseScreen)
-	ON_BN_CLICKED(IDC_BTN_SEND_MSG, &CVideoDlg::OnBtnSendMsg)
+ON_WM_CTLCOLOR()
+ON_BN_CLICKED(IDC_BTN_OPEN_CAMERA, &CVideoDlg::OnBtnOpenCamera)
+ON_BN_CLICKED(IDC_BTN_CLOSE_CAMERA, &CVideoDlg::OnBtnCloseCamera)
+ON_BN_CLICKED(IDC_BTN_OPEN_MIC, &CVideoDlg::OnBtnOpenMic)
+ON_BN_CLICKED(IDC_BTN_CLOSE_MIC, &CVideoDlg::OnBtnCloseMic)
+ON_BN_CLICKED(IDC_BTN_OPEN_SCREEN, &CVideoDlg::OnBtnOpenScreen)
+ON_BN_CLICKED(IDC_BTN_CLOSE_SCREEN, &CVideoDlg::OnBtnCloseScreen)
+ON_BN_CLICKED(IDC_BTN_SEND_MSG, &CVideoDlg::OnBtnSendMsg)
 END_MESSAGE_MAP()
 
-CVideoDlg::CVideoDlg(CWnd* pParent)
-	: CDialogEx(IDD_VIDEO_DIALOG, pParent)
-{
+CVideoDlg::CVideoDlg(CWnd* pParent) : CDialogEx(IDD_VIDEO_DIALOG, pParent) {}
 
+void CVideoDlg::UpdateUI(UserState state) {
+  if (state != UserState::Unknown) {
+    state_ = state;
+  }
+  if (state_ != UserState::InRoom) {
+    // é‡ç½®è®¾å¤‡çŠ¶æ€
+    isCameraOpen_ = FALSE;
+    isMicOpen_ = FALSE;
+    isScreenOpen_ = FALSE;
+
+    restAllRemoteViewWnd();
+
+    cbCamera_.EnableWindow(FALSE);
+    btnOpenCamera_.EnableWindow(FALSE);
+    btnCloseCamera_.EnableWindow(FALSE);
+
+    btnOpenMic_.EnableWindow(FALSE);
+    btnCloseMic_.EnableWindow(FALSE);
+
+    btnOpenScreen_.EnableWindow(FALSE);
+    btnCloseScreen_.EnableWindow(FALSE);
+
+    btnSendMsg_.EnableWindow(FALSE);
+
+    editMsgList_.SetWindowText(_T(""));
+  } else {
+    updateCameraList();
+
+    cbCamera_.EnableWindow(!isCameraOpen_);
+    btnOpenCamera_.EnableWindow(!isCameraOpen_);
+    btnCloseCamera_.EnableWindow(isCameraOpen_);
+
+    btnOpenMic_.EnableWindow(!isMicOpen_);
+    btnCloseMic_.EnableWindow(isMicOpen_);
+
+    btnOpenScreen_.EnableWindow(!isScreenOpen_);
+    btnCloseScreen_.EnableWindow(isScreenOpen_);
+
+    btnSendMsg_.EnableWindow(TRUE);
+  }
 }
 
-void CVideoDlg::UpdateUI(UserState state)
-{
-	if (state != UserState::Unknown) {
-		state_ = state;
-	}
-	if (state_ != UserState::InRoom)
-	{
-		//ÖØÖÃÉè±¸×´Ì¬
-		isCameraOpen_ = FALSE;
-		isMicOpen_ = FALSE;
-		isScreenOpen_ = FALSE;
+BOOL CVideoDlg::OnInitDialog() {
+  CDialogEx::OnInitDialog();
 
-		restAllRemoteViewWnd();
+  // è®°å½•ç”¨äºè§†é¢‘æ¸²æŸ“çš„å„ä¸ªçª—å£å¥æŸ„
+  localView_ = GetDlgItem(IDC_LOCAL_RENDER)->m_hWnd;
+  subStreamView_ = GetDlgItem(IDC_SUB_STREAM_RENDER)->m_hWnd;
 
-		cbCamera_.EnableWindow(FALSE);
-		btnOpenCamera_.EnableWindow(FALSE);
-		btnCloseCamera_.EnableWindow(FALSE);
+  std::pair<HWND, std::string> pair;
+  remoteViews_.clear();
 
-		btnOpenMic_.EnableWindow(FALSE);
-		btnCloseMic_.EnableWindow(FALSE);
+  pair.first = GetDlgItem(IDC_REMOTE_RENDER1)->m_hWnd;
+  pair.second = "";
+  remoteViews_.push_back(pair);
 
-		btnOpenScreen_.EnableWindow(FALSE);
-		btnCloseScreen_.EnableWindow(FALSE);
+  pair.first = GetDlgItem(IDC_REMOTE_RENDER2)->m_hWnd;
+  pair.second = "";
+  remoteViews_.push_back(pair);
 
-		btnSendMsg_.EnableWindow(FALSE);
+  pair.first = GetDlgItem(IDC_REMOTE_RENDER3)->m_hWnd;
+  pair.second = "";
+  remoteViews_.push_back(pair);
 
-		editMsgList_.SetWindowText(_T(""));
-	}
-	else
-	{
-		updateCameraList();
+  pair.first = GetDlgItem(IDC_REMOTE_RENDER4)->m_hWnd;
+  pair.second = "";
+  remoteViews_.push_back(pair);
 
-		cbCamera_.EnableWindow(!isCameraOpen_);
-		btnOpenCamera_.EnableWindow(!isCameraOpen_);
-		btnCloseCamera_.EnableWindow(isCameraOpen_);
-
-		btnOpenMic_.EnableWindow(!isMicOpen_);
-		btnCloseMic_.EnableWindow(isMicOpen_);
-
-		btnOpenScreen_.EnableWindow(!isScreenOpen_);
-		btnCloseScreen_.EnableWindow(isScreenOpen_);
-
-		btnSendMsg_.EnableWindow(TRUE);
-	}
+  return TRUE;
 }
 
-BOOL CVideoDlg::OnInitDialog()
-{
-	CDialogEx::OnInitDialog();
+void CVideoDlg::DoDataExchange(CDataExchange* pDX) {
+  CDialogEx::DoDataExchange(pDX);
 
-	//¼ÇÂ¼ÓÃÓÚÊÓÆµäÖÈ¾µÄ¸÷¸ö´°¿Ú¾ä±ú
-	localView_ = GetDlgItem(IDC_LOCAL_RENDER)->m_hWnd;
-	subStreamView_ = GetDlgItem(IDC_SUB_STREAM_RENDER)->m_hWnd;
-	
-	std::pair<HWND, std::string> pair;
-	remoteViews_.clear();
+  DDX_Control(pDX, IDC_COMBOX_CAMERA, cbCamera_);
 
-	pair.first = GetDlgItem(IDC_REMOTE_RENDER1)->m_hWnd;
-	pair.second = "";
-	remoteViews_.push_back(pair);
+  DDX_Control(pDX, IDC_BTN_OPEN_CAMERA, btnOpenCamera_);
+  DDX_Control(pDX, IDC_BTN_CLOSE_CAMERA, btnCloseCamera_);
 
-	pair.first = GetDlgItem(IDC_REMOTE_RENDER2)->m_hWnd;
-	pair.second = "";
-	remoteViews_.push_back(pair);
+  DDX_Control(pDX, IDC_BTN_OPEN_MIC, btnOpenMic_);
+  DDX_Control(pDX, IDC_BTN_CLOSE_MIC, btnCloseMic_);
 
-	pair.first = GetDlgItem(IDC_REMOTE_RENDER3)->m_hWnd;
-	pair.second = "";
-	remoteViews_.push_back(pair);
+  DDX_Control(pDX, IDC_BTN_OPEN_SCREEN, btnOpenScreen_);
+  DDX_Control(pDX, IDC_BTN_CLOSE_SCREEN, btnCloseScreen_);
 
-	pair.first = GetDlgItem(IDC_REMOTE_RENDER4)->m_hWnd;
-	pair.second = "";
-	remoteViews_.push_back(pair);
-
-	return TRUE;
+  DDX_Control(pDX, IDC_EDIT_MSG_LIST, editMsgList_);
+  DDX_Control(pDX, IDC_EDIT_SEND_MSG, editSendMsg_);
+  DDX_Control(pDX, IDC_BTN_SEND_MSG, btnSendMsg_);
 }
 
-void CVideoDlg::DoDataExchange(CDataExchange* pDX)
-{
-	CDialogEx::DoDataExchange(pDX);
+HBRUSH CVideoDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor) {
+  int nCtrlId = pWnd->GetDlgCtrlID();
+  if (nCtrlId == IDC_LOCAL_RENDER || nCtrlId == IDC_REMOTE_RENDER1 ||
+      nCtrlId == IDC_REMOTE_RENDER2 || nCtrlId == IDC_REMOTE_RENDER3 ||
+      nCtrlId == IDC_REMOTE_RENDER4 || nCtrlId == IDC_SUB_STREAM_RENDER) {
+    pDC->SetTextColor(RGB(255, 255, 255));
+    pDC->SetBkMode(TRANSPARENT);
+    return (HBRUSH)GetStockObject(DKGRAY_BRUSH);
+  }
 
-	DDX_Control(pDX, IDC_COMBOX_CAMERA, cbCamera_);
-
-	DDX_Control(pDX, IDC_BTN_OPEN_CAMERA, btnOpenCamera_);
-	DDX_Control(pDX, IDC_BTN_CLOSE_CAMERA, btnCloseCamera_);
-
-	DDX_Control(pDX, IDC_BTN_OPEN_MIC, btnOpenMic_);
-	DDX_Control(pDX, IDC_BTN_CLOSE_MIC, btnCloseMic_);
-
-	DDX_Control(pDX, IDC_BTN_OPEN_SCREEN, btnOpenScreen_);
-	DDX_Control(pDX, IDC_BTN_CLOSE_SCREEN, btnCloseScreen_);
-
-	DDX_Control(pDX, IDC_EDIT_MSG_LIST, editMsgList_);
-	DDX_Control(pDX, IDC_EDIT_SEND_MSG, editSendMsg_);
-	DDX_Control(pDX, IDC_BTN_SEND_MSG, btnSendMsg_);
+  return __super::OnCtlColor(pDC, pWnd, nCtlColor);
 }
 
-HBRUSH CVideoDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
-{
-	int nCtrlId = pWnd->GetDlgCtrlID();
-	if (nCtrlId == IDC_LOCAL_RENDER ||
-		nCtrlId == IDC_REMOTE_RENDER1 ||
-		nCtrlId == IDC_REMOTE_RENDER2 ||
-		nCtrlId == IDC_REMOTE_RENDER3 ||
-		nCtrlId == IDC_REMOTE_RENDER4 ||
-		nCtrlId == IDC_SUB_STREAM_RENDER)
-	{
-		
-		pDC->SetTextColor(RGB(255, 255, 255));
-		pDC->SetBkMode(TRANSPARENT);
-		return (HBRUSH)GetStockObject(DKGRAY_BRUSH);
-	}
+void CVideoDlg::OnBtnOpenCamera() {
+  if (cameraList_.empty()) {
+    MessageBox(_T("æ— å¯ç”¨æ‘„åƒå¤´"), _T("é”™è¯¯"), MB_OK);
+    return;
+  }
 
-	return __super::OnCtlColor(pDC, pWnd, nCtlColor);
+  int nIndex = cbCamera_.GetCurSel();
+  TICManager::GetInstance().GetTRTCCloud()->setCurrentCameraDevice(
+      cameraList_[nIndex].first.c_str());
+
+  TICManager::GetInstance().GetTRTCCloud()->startLocalPreview(localView_);
+
+  isCameraOpen_ = TRUE;
+  UpdateUI();
 }
 
-void CVideoDlg::OnBtnOpenCamera()
-{
-	if (cameraList_.empty())
-	{
-		MessageBox(_T("ÎŞ¿ÉÓÃÉãÏñÍ·"), _T("´íÎó"), MB_OK);
-		return;
-	}
+void CVideoDlg::OnBtnCloseCamera() {
+  TICManager::GetInstance().GetTRTCCloud()->stopLocalPreview();
 
-	int nIndex = cbCamera_.GetCurSel();
-	TICManager::GetInstance().GetTRTCCloud()->setCurrentCameraDevice(cameraList_[nIndex].first.c_str());
-
-	TICManager::GetInstance().GetTRTCCloud()->startLocalPreview(localView_);
-
-	isCameraOpen_ = TRUE;
-	UpdateUI();
+  isCameraOpen_ = FALSE;
+  UpdateUI();
 }
 
-void CVideoDlg::OnBtnCloseCamera()
-{
-	TICManager::GetInstance().GetTRTCCloud()->stopLocalPreview();
+void CVideoDlg::OnBtnOpenMic() {
+  ITRTCDeviceCollection* micList =
+      TICManager::GetInstance().GetTRTCCloud()->getMicDevicesList();
+  uint32_t micCount = micList->getCount();
+  micList->release();
+  if (micCount <= 0) {
+    MessageBox(_T("æ— å¯ç”¨éº¦å…‹é£"), _T("é”™è¯¯"), MB_OK);
+    return;
+  }
 
-	isCameraOpen_ = FALSE;
-	UpdateUI();
+  TICManager::GetInstance().GetTRTCCloud()->startLocalAudio();
+  TICManager::GetInstance().GetTRTCCloud()->muteLocalAudio(false);
+
+  isMicOpen_ = TRUE;
+  UpdateUI();
 }
 
-void CVideoDlg::OnBtnOpenMic()
-{
-	ITRTCDeviceCollection* micList = TICManager::GetInstance().GetTRTCCloud()->getMicDevicesList();
-	uint32_t micCount = micList->getCount();
-	micList->release();
-	if (micCount <= 0)
-	{
-		MessageBox(_T("ÎŞ¿ÉÓÃÂó¿Ë·ç"), _T("´íÎó"), MB_OK);
-		return;
-	}
+void CVideoDlg::OnBtnCloseMic() {
+  TICManager::GetInstance().GetTRTCCloud()->muteLocalAudio(true);
+  TICManager::GetInstance().GetTRTCCloud()->stopLocalAudio();
 
-	TICManager::GetInstance().GetTRTCCloud()->startLocalAudio();
-	TICManager::GetInstance().GetTRTCCloud()->muteLocalAudio(false);
-
-	isMicOpen_ = TRUE;
-	UpdateUI();
+  isMicOpen_ = FALSE;
+  UpdateUI();
 }
 
-void CVideoDlg::OnBtnCloseMic()
-{
-	TICManager::GetInstance().GetTRTCCloud()->muteLocalAudio(true);
-	TICManager::GetInstance().GetTRTCCloud()->stopLocalAudio();
+void CVideoDlg::OnBtnOpenScreen() {
+  TRTCScreenCaptureSourceInfo src;
+  src.type = TRTCScreenCaptureSourceTypeScreen;
+  TICManager::GetInstance().GetTRTCCloud()->selectScreenCaptureTarget(
+      src, RECT{0, 0, 0, 0}, true, false);
+  TICManager::GetInstance().GetTRTCCloud()->startScreenCapture(subStreamView_);
 
-	isMicOpen_ = FALSE;
-	UpdateUI();
+  isScreenOpen_ = true;
+  UpdateUI();
 }
 
-void CVideoDlg::OnBtnOpenScreen()
-{
-	TRTCScreenCaptureSourceInfo src;
-	src.type = TRTCScreenCaptureSourceTypeScreen;
-	TICManager::GetInstance().GetTRTCCloud()->selectScreenCaptureTarget(src, RECT{ 0,0,0,0 }, true, false);
-	TICManager::GetInstance().GetTRTCCloud()->startScreenCapture(subStreamView_);
+void CVideoDlg::OnBtnCloseScreen() {
+  TICManager::GetInstance().GetTRTCCloud()->stopScreenCapture();
 
-	isScreenOpen_ = true;
-	UpdateUI();
+  isScreenOpen_ = false;
+  UpdateUI();
 }
 
-void CVideoDlg::OnBtnCloseScreen()
-{
-	TICManager::GetInstance().GetTRTCCloud()->stopScreenCapture();
+void CVideoDlg::OnBtnSendMsg() {
+  CString sendText;
+  editSendMsg_.GetWindowText(sendText);
+  if (sendText.IsEmpty()) {
+    AfxMessageBox(_T("è¯·è¾“å…¥è¦å‘é€çš„æ¶ˆæ¯"), MB_OK);
+    return;
+  }
 
-	isScreenOpen_ = false;
-	UpdateUI();
+  std::weak_ptr<CVideoDlg> weakSelf = this->shared_from_this();
+  TICManager::GetInstance().SendGroupTextMessage(
+      w2a(sendText.GetBuffer(),
+          CP_UTF8),  // ä¸ºäº†å’Œå…¶ä»–å¹³å°äº’é€šï¼Œå‘é€å‰è½¬æˆutf8ç¼–ç 
+      [this, weakSelf, sendText](TICModule module, int code, const char* desc) {
+        std::shared_ptr<CVideoDlg> self = weakSelf.lock();
+        if (!self) {
+          return;
+        }
+
+        if (code == 0) {
+          CString msglist;
+          editMsgList_.GetWindowText(msglist);
+          CString text = _T("æˆ‘: ") + sendText + _T("\r\n");
+          editMsgList_.SetWindowText(msglist + text);
+          editMsgList_.LineScroll(editMsgList_.GetLineCount());
+
+          editSendMsg_.SetWindowText(_T(""));
+        } else {
+          showErrorMsg(module, code, desc);
+        }
+      });
+}
+void CVideoDlg::updateCameraList() {
+  cameraList_.clear();
+  ITRTCDeviceCollection* camlist =
+      TICManager::GetInstance().GetTRTCCloud()->getCameraDevicesList();
+  for (uint32_t i = 0; i < camlist->getCount(); ++i) {
+    std::pair<std::string /*id*/, std::string /*name*/> pair;
+    pair.first = camlist->getDevicePID(i);
+    pair.second = camlist->getDeviceName(i);
+    cameraList_.emplace_back(pair);
+  }
+  camlist->release();
+
+  ITRTCDeviceInfo* curCameraDeviceInfo =
+      TICManager::GetInstance().GetTRTCCloud()->getCurrentCameraDevice();
+  std::string szCurCameraId =
+      curCameraDeviceInfo ? curCameraDeviceInfo->getDevicePID() : "";
+  curCameraDeviceInfo->release();
+
+  if (szCurCameraId.empty() && cameraList_.size() > 0) {
+    szCurCameraId = cameraList_.front().first;
+  }
+
+  cbCamera_.ResetContent();
+  for (size_t i = 0; i < cameraList_.size(); ++i) {
+    cbCamera_.InsertString(i, a2w(cameraList_[i].second, CP_UTF8).c_str());
+    if (cameraList_[i].first == szCurCameraId) cbCamera_.SetCurSel(i);
+  }
 }
 
-void CVideoDlg::OnBtnSendMsg()
-{
-	CString sendText;
-	editSendMsg_.GetWindowText(sendText);
-	if (sendText.IsEmpty())
-	{
-		AfxMessageBox(_T("ÇëÊäÈëÒª·¢ËÍµÄÏûÏ¢"), MB_OK);
-		return;
-	}
+HWND CVideoDlg::getRemoteViewWnd(const std::string& userId) {
+  for (auto iter = remoteViews_.begin(); iter != remoteViews_.end(); ++iter) {
+    if (iter->second == userId) return iter->first;
+  }
 
-	std::weak_ptr<CVideoDlg> weakSelf = this->shared_from_this();
-	TICManager::GetInstance().SendGroupTextMessage(
-		w2a(sendText.GetBuffer(), CP_UTF8),	//ÎªÁËºÍÆäËûÆ½Ì¨»¥Í¨£¬·¢ËÍÇ°×ª³Éutf8±àÂë
-		[this, weakSelf, sendText](TICModule module, int code, const char *desc) {
-		std::shared_ptr<CVideoDlg> self = weakSelf.lock();
-		if (!self)
-		{
-			return;
-		}
-
-		if (code == 0) {
-			CString msglist;
-			editMsgList_.GetWindowText(msglist);
-			CString text = _T("ÎÒ: ") + sendText + _T("\r\n");
-			editMsgList_.SetWindowText(msglist + text);
-			editMsgList_.LineScroll(editMsgList_.GetLineCount());
-
-			editSendMsg_.SetWindowText(_T(""));
-		}
-		else {
-			showErrorMsg(module, code,desc);
-		}
-	});
-}
-void CVideoDlg::updateCameraList()
-{
-	cameraList_.clear();
-	ITRTCDeviceCollection *camlist = TICManager::GetInstance().GetTRTCCloud()->getCameraDevicesList();
-	for (uint32_t i = 0; i < camlist->getCount(); ++i)
-	{
-		std::pair<std::string /*id*/, std::string /*name*/> pair;
-		pair.first = camlist->getDevicePID(i);
-		pair.second = camlist->getDeviceName(i);
-		cameraList_.emplace_back(pair);
-	}
-	camlist->release();
-
-	ITRTCDeviceInfo *curCameraDeviceInfo = TICManager::GetInstance().GetTRTCCloud()->getCurrentCameraDevice();
-	std::string szCurCameraId = curCameraDeviceInfo ? curCameraDeviceInfo->getDevicePID() : "";
-	curCameraDeviceInfo->release();
-
-	if (szCurCameraId.empty() && cameraList_.size() > 0)
-	{
-		szCurCameraId = cameraList_.front().first;
-	}
-	
-	cbCamera_.ResetContent();
-	for (size_t i = 0; i < cameraList_.size(); ++i)
-	{
-		cbCamera_.InsertString(i, a2w(cameraList_[i].second, CP_UTF8).c_str());
-		if (cameraList_[i].first == szCurCameraId) cbCamera_.SetCurSel(i);
-	}
+  for (auto iter = remoteViews_.begin(); iter != remoteViews_.end(); ++iter) {
+    if (iter->second.empty()) {
+      iter->second = userId;
+      return iter->first;
+    }
+  }
+  return NULL;
 }
 
-HWND CVideoDlg::getRemoteViewWnd(const std::string& userId)
-{
-	for (auto iter = remoteViews_.begin(); iter != remoteViews_.end(); ++iter)
-	{
-		if (iter->second == userId) return iter->first;
-	}
-
-	for (auto iter = remoteViews_.begin(); iter != remoteViews_.end(); ++iter)
-	{
-		if (iter->second.empty())
-		{
-			iter->second = userId;
-			return iter->first;
-		}
-	}
-	return NULL;
+void CVideoDlg::resetRemoteViewWnd(const std::string& userId) {
+  for (auto iter = remoteViews_.begin(); iter != remoteViews_.end(); ++iter) {
+    if (iter->second == userId) {
+      iter->second = "";
+      break;
+    }
+  }
 }
 
-void CVideoDlg::resetRemoteViewWnd(const std::string& userId)
-{
-	for (auto iter = remoteViews_.begin(); iter != remoteViews_.end(); ++iter)
-	{
-		if (iter->second == userId)
-		{
-			iter->second = "";
-			break;
-		}
-	}
+void CVideoDlg::restAllRemoteViewWnd() {
+  for (auto iter = remoteViews_.begin(); iter != remoteViews_.end(); ++iter) {
+    iter->second = "";
+  }
 }
 
-void CVideoDlg::restAllRemoteViewWnd()
-{
-	for (auto iter = remoteViews_.begin(); iter != remoteViews_.end(); ++iter)
-	{
-		iter->second = "";
-	}
+void CVideoDlg::onTICClassroomDestroy() {}
+
+void CVideoDlg::onTICMemberJoin(const std::vector<std::string>& userIds) {
+  CString msglist;
+  editMsgList_.GetWindowText(msglist);
+  for (auto& var : userIds) {
+    CString strText = CString(a2w(var).c_str()) + _T("è¿›å…¥æˆ¿é—´\r\n");
+    msglist += strText;
+  }
+  editMsgList_.SetWindowText(msglist);
+  editMsgList_.LineScroll(editMsgList_.GetLineCount());
 }
 
-void CVideoDlg::onTICClassroomDestroy()
-{
-	
+void CVideoDlg::onTICMemberQuit(const std::vector<std::string>& userIds) {
+  CString msglist;
+  editMsgList_.GetWindowText(msglist);
+  for (auto& var : userIds) {
+    CString strText = CString(a2w(var).c_str()) + _T("é€€å‡ºæˆ¿é—´\r\n");
+    msglist += strText;
+  }
+  editMsgList_.SetWindowText(msglist);
+  editMsgList_.LineScroll(editMsgList_.GetLineCount());
 }
 
-void CVideoDlg::onTICMemberJoin(const std::vector<std::string>& userIds)
-{
-	CString msglist;
-	editMsgList_.GetWindowText(msglist);
-	for (auto& var : userIds)
-	{
-		CString strText = CString(a2w(var).c_str()) + _T("½øÈë·¿¼ä\r\n");
-		msglist += strText;
-	}
-	editMsgList_.SetWindowText(msglist);
-	editMsgList_.LineScroll(editMsgList_.GetLineCount());
+void CVideoDlg::onTICUserVideoAvailable(const std::string& userId,
+                                        bool available) {
+  if (available) {
+    printf("%sæ‰“å¼€è§†é¢‘\n", userId.c_str());
+    HWND hRendWnd = getRemoteViewWnd(userId);
+    if (hRendWnd)
+      TICManager::GetInstance().GetTRTCCloud()->startRemoteView(userId.c_str(),
+                                                                hRendWnd);
+  } else {
+    printf("%så…³é—­è§†é¢‘\n", userId.c_str());
+    TICManager::GetInstance().GetTRTCCloud()->stopRemoteView(userId.c_str());
+    resetRemoteViewWnd(userId);
+  }
 }
 
-void CVideoDlg::onTICMemberQuit(const std::vector<std::string>& userIds)
-{
-	CString msglist;
-	editMsgList_.GetWindowText(msglist);
-	for (auto& var : userIds)
-	{
-		CString strText = CString(a2w(var).c_str()) + _T("ÍË³ö·¿¼ä\r\n");
-		msglist += strText;
-	}
-	editMsgList_.SetWindowText(msglist);
-	editMsgList_.LineScroll(editMsgList_.GetLineCount());
+void CVideoDlg::onTICUserSubStreamAvailable(const std::string& userId,
+                                            bool available) {
+  if (available) {
+    printf("%sæ‰“å¼€è¾…è·¯è§†é¢‘\n", userId.c_str());
+    TICManager::GetInstance().GetTRTCCloud()->startRemoteSubStreamView(
+        userId.c_str(), subStreamView_);
+  } else {
+    printf("%så…³é—­è¾…è·¯è§†é¢‘\n", userId.c_str());
+    TICManager::GetInstance().GetTRTCCloud()->stopRemoteSubStreamView(
+        userId.c_str());
+  }
 }
 
-void CVideoDlg::onTICUserVideoAvailable(const std::string& userId, bool available)
-{
-	if (available)
-	{
-		printf("%s´ò¿ªÊÓÆµ\n", userId.c_str());
-		HWND hRendWnd = getRemoteViewWnd(userId);
-		if (hRendWnd) TICManager::GetInstance().GetTRTCCloud()->startRemoteView(userId.c_str(), hRendWnd);
-	}
-	else
-	{
-		printf("%s¹Ø±ÕÊÓÆµ\n", userId.c_str());
-		TICManager::GetInstance().GetTRTCCloud()->stopRemoteView(userId.c_str());
-		resetRemoteViewWnd(userId);
-	}
+void CVideoDlg::onTICUserAudioAvailable(const std::string& userId,
+                                        bool available) {
+  if (available) {
+    printf("%sæ‰“å¼€éŸ³é¢‘\n", userId.c_str());
+  } else {
+    printf("%så…³é—­éŸ³é¢‘\n", userId.c_str());
+  }
 }
 
-void CVideoDlg::onTICUserSubStreamAvailable(const std::string& userId, bool available)
-{
-	if (available)
-	{
-		printf("%s´ò¿ª¸¨Â·ÊÓÆµ\n", userId.c_str());
-		TICManager::GetInstance().GetTRTCCloud()->startRemoteSubStreamView(userId.c_str(), subStreamView_);
-	}
-	else
-	{
-		printf("%s¹Ø±Õ¸¨Â·ÊÓÆµ\n", userId.c_str());
-		TICManager::GetInstance().GetTRTCCloud()->stopRemoteSubStreamView(userId.c_str());
-	}
+void CVideoDlg::onTICDevice(const std::string& deviceId, TRTCDeviceType type,
+                            TRTCDeviceState state) {
+  printf("è®¾å¤‡æ’æ‹”: %s %d %d\n", w2a(a2w(deviceId, CP_UTF8)).c_str(), type,
+         state);
+
+  if (type == TRTCDeviceTypeCamera) {
+    updateCameraList();
+  }
 }
 
-void CVideoDlg::onTICUserAudioAvailable(const std::string& userId, bool available)
-{
-	if (available)
-	{
-		printf("%s´ò¿ªÒôÆµ\n", userId.c_str());
-	}
-	else
-	{
-		printf("%s¹Ø±ÕÒôÆµ\n", userId.c_str());
-	}
+void CVideoDlg::onTICSendOfflineRecordInfo(int code, const char* desc) {
+  if (code == 0) {
+    printf("å‘é€å¯¹æ—¶ä¿¡æ¯æˆåŠŸ,å¯ä»¥è¿›è¡Œè¯¾åç¦»çº¿å½•åˆ¶.\n");
+  } else {
+    printf("å‘é€å¯¹æ—¶ä¿¡æ¯å¤±è´¥,å°†æ— æ³•è¿›è¡Œè¯¾åç¦»çº¿å½•åˆ¶. %d %s\n", code, desc);
+  }
 }
 
-void CVideoDlg::onTICDevice(const std::string& deviceId, TRTCDeviceType type, TRTCDeviceState state)
-{
-	printf("Éè±¸²å°Î: %s %d %d\n", w2a(a2w(deviceId, CP_UTF8)).c_str(), type, state);
+void CVideoDlg::onTICRecvTextMessage(const std::string& fromUserId,
+                                     const std::string& text) {
+  // printf("æ”¶åˆ°C2Cæ–‡æœ¬æ¶ˆæ¯: %s : %s.\n", fromUserId.c_str(), w2a(a2w(text,
+  // CP_UTF8), CP_ACP).c_str());
 
-	if (type == TRTCDeviceTypeCamera)
-	{
-		updateCameraList();
-	}
+  CString msglist;
+  editMsgList_.GetWindowText(msglist);
+
+  CString strText =
+      CString(a2w(fromUserId).c_str()) + _T("(ç§èŠ): ") +
+      CString(a2w(text, CP_UTF8).c_str()) +
+      _T("\r\n");  // tic demoå„å¹³å°ç»Ÿä¸€ç”¨UTF8ç¼–ç æ”¶å‘æ¶ˆæ¯,åé¢ä¸å†è¯´æ˜
+  editMsgList_.SetWindowText(msglist + strText);
+  editMsgList_.LineScroll(editMsgList_.GetLineCount());
 }
 
-void CVideoDlg::onTICSendOfflineRecordInfo(int code, const char* desc)
-{
-	if (code == 0)
-	{
-		printf("·¢ËÍ¶ÔÊ±ĞÅÏ¢³É¹¦,¿ÉÒÔ½øĞĞ¿ÎºóÀëÏßÂ¼ÖÆ.\n");
-	}
-	else
-	{
-		printf("·¢ËÍ¶ÔÊ±ĞÅÏ¢Ê§°Ü,½«ÎŞ·¨½øĞĞ¿ÎºóÀëÏßÂ¼ÖÆ. %d %s\n", code, desc);
-	}
+void CVideoDlg::onTICRecvCustomMessage(const std::string& fromUserId,
+                                       const std::string& data) {
+  // printf("æ”¶åˆ°C2Cè‡ªå®šä¹‰æ¶ˆæ¯: %s : %s.\n", fromUserId.c_str(), w2a(a2w(data,
+  // CP_UTF8), CP_ACP).c_str());
 }
 
-void CVideoDlg::onTICRecvTextMessage(const std::string& fromUserId, const std::string& text)
-{
-	//printf("ÊÕµ½C2CÎÄ±¾ÏûÏ¢: %s : %s.\n", fromUserId.c_str(), w2a(a2w(text, CP_UTF8), CP_ACP).c_str());
+void CVideoDlg::onTICRecvGroupTextMessage(const std::string& fromUserId,
+                                          const std::string& text) {
+  // printf("æ”¶åˆ°ç¾¤æ–‡æœ¬æ¶ˆæ¯: %s: %s.\n", fromUserId.c_str(), w2a(a2w(text,
+  // CP_UTF8), CP_ACP).c_str());
 
-	CString msglist;
-	editMsgList_.GetWindowText(msglist);
+  CString msglist;
+  editMsgList_.GetWindowText(msglist);
 
-	CString strText = CString(a2w(fromUserId).c_str()) + _T("(Ë½ÁÄ): ") + CString(a2w(text, CP_UTF8).c_str()) + _T("\r\n"); //tic demo¸÷Æ½Ì¨Í³Ò»ÓÃUTF8±àÂëÊÕ·¢ÏûÏ¢,ºóÃæ²»ÔÙËµÃ÷
-	editMsgList_.SetWindowText(msglist + strText);
-	editMsgList_.LineScroll(editMsgList_.GetLineCount());
+  CString strText = CString(a2w(fromUserId).c_str()) + _T(": ") +
+                    CString(a2w(text, CP_UTF8).c_str()) + _T("\r\n");
+  editMsgList_.SetWindowText(msglist + strText);
+  editMsgList_.LineScroll(editMsgList_.GetLineCount());
 }
 
-void CVideoDlg::onTICRecvCustomMessage(const std::string& fromUserId, const std::string& data)
-{
-	//printf("ÊÕµ½C2C×Ô¶¨ÒåÏûÏ¢: %s : %s.\n", fromUserId.c_str(), w2a(a2w(data, CP_UTF8), CP_ACP).c_str());
+void CVideoDlg::onTICRecvGroupCustomMessage(const std::string& fromUserId,
+                                            const std::string& data) {
+  // printf("æ”¶åˆ°è‡ªå®šä¹‰ç¾¤æ¶ˆæ¯: %s: %s.\n", fromUserId.c_str(), w2a(a2w(data,
+  // CP_UTF8), CP_ACP).c_str());
 }
 
-void CVideoDlg::onTICRecvGroupTextMessage(const std::string& fromUserId, const std::string& text)
-{
-	//printf("ÊÕµ½ÈºÎÄ±¾ÏûÏ¢: %s: %s.\n", fromUserId.c_str(), w2a(a2w(text, CP_UTF8), CP_ACP).c_str());
-
-	CString msglist;
-	editMsgList_.GetWindowText(msglist);
-
-	CString strText = CString(a2w(fromUserId).c_str()) + _T(": ") + CString(a2w(text, CP_UTF8).c_str()) + _T("\r\n");
-	editMsgList_.SetWindowText(msglist + strText);
-	editMsgList_.LineScroll(editMsgList_.GetLineCount());
-}
-
-void CVideoDlg::onTICRecvGroupCustomMessage(const std::string& fromUserId, const std::string& data)
-{
-	//printf("ÊÕµ½×Ô¶¨ÒåÈºÏûÏ¢: %s: %s.\n", fromUserId.c_str(), w2a(a2w(data, CP_UTF8), CP_ACP).c_str());
-}
-
-void CVideoDlg::onTICRecvMessage(const std::string& jsonMsg)
-{
-	//printf("ÊÕµ½ÏûÏ¢:\n%s\n", w2a(a2w(jsonMsg, CP_UTF8), CP_ACP).c_str());
+void CVideoDlg::onTICRecvMessage(const std::string& jsonMsg) {
+  // printf("æ”¶åˆ°æ¶ˆæ¯:\n%s\n", w2a(a2w(jsonMsg, CP_UTF8), CP_ACP).c_str());
 }

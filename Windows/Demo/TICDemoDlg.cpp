@@ -1,8 +1,15 @@
-#include "stdafx.h"
-#include "TICDemo.h"
+ï»¿//
+//  Copyright Â© 2019 Tencent. All rights reserved.
+//
+
 #include "TICDemoDlg.h"
-#include "afxdialogex.h"
+
+#include <vector>
+
 #include "Config.h"
+#include "TICDemo.h"
+#include "afxdialogex.h"
+#include "stdafx.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -10,505 +17,459 @@
 extern CTICDemoApp theApp;
 
 BEGIN_MESSAGE_MAP(CTICDemoDlg, CDialogEx)
-	ON_WM_CTLCOLOR()
-	ON_WM_SIZE()
-	ON_WM_DESTROY()
-	ON_WM_PAINT()
-	ON_WM_QUERYDRAGICON()
-	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB, &CTICDemoDlg::OnTabSelChange)
-	ON_BN_CLICKED(IDC_BTN_LOGIN, &CTICDemoDlg::OnBtnLogin)
-	ON_BN_CLICKED(IDC_BTN_LOGOUT, &CTICDemoDlg::OnBtnLogout)
-	ON_BN_CLICKED(IDC_BTN_CREATE_ROOM, &CTICDemoDlg::OnBtnCreateRoom)
-	ON_BN_CLICKED(IDC_BTN_DESTROY_ROOM, &CTICDemoDlg::OnBtnDestroyRoom)
-	ON_BN_CLICKED(IDC_BTN_JOIN_ROOM, &CTICDemoDlg::OnBtnJoinRoom)
-	ON_BN_CLICKED(IDC_BTN_QUIT_ROOM, &CTICDemoDlg::OnBtnQuitRoom)
+ON_WM_CTLCOLOR()
+ON_WM_SIZE()
+ON_WM_DESTROY()
+ON_WM_PAINT()
+ON_WM_QUERYDRAGICON()
+ON_NOTIFY(TCN_SELCHANGE, IDC_TAB, &CTICDemoDlg::OnTabSelChange)
+ON_BN_CLICKED(IDC_BTN_LOGIN, &CTICDemoDlg::OnBtnLogin)
+ON_BN_CLICKED(IDC_BTN_LOGOUT, &CTICDemoDlg::OnBtnLogout)
+ON_BN_CLICKED(IDC_BTN_CREATE_ROOM, &CTICDemoDlg::OnBtnCreateRoom)
+ON_BN_CLICKED(IDC_BTN_DESTROY_ROOM, &CTICDemoDlg::OnBtnDestroyRoom)
+ON_BN_CLICKED(IDC_BTN_JOIN_ROOM, &CTICDemoDlg::OnBtnJoinRoom)
+ON_BN_CLICKED(IDC_BTN_QUIT_ROOM, &CTICDemoDlg::OnBtnQuitRoom)
 END_MESSAGE_MAP()
 
+CTICDemoDlg::CTICDemoDlg(CWnd *pParent /*=nullptr*/)
+    : CDialogEx(IDD_TICDEMO_DIALOG, pParent) {
+  hIcon_ = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 
-CTICDemoDlg::CTICDemoDlg(CWnd* pParent /*=nullptr*/)
-	: CDialogEx(IDD_TICDEMO_DIALOG, pParent)
-{
-	hIcon_ = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
-
-	videoDlg_ = std::make_shared<CVideoDlg>();
-	boardDlg_ = std::make_shared<CBoardDlg>();
+  videoDlg_ = std::make_shared<CVideoDlg>();
+  boardDlg_ = std::make_shared<CBoardDlg>();
 }
 
-CTICDemoDlg::~CTICDemoDlg()
-{
+CTICDemoDlg::~CTICDemoDlg() {}
 
+void CTICDemoDlg::DoDataExchange(CDataExchange *pDX) {
+  CDialogEx::DoDataExchange(pDX);
+
+  DDX_Control(pDX, IDC_TAB, tabCtrl_);
+
+  DDX_Control(pDX, IDC_COMBOX_USER, cbUser_);
+
+  DDX_Control(pDX, IDC_EDIT_CLASSID, editClassId_);
+
+  DDX_Control(pDX, IDC_BTN_LOGIN, btnLogin_);
+  DDX_Control(pDX, IDC_BTN_LOGOUT, btnLogout_);
+  DDX_Control(pDX, IDC_BTN_CREATE_ROOM, btnCreateRoom_);
+  DDX_Control(pDX, IDC_BTN_DESTROY_ROOM, btnDestroyRoom_);
+  DDX_Control(pDX, IDC_BTN_JOIN_ROOM, btnJoinRoom_);
+  DDX_Control(pDX, IDC_BTN_QUIT_ROOM, btnQuitRoom_);
 }
 
-void CTICDemoDlg::DoDataExchange(CDataExchange* pDX)
-{
-	CDialogEx::DoDataExchange(pDX);
+BOOL CTICDemoDlg::OnInitDialog() {
+  CDialogEx::OnInitDialog();
 
-	DDX_Control(pDX, IDC_TAB, tabCtrl_);
+  SetIcon(hIcon_, TRUE);   // è®¾ç½®å¤§å›¾æ ‡
+  SetIcon(hIcon_, FALSE);  // è®¾ç½®å°å›¾æ ‡
 
-	DDX_Control(pDX, IDC_COMBOX_USER, cbUser_);
+  // æ’å…¥TABé¡µ
+  tabCtrl_.InsertItem(0, _T("è§†é¢‘"));
+  tabCtrl_.InsertItem(1, _T("ç™½æ¿"));
 
-	DDX_Control(pDX, IDC_EDIT_CLASSID, editClassId_);
+  videoDlg_->Create(IDD_VIDEO_DIALOG, &tabCtrl_);
+  boardDlg_->Create(IDD_BOARD_DIALOG, &tabCtrl_);
 
-	DDX_Control(pDX, IDC_BTN_LOGIN, btnLogin_);
-	DDX_Control(pDX, IDC_BTN_LOGOUT, btnLogout_);
-	DDX_Control(pDX, IDC_BTN_CREATE_ROOM, btnCreateRoom_);
-	DDX_Control(pDX, IDC_BTN_DESTROY_ROOM, btnDestroyRoom_);
-	DDX_Control(pDX, IDC_BTN_JOIN_ROOM, btnJoinRoom_);
-	DDX_Control(pDX, IDC_BTN_QUIT_ROOM, btnQuitRoom_);
+  // è·å–æ ‡ç­¾é«˜åº¦
+  CRect itemRect;
+  tabCtrl_.GetItemRect(0, &itemRect);
+
+  // è·å–å¹¶è®¡ç®—æ ‡ç­¾é¡µå·¥ä½œåŒºå¤§å°
+  CRect clientRect;
+  tabCtrl_.GetClientRect(clientRect);
+  clientRect.top += itemRect.Height() + 2;
+  clientRect.bottom -= 2;
+  clientRect.left += 2;
+  clientRect.right -= 2;
+
+  videoDlg_->MoveWindow(&clientRect);
+  videoDlg_->ShowWindow(SW_SHOW);
+  boardDlg_->MoveWindow(&clientRect);
+  boardDlg_->ShowWindow(SW_HIDE);
+
+  // ç”¨æˆ·åˆ—è¡¨
+  const std::vector<UserInfo> &userInfoList =
+      Config::GetInstance().UserInfoList();
+  for (size_t i = 0; i < userInfoList.size(); ++i) {
+    cbUser_.InsertString(i, a2w(userInfoList[i].userid).c_str());
+  }
+  cbUser_.SetCurSel(0);
+
+  // TICå›è°ƒ
+  TICManager::GetInstance().AddEventListener(videoDlg_.get());
+  TICManager::GetInstance().AddMessageListener(videoDlg_.get());
+  TICManager::GetInstance().AddStatusListener(this);
+  std::weak_ptr<CTICDemoDlg> weakSelf = this->shared_from_this();
+  TICManager::GetInstance().Init(
+      Config::GetInstance().SdkAppId(),
+      [this, weakSelf](TICModule module, int code, const char *desc) {
+        std::shared_ptr<CTICDemoDlg> self = weakSelf.lock();
+        if (!self) {
+          return;
+        }
+
+        if (code == 0) {
+          UpdateUI(UserState::Init);
+        } else {
+          UpdateUI(UserState::NotInit);
+          showErrorMsg(module, code, desc);
+        }
+      });
+
+  // å¡«å†™é»˜è®¤å‚æ•°
+  editClassId_.SetWindowText(_T("13582"));
+
+  // è®¾ç½®ç‰ˆæœ¬ä¿¡æ¯;
+  CString version;
+  version.Format(
+      _T("IMSDK: %s\n\nTRTC: %s\n\nTEduBoard: %s"),
+      a2w(TIMGetSDKVersion()).c_str(),
+      a2w(TICManager::GetInstance().GetTRTCCloud()->getSDKVersion()).c_str(),
+      a2w(GetTEduBoardVersion()).c_str());
+
+  GetDlgItem(IDC_VERSION)->SetWindowText(version);
+
+  return TRUE;
 }
 
-BOOL CTICDemoDlg::OnInitDialog()
-{
-	CDialogEx::OnInitDialog();
+HBRUSH CTICDemoDlg::OnCtlColor(CDC *pDC, CWnd *pWnd, UINT nCtlColor) {
+  int nCtrlId = pWnd->GetDlgCtrlID();
+  if (nCtrlId == IDC_NOTIFY) {
+    pDC->SetTextColor(RGB(200, 0, 0));
+    pDC->SetBkMode(TRANSPARENT);
+    return (HBRUSH)GetStockObject(NULL_BRUSH);
+  }
 
-	SetIcon(hIcon_, TRUE);  // ÉèÖÃ´óÍ¼±ê
-	SetIcon(hIcon_, FALSE); // ÉèÖÃĞ¡Í¼±ê
-
-	//²åÈëTABÒ³
-	tabCtrl_.InsertItem(0, _T("ÊÓÆµ"));
-	tabCtrl_.InsertItem(1, _T("°×°å"));
-
-	videoDlg_->Create(IDD_VIDEO_DIALOG, &tabCtrl_);
-	boardDlg_->Create(IDD_BOARD_DIALOG, &tabCtrl_);
-
-	//»ñÈ¡±êÇ©¸ß¶È
-	CRect itemRect;
-	tabCtrl_.GetItemRect(0, &itemRect);
-
-	//»ñÈ¡²¢¼ÆËã±êÇ©Ò³¹¤×÷Çø´óĞ¡
-	CRect clientRect;
-	tabCtrl_.GetClientRect(clientRect);
-	clientRect.top += itemRect.Height() + 2;
-	clientRect.bottom -= 2;
-	clientRect.left += 2;
-	clientRect.right -= 2;
-
-	videoDlg_->MoveWindow(&clientRect);
-	videoDlg_->ShowWindow(SW_SHOW);
-	boardDlg_->MoveWindow(&clientRect);
-	boardDlg_->ShowWindow(SW_HIDE);
-
-	//ÓÃ»§ÁĞ±í
-	const std::vector<UserInfo>& userInfoList = Config::GetInstance().UserInfoList();
-	for (size_t i=0; i<userInfoList.size(); ++i)
-	{
-		cbUser_.InsertString(i, a2w(userInfoList[i].userid).c_str());
-	}
-	cbUser_.SetCurSel(0);
-
-	//TIC»Øµ÷
-	TICManager::GetInstance().AddEventListener(videoDlg_.get());
-	TICManager::GetInstance().AddMessageListener(videoDlg_.get());
-	TICManager::GetInstance().AddStatusListener(this);
-	std::weak_ptr<CTICDemoDlg> weakSelf = this->shared_from_this();
-	TICManager::GetInstance().Init(Config::GetInstance().SdkAppId(), [this, weakSelf](TICModule module, int code, const char *desc) {
-		std::shared_ptr<CTICDemoDlg> self = weakSelf.lock();
-		if (!self)
-		{
-			return;
-		}
-
-		if (code == 0) {
-			UpdateUI(UserState::Init);
-		}
-		else {
-			UpdateUI(UserState::NotInit);
-			showErrorMsg(module, code, desc);
-		}
-	});
-
-	// ÌîĞ´Ä¬ÈÏ²ÎÊı
-	editClassId_.SetWindowText(_T("13582"));
-
-	//ÉèÖÃ°æ±¾ĞÅÏ¢;
-	CString version;
-	version.Format(_T("IMSDK: %s\n\nTRTC: %s\n\nTEduBoard: %s"),
-		a2w(TIMGetSDKVersion()).c_str(),
-		a2w(TICManager::GetInstance().GetTRTCCloud()->getSDKVersion()).c_str(),
-		a2w(GetTEduBoardVersion()).c_str());
-
-	GetDlgItem(IDC_VERSION)->SetWindowText(version);
-
-	return TRUE;
+  return __super::OnCtlColor(pDC, pWnd, nCtlColor);
 }
 
-HBRUSH CTICDemoDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
-{
-	int nCtrlId = pWnd->GetDlgCtrlID();
-	if (nCtrlId == IDC_NOTIFY)
-	{
-		pDC->SetTextColor(RGB(200, 0, 0));
-		pDC->SetBkMode(TRANSPARENT);
-		return (HBRUSH)GetStockObject(NULL_BRUSH);
-	}
+void CTICDemoDlg::OnSize(UINT nType, int cx, int cy) {
+  __super::OnSize(nType, cx, cy);
 
-	return __super::OnCtlColor(pDC, pWnd, nCtlColor);
+  if (tabCtrl_.m_hWnd) {
+    // è·å–æ ‡ç­¾é«˜åº¦
+    CRect itemRect;
+    tabCtrl_.GetItemRect(0, &itemRect);
+
+    // è·å–å¹¶è®¡ç®—æ ‡ç­¾é¡µå·¥ä½œåŒºå¤§å°
+    CRect clientRect;
+    tabCtrl_.GetClientRect(clientRect);
+    clientRect.top += itemRect.Height() + 2;
+    clientRect.bottom -= 2;
+    clientRect.left += 2;
+    clientRect.right -= 2;
+
+    videoDlg_->MoveWindow(&clientRect);
+    boardDlg_->MoveWindow(&clientRect);
+  }
 }
 
-void CTICDemoDlg::OnSize(UINT nType, int cx, int cy)
-{
-	__super::OnSize(nType, cx, cy);
+void CTICDemoDlg::OnDestroy() {
+  std::weak_ptr<CTICDemoDlg> weakSelf = this->shared_from_this();
+  TICManager::GetInstance().Uninit(
+      [this, weakSelf](TICModule module, int code, const char *desc) {
+        std::shared_ptr<CTICDemoDlg> self = weakSelf.lock();
+        if (!self) {
+          return;
+        }
 
-	if (tabCtrl_.m_hWnd) {
-		//»ñÈ¡±êÇ©¸ß¶È
-		CRect itemRect;
-		tabCtrl_.GetItemRect(0, &itemRect);
+        if (code == 0) {
+          UpdateUI(UserState::NotInit);
+        } else {
+          UpdateUI(UserState::NotInit);
+          showErrorMsg(module, code, desc);
+        }
+      });
 
-		//»ñÈ¡²¢¼ÆËã±êÇ©Ò³¹¤×÷Çø´óĞ¡
-		CRect clientRect;
-		tabCtrl_.GetClientRect(clientRect);
-		clientRect.top += itemRect.Height() + 2;
-		clientRect.bottom -= 2;
-		clientRect.left += 2;
-		clientRect.right -= 2;
-
-		videoDlg_->MoveWindow(&clientRect);
-		boardDlg_->MoveWindow(&clientRect);
-	}
+  TICManager::GetInstance().RemoveEventListener(videoDlg_.get());
+  TICManager::GetInstance().RemoveMessageListener(videoDlg_.get());
+  TICManager::GetInstance().RemoveStatusListener(this);
 }
 
-void CTICDemoDlg::OnDestroy()
-{
-	std::weak_ptr< CTICDemoDlg> weakSelf = this->shared_from_this();
-	TICManager::GetInstance().Uninit([this, weakSelf](TICModule module, int code, const char *desc) {
-		std::shared_ptr<CTICDemoDlg> self = weakSelf.lock();
-		if (!self)
-		{
-			return;
-		}
+void CTICDemoDlg::OnPaint() {
+  if (IsIconic()) {
+    CPaintDC dc(this);  // ç”¨äºç»˜åˆ¶çš„è®¾å¤‡ä¸Šä¸‹æ–‡
 
-		if (code == 0) {
-			UpdateUI(UserState::NotInit);
-		}
-		else {
-			UpdateUI(UserState::NotInit);
-			showErrorMsg(module, code, desc);
-		}
-	});
+    SendMessage(WM_ICONERASEBKGND, reinterpret_cast<WPARAM>(dc.GetSafeHdc()),
+                0);
 
-	TICManager::GetInstance().RemoveEventListener(videoDlg_.get());
-	TICManager::GetInstance().RemoveMessageListener(videoDlg_.get());
-	TICManager::GetInstance().RemoveStatusListener(this);
+    // ä½¿å›¾æ ‡åœ¨å·¥ä½œåŒºçŸ©å½¢ä¸­å±…ä¸­
+    int cxIcon = GetSystemMetrics(SM_CXICON);
+    int cyIcon = GetSystemMetrics(SM_CYICON);
+    CRect rect;
+    GetClientRect(&rect);
+    int x = (rect.Width() - cxIcon + 1) / 2;
+    int y = (rect.Height() - cyIcon + 1) / 2;
+
+    // ç»˜åˆ¶å›¾æ ‡
+    dc.DrawIcon(x, y, hIcon_);
+  } else {
+    CDialogEx::OnPaint();
+  }
 }
 
-void CTICDemoDlg::OnPaint()
-{
-	if (IsIconic())
-	{
-		CPaintDC dc(this); // ÓÃÓÚ»æÖÆµÄÉè±¸ÉÏÏÂÎÄ
+// å½“ç”¨æˆ·æ‹–åŠ¨æœ€å°åŒ–çª—å£æ—¶ç³»ç»Ÿè°ƒç”¨æ­¤å‡½æ•°å–å¾—å…‰æ ‡æ˜¾ç¤ºã€‚
+HCURSOR CTICDemoDlg::OnQueryDragIcon() { return static_cast<HCURSOR>(hIcon_); }
 
-		SendMessage(WM_ICONERASEBKGND, reinterpret_cast<WPARAM>(dc.GetSafeHdc()), 0);
-
-		// Ê¹Í¼±êÔÚ¹¤×÷Çø¾ØĞÎÖĞ¾ÓÖĞ
-		int cxIcon = GetSystemMetrics(SM_CXICON);
-		int cyIcon = GetSystemMetrics(SM_CYICON);
-		CRect rect;
-		GetClientRect(&rect);
-		int x = (rect.Width() - cxIcon + 1) / 2;
-		int y = (rect.Height() - cyIcon + 1) / 2;
-
-		// »æÖÆÍ¼±ê
-		dc.DrawIcon(x, y, hIcon_);
-	}
-	else
-	{
-		CDialogEx::OnPaint();
-	}
+void CTICDemoDlg::OnTabSelChange(NMHDR *pNMHDR, LRESULT *pResult) {
+  *pResult = 0;
+  int nCurSel = tabCtrl_.GetCurSel();
+  switch (nCurSel) {
+    case 0:
+      videoDlg_->ShowWindow(SW_SHOW);
+      boardDlg_->ShowWindow(SW_HIDE);
+      break;
+    case 1:
+      videoDlg_->ShowWindow(SW_HIDE);
+      boardDlg_->ShowWindow(SW_SHOW);
+      break;
+    case 2:
+      videoDlg_->ShowWindow(SW_HIDE);
+      boardDlg_->ShowWindow(SW_HIDE);
+      break;
+    default:
+      break;
+  }
 }
 
-//µ±ÓÃ»§ÍÏ¶¯×îĞ¡»¯´°¿ÚÊ±ÏµÍ³µ÷ÓÃ´Ëº¯ÊıÈ¡µÃ¹â±êÏÔÊ¾¡£
-HCURSOR CTICDemoDlg::OnQueryDragIcon()
-{
-	return static_cast<HCURSOR>(hIcon_);
+void CTICDemoDlg::OnBtnLogin() {
+  btnLogin_.EnableWindow(FALSE);
+
+  int nSelectIndex = cbUser_.GetCurSel();
+  const std::vector<UserInfo> &userInfoList =
+      Config::GetInstance().UserInfoList();
+
+  theApp.setUserId(userInfoList[nSelectIndex].userid);
+  theApp.setUserSig(userInfoList[nSelectIndex].usersig);
+
+  std::weak_ptr<CTICDemoDlg> weakSelf = this->shared_from_this();
+  TICManager::GetInstance().Login(
+      userInfoList[nSelectIndex].userid, userInfoList[nSelectIndex].usersig,
+      [this, weakSelf](TICModule module, int code, const char *desc) {
+        std::shared_ptr<CTICDemoDlg> self = weakSelf.lock();
+        if (!self) {
+          return;
+        }
+
+        if (code == 0) {
+          UpdateUI(UserState::Login);
+        } else {
+          UpdateUI(UserState::Init);
+          showErrorMsg(module, code, desc);
+        }
+      });
 }
 
-void CTICDemoDlg::OnTabSelChange(NMHDR *pNMHDR, LRESULT *pResult)
-{
-	*pResult = 0;
-	int nCurSel = tabCtrl_.GetCurSel();
-	switch (nCurSel)
-	{
-	case 0:
-		videoDlg_->ShowWindow(SW_SHOW);
-		boardDlg_->ShowWindow(SW_HIDE);
-		break;
-	case 1:
-		videoDlg_->ShowWindow(SW_HIDE);
-		boardDlg_->ShowWindow(SW_SHOW);
-		break;
-	case 2:
-		videoDlg_->ShowWindow(SW_HIDE);
-		boardDlg_->ShowWindow(SW_HIDE);
-		break;
-	default:
-		break;
-	}
+void CTICDemoDlg::OnBtnLogout() {
+  btnLogout_.EnableWindow(FALSE);
+
+  std::weak_ptr<CTICDemoDlg> weakSelf = this->shared_from_this();
+  TICManager::GetInstance().Logout(
+      [this, weakSelf](TICModule module, int code, const char *desc) {
+        std::shared_ptr<CTICDemoDlg> self = weakSelf.lock();
+        if (!self) {
+          return;
+        }
+
+        if (code == 0) {
+          UpdateUI(UserState::Init);
+        } else {
+          UpdateUI(UserState::Login);
+          showErrorMsg(module, code, desc);
+        }
+      });
 }
 
-void CTICDemoDlg::OnBtnLogin()
-{
-	btnLogin_.EnableWindow(FALSE);
+void CTICDemoDlg::OnBtnCreateRoom() {
+  CString str;
+  editClassId_.GetWindowText(str);
+  if (str.IsEmpty()) {
+    AfxMessageBox(_T("è¯·å…ˆå¡«å†™æˆ¿é—´å·"), MB_OK);
+    return;
+  }
+  int classId = atoi(w2a(str.GetBuffer()).c_str());
+  if (classId == 0) {
+    AfxMessageBox(_T("æˆ¿é—´å·æœ‰è¯¯"), MB_OK);
+    return;
+  }
 
-	int nSelectIndex = cbUser_.GetCurSel();
-	const std::vector<UserInfo>& userInfoList = Config::GetInstance().UserInfoList();
+  btnCreateRoom_.EnableWindow(FALSE);
 
-	theApp.setUserId(userInfoList[nSelectIndex].userid);
-	theApp.setUserSig(userInfoList[nSelectIndex].usersig);
+  std::weak_ptr<CTICDemoDlg> weakSelf = this->shared_from_this();
+  TICManager::GetInstance().CreateClassroom(
+      classId, TIC_CLASS_SCENE_VIDEO_CALL,
+      [this, weakSelf](TICModule module, int code, const char *desc) {
+        std::shared_ptr<CTICDemoDlg> self = weakSelf.lock();
+        if (!self) {
+          return;
+        }
 
-	std::weak_ptr< CTICDemoDlg> weakSelf = this->shared_from_this();
-	TICManager::GetInstance().Login(userInfoList[nSelectIndex].userid, userInfoList[nSelectIndex].usersig, [this, weakSelf](TICModule module, int code, const char *desc){
-		std::shared_ptr<CTICDemoDlg> self = weakSelf.lock();
-		if (!self)
-		{
-			return;
-		}
-		
-		if (code == 0) {
-			UpdateUI(UserState::Login);
-		}
-		else {
-			UpdateUI(UserState::Init);
-			showErrorMsg(module, code, desc);
-		}
-	});
+        if (code == 0) {
+          UpdateUI(UserState::Login);
+          AfxMessageBox(_T("åˆ›å»ºè¯¾å ‚æˆåŠŸï¼Œè¯·\"åŠ å…¥è¯¾å ‚\""), MB_OK);
+        } else {
+          UpdateUI(UserState::Login);
+
+          if (code == 10021) {
+            AfxMessageBox(_T("è¯¥è¯¾å ‚å·²è¢«ä»–äººåˆ›å»ºï¼Œè¯·\"åŠ å…¥è¯¾å ‚\""), MB_OK);
+          } else if (code == 10025) {
+            AfxMessageBox(_T("è¯¥è¯¾å ‚å·²åˆ›å»ºï¼Œè¯·\"åŠ å…¥è¯¾å ‚\""), MB_OK);
+          } else {
+            showErrorMsg(module, code, desc);
+          }
+        }
+      });
 }
 
-void CTICDemoDlg::OnBtnLogout()
-{
-	btnLogout_.EnableWindow(FALSE);
+void CTICDemoDlg::OnBtnDestroyRoom() {
+  CString str;
+  editClassId_.GetWindowText(str);
+  if (str.IsEmpty()) {
+    AfxMessageBox(_T("è¯·å…ˆå¡«å†™æˆ¿é—´å·"), MB_OK);
+    return;
+  }
+  int classId = atoi(w2a(str.GetBuffer()).c_str());
+  if (classId == 0) {
+    AfxMessageBox(_T("æˆ¿é—´å·æœ‰è¯¯"), MB_OK);
+    return;
+  }
 
-	std::weak_ptr< CTICDemoDlg> weakSelf = this->shared_from_this();
-	TICManager::GetInstance().Logout([this, weakSelf](TICModule module, int code, const char *desc) {
-		std::shared_ptr<CTICDemoDlg> self = weakSelf.lock();
-		if (!self)
-		{
-			return;
-		}
+  btnDestroyRoom_.EnableWindow(FALSE);
 
-		if (code == 0) {
-			UpdateUI(UserState::Init);
-		}
-		else {
-			UpdateUI(UserState::Login);
-			showErrorMsg(module, code, desc);
-		}
-	});
+  std::weak_ptr<CTICDemoDlg> weakSelf = this->shared_from_this();
+  TICManager::GetInstance().DestroyClassroom(
+      classId, [this, weakSelf](TICModule module, int code, const char *desc) {
+        std::shared_ptr<CTICDemoDlg> self = weakSelf.lock();
+        if (!self) {
+          return;
+        }
+
+        if (code == 0) {
+          UpdateUI(UserState::Login);
+          AfxMessageBox(_T("é”€æ¯æˆ¿é—´æˆåŠŸ"), MB_OK);
+        } else {
+          UpdateUI(UserState::Login);
+          showErrorMsg(module, code, desc);
+        }
+      });
 }
 
-void CTICDemoDlg::OnBtnCreateRoom()
-{
-	CString str;
-	editClassId_.GetWindowText(str);
-	if (str.IsEmpty())
-	{
-		AfxMessageBox(_T("ÇëÏÈÌîĞ´·¿¼äºÅ"), MB_OK);
-		return;
-	}
-	int classId = atoi( w2a( str.GetBuffer() ).c_str() );
-	if (classId == 0)
-	{
-		AfxMessageBox(_T("·¿¼äºÅÓĞÎó"), MB_OK);
-		return;
-	}
+void CTICDemoDlg::OnBtnJoinRoom() {
+  CString str;
+  editClassId_.GetWindowText(str);
+  if (str.IsEmpty()) {
+    AfxMessageBox(_T("è¯·å…ˆå¡«å†™æˆ¿é—´å·"), MB_OK);
+    return;
+  }
+  int classId = atoi(w2a(str.GetBuffer()).c_str());
+  if (classId == 0) {
+    AfxMessageBox(_T("æˆ¿é—´å·æœ‰è¯¯"), MB_OK);
+    return;
+  }
 
-	btnCreateRoom_.EnableWindow(FALSE);
+  btnJoinRoom_.EnableWindow(FALSE);
 
-	std::weak_ptr< CTICDemoDlg> weakSelf = this->shared_from_this();
-	TICManager::GetInstance().CreateClassroom(classId, TIC_CLASS_SCENE_VIDEO_CALL,[this, weakSelf](TICModule module, int code, const char *desc) {
-		std::shared_ptr<CTICDemoDlg> self = weakSelf.lock();
-		if (!self)
-		{
-			return;
-		}
+  TICClassroomOption option;
+  option.classId = classId;
+  option.boardCallback = boardDlg_.get();
 
-		if (code == 0) {
-			UpdateUI(UserState::Login);
-			AfxMessageBox(_T("´´½¨¿ÎÌÃ³É¹¦£¬Çë\"¼ÓÈë¿ÎÌÃ\""), MB_OK);
-		}
-		else {
-			UpdateUI(UserState::Login);
-			
-			if (code == 10021) {
-				AfxMessageBox(_T("¸Ã¿ÎÌÃÒÑ±»ËûÈË´´½¨£¬Çë\"¼ÓÈë¿ÎÌÃ\""), MB_OK);
-			}
-			else if (code == 10025) {
-				AfxMessageBox(_T("¸Ã¿ÎÌÃÒÑ´´½¨£¬Çë\"¼ÓÈë¿ÎÌÃ\""), MB_OK);
-			}
-			else
-			{
-				showErrorMsg(module, code, desc);
-			}
-		}
-	});
+  theApp.setClassId(classId);
+
+  std::weak_ptr<CTICDemoDlg> weakSelf = this->shared_from_this();
+  TICManager::GetInstance().JoinClassroom(
+      option, [this, weakSelf](TICModule module, int code, const char *desc) {
+        std::shared_ptr<CTICDemoDlg> self = weakSelf.lock();
+        if (!self) {
+          return;
+        }
+
+        if (code == 0) {
+          UpdateUI(UserState::InRoom);
+          boardDlg_->Init();
+        } else {
+          UpdateUI(UserState::Login);
+
+          if (code == 10015) {
+            AfxMessageBox(_T("è¯¾å ‚ä¸å­˜åœ¨ï¼Œè¯·\"åˆ›å»ºè¯¾å ‚\""), MB_OK);
+          } else {
+            showErrorMsg(module, code, desc);
+          }
+        }
+      });
 }
 
-void CTICDemoDlg::OnBtnDestroyRoom()
-{
-	CString str;
-	editClassId_.GetWindowText(str);
-	if (str.IsEmpty())
-	{
-		AfxMessageBox(_T("ÇëÏÈÌîĞ´·¿¼äºÅ"), MB_OK);
-		return;
-	}
-	int classId = atoi(w2a(str.GetBuffer()).c_str());
-	if (classId == 0)
-	{
-		AfxMessageBox(_T("·¿¼äºÅÓĞÎó"), MB_OK);
-		return;
-	}
+void CTICDemoDlg::OnBtnQuitRoom() {
+  btnQuitRoom_.EnableWindow(FALSE);
 
-	btnDestroyRoom_.EnableWindow(FALSE);
+  std::weak_ptr<CTICDemoDlg> weakSelf = this->shared_from_this();
+  TICManager::GetInstance().QuitClassroom(
+      false, [this, weakSelf](TICModule module, int code, const char *desc) {
+        std::shared_ptr<CTICDemoDlg> self = weakSelf.lock();
+        if (!self) {
+          return;
+        }
 
-	std::weak_ptr< CTICDemoDlg> weakSelf = this->shared_from_this();
-	TICManager::GetInstance().DestroyClassroom(classId, [this, weakSelf](TICModule module, int code, const char *desc) {
-		std::shared_ptr<CTICDemoDlg> self = weakSelf.lock();
-		if (!self)
-		{
-			return;
-		}
-
-		if (code == 0) {
-			UpdateUI(UserState::Login);
-			AfxMessageBox(_T("Ïú»Ù·¿¼ä³É¹¦"), MB_OK);
-		}
-		else {
-			UpdateUI(UserState::Login);
-			showErrorMsg(module, code, desc);
-		}
-	});
+        if (code == 0) {
+          UpdateUI(UserState::Login);
+          boardDlg_->Uninit();
+        } else {
+          UpdateUI(UserState::InRoom);
+          showErrorMsg(module, code, desc);
+        }
+      });
 }
 
-void CTICDemoDlg::OnBtnJoinRoom()
-{
-	CString str;
-	editClassId_.GetWindowText(str);
-	if (str.IsEmpty())
-	{
-		AfxMessageBox(_T("ÇëÏÈÌîĞ´·¿¼äºÅ"), MB_OK);
-		return;
-	}
-	int classId = atoi(w2a(str.GetBuffer()).c_str());
-	if (classId == 0)
-	{
-		AfxMessageBox(_T("·¿¼äºÅÓĞÎó"), MB_OK);
-		return;
-	}
+void CTICDemoDlg::onTICForceOffline() {
+  UpdateUI(UserState::Init);
 
-	btnJoinRoom_.EnableWindow(FALSE);
-
-	TICClassroomOption option;
-	option.classId = classId;
-	option.boardCallback = boardDlg_.get();
-
-	theApp.setClassId(classId);
-
-	std::weak_ptr< CTICDemoDlg> weakSelf = this->shared_from_this();
-	TICManager::GetInstance().JoinClassroom(option, [this, weakSelf](TICModule module, int code, const char *desc) {
-		std::shared_ptr<CTICDemoDlg> self = weakSelf.lock();
-		if (!self)
-		{
-			return;
-		}
-
-		if (code == 0) {
-			UpdateUI(UserState::InRoom);
-			boardDlg_->Init();
-		}
-		else {
-			UpdateUI(UserState::Login);
-
-			if (code == 10015) {
-				AfxMessageBox(_T("¿ÎÌÃ²»´æÔÚ£¬Çë\"´´½¨¿ÎÌÃ\""), MB_OK);
-			}
-			else {
-				showErrorMsg(module, code, desc);
-			}
-		}
-	});
+  AfxMessageBox(_T("è´¦å·åœ¨å…¶ä»–åœ°æ–¹ç™»é™†"), MB_OK);
 }
 
-void CTICDemoDlg::OnBtnQuitRoom()
-{	
-	btnQuitRoom_.EnableWindow(FALSE);
+void CTICDemoDlg::onTICUserSigExpired() { AfxMessageBox(_T("Sigè¿‡æœŸ"), MB_OK); }
 
-	std::weak_ptr< CTICDemoDlg> weakSelf = this->shared_from_this();
-	TICManager::GetInstance().QuitClassroom(false, [this, weakSelf](TICModule module, int code, const char *desc) {
-		std::shared_ptr<CTICDemoDlg> self = weakSelf.lock();
-		if (!self)
-		{
-			return;
-		}
+void CTICDemoDlg::UpdateUI(UserState state) {
+  if (state != UserState::Unknown) {
+    state_ = state;
+  }
+  switch (state_) {
+    case UserState::Init: {
+      editClassId_.EnableWindow(TRUE);
+      btnLogin_.EnableWindow(TRUE);
+      btnLogout_.EnableWindow(FALSE);
+      btnCreateRoom_.EnableWindow(FALSE);
+      btnDestroyRoom_.EnableWindow(FALSE);
+      btnJoinRoom_.EnableWindow(FALSE);
+      btnQuitRoom_.EnableWindow(FALSE);
+      cbUser_.EnableWindow(TRUE);
+      break;
+    }
+    case UserState::Login: {
+      editClassId_.EnableWindow(TRUE);
+      btnLogin_.EnableWindow(FALSE);
+      btnLogout_.EnableWindow(TRUE);
+      btnCreateRoom_.EnableWindow(TRUE);
+      btnDestroyRoom_.EnableWindow(TRUE);
+      btnJoinRoom_.EnableWindow(TRUE);
+      btnQuitRoom_.EnableWindow(FALSE);
+      cbUser_.EnableWindow(FALSE);
+      break;
+    }
+    case UserState::InRoom: {
+      editClassId_.EnableWindow(FALSE);
+      btnLogin_.EnableWindow(FALSE);
+      btnLogout_.EnableWindow(FALSE);
+      btnCreateRoom_.EnableWindow(FALSE);
+      btnDestroyRoom_.EnableWindow(FALSE);
+      btnJoinRoom_.EnableWindow(FALSE);
+      btnQuitRoom_.EnableWindow(TRUE);
+      cbUser_.EnableWindow(FALSE);
+      break;
+    }
+    default:
+      break;
+  }
 
-		if (code == 0) {
-			UpdateUI(UserState::Login);
-			boardDlg_->Uninit();
-		}
-		else {
-			UpdateUI(UserState::InRoom);
-			showErrorMsg(module, code, desc);
-		}
-	});
-}
-
-void CTICDemoDlg::onTICForceOffline()
-{
-	UpdateUI(UserState::Init);
-
-	AfxMessageBox(_T("ÕËºÅÔÚÆäËûµØ·½µÇÂ½"), MB_OK);
-}
-
-void CTICDemoDlg::onTICUserSigExpired()
-{
-	AfxMessageBox(_T("Sig¹ıÆÚ"), MB_OK);
-}
-
-void CTICDemoDlg::UpdateUI(UserState state)
-{
-	if (state != UserState::Unknown) {
-		state_ = state;
-	}
-	switch (state_)
-	{
-	case UserState::Init:
-	{
-		editClassId_.EnableWindow(TRUE);
-		btnLogin_.EnableWindow(TRUE);
-		btnLogout_.EnableWindow(FALSE);
-		btnCreateRoom_.EnableWindow(FALSE);
-		btnDestroyRoom_.EnableWindow(FALSE);
-		btnJoinRoom_.EnableWindow(FALSE);
-		btnQuitRoom_.EnableWindow(FALSE);
-		cbUser_.EnableWindow(TRUE);
-		break;
-	}
-	case UserState::Login:
-	{
-		editClassId_.EnableWindow(TRUE);
-		btnLogin_.EnableWindow(FALSE);
-		btnLogout_.EnableWindow(TRUE);
-		btnCreateRoom_.EnableWindow(TRUE);
-		btnDestroyRoom_.EnableWindow(TRUE);
-		btnJoinRoom_.EnableWindow(TRUE);
-		btnQuitRoom_.EnableWindow(FALSE);
-		cbUser_.EnableWindow(FALSE);
-		break;
-	}
-	case UserState::InRoom:
-	{
-		editClassId_.EnableWindow(FALSE);
-		btnLogin_.EnableWindow(FALSE);
-		btnLogout_.EnableWindow(FALSE);
-		btnCreateRoom_.EnableWindow(FALSE);
-		btnDestroyRoom_.EnableWindow(FALSE);
-		btnJoinRoom_.EnableWindow(FALSE);
-		btnQuitRoom_.EnableWindow(TRUE);
-		cbUser_.EnableWindow(FALSE);
-		break;
-	}
-	default: break;
-	}
-
-	videoDlg_->UpdateUI(state_);
-	boardDlg_->UpdateUI();
+  videoDlg_->UpdateUI(state_);
+  boardDlg_->UpdateUI();
 }

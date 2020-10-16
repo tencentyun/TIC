@@ -1,42 +1,45 @@
+ï»¿//
+//  Copyright Â© 2019 Tencent. All rights reserved.
+//
+
 #pragma once
 
 #ifndef VC_EXTRALEAN
-#define VC_EXTRALEAN            // ´Ó Windows Í·ÖĞÅÅ³ı¼«ÉÙÊ¹ÓÃµÄ×ÊÁÏ
+#define VC_EXTRALEAN  // ä» Windows å¤´ä¸­æ’é™¤æå°‘ä½¿ç”¨çš„èµ„æ–™
 #endif
 
 #include "targetver.h"
 
-#define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS      // Ä³Ğ© CString ¹¹Ôìº¯Êı½«ÊÇÏÔÊ½µÄ
+#define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS  // æŸäº› CString æ„é€ å‡½æ•°å°†æ˜¯æ˜¾å¼çš„
 
-// ¹Ø±Õ MFC ¶ÔÄ³Ğ©³£¼ûµ«¾­³£¿É·ÅĞÄºöÂÔµÄ¾¯¸æÏûÏ¢µÄÒş²Ø
+// å…³é—­ MFC å¯¹æŸäº›å¸¸è§ä½†ç»å¸¸å¯æ”¾å¿ƒå¿½ç•¥çš„è­¦å‘Šæ¶ˆæ¯çš„éšè—
 #define _AFX_ALL_WARNINGS
 
-#include <afxwin.h>         // MFC ºËĞÄ×é¼şºÍ±ê×¼×é¼ş
-#include <afxext.h>         // MFC À©Õ¹
+#include <afxext.h>  // MFC éµâ•ç
+#include <afxwin.h>  // MFC éç¨¿ç¸¾ç¼å‹ªæ¬¢éœå±¾çˆ£é‘å—™ç²æµ ?#13;
 
 #ifndef _AFX_NO_OLE_SUPPORT
-#include <afxdtctl.h>           // MFC ¶Ô Internet Explorer 4 ¹«¹²¿Ø¼şµÄÖ§³Ö
+#include <afxdtctl.h>  // MFC å¯¹ Internet Explorer 4 å…¬å…±æ§ä»¶çš„æ”¯æŒ
 #endif
 #ifndef _AFX_NO_AFXCMN_SUPPORT
-#include <afxcmn.h>             // MFC ¶Ô Windows ¹«¹²¿Ø¼şµÄÖ§³Ö
-#endif // _AFX_NO_AFXCMN_SUPPORT
+#include <afxcmn.h>  // MFC å¯¹ Windows å…¬å…±æ§ä»¶çš„æ”¯æŒ
+#endif               // _AFX_NO_AFXCMN_SUPPORT
 
-#include <afxcontrolbars.h>     // ¹¦ÄÜÇøºÍ¿Ø¼şÌõµÄ MFC Ö§³Ö
-
-
-#include <assert.h>
-#include <string>
-#include <vector>
-#include <functional>
-#include <fstream>
-#include <io.h>
-#include <direct.h>
+#include <afxcontrolbars.h>  // é”ç†»å…˜é–å“„æ‹°éºÑ‚æ¬¢é‰ï¼„æ®‘ MFC é€îˆ›å¯”
 #include <afxinet.h>
+#include <assert.h>
+#include <direct.h>
+#include <io.h>
+
+#include <fstream>
+#include <functional>
+#include <string>
 #include <thread>
+#include <vector>
 
 #include "..\SDK\TIC\TICManager.h"
 
-#define WM_UPDATE_THUMB_IMAGE WM_USER+100
+#define WM_UPDATE_THUMB_IMAGE WM_USER + 100
 
 #define ThumpWidth 134
 #define ThumpHeight 75
@@ -44,10 +47,11 @@
 std::wstring a2w(const std::string &str, unsigned int codePage = CP_ACP);
 std::string w2a(const std::wstring &wstr, unsigned int codePage = CP_ACP);
 
-std::string  i2s(int num);
+std::string i2s(int num);
 
-void showErrorMsg(TICModule module, int code, const char* desc);
+void showErrorMsg(TICModule module, int code, const char *desc);
 
-void stretchImage(CImage *pImage, CImage *ResultImage, int outWidth, int outHeight);
+void stretchImage(CImage *pImage, CImage *ResultImage, int outWidth,
+                  int outHeight);
 
 std::string savePic(std::string strImgUrl);

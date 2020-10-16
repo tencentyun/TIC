@@ -1,68 +1,71 @@
+Ôªø//
+//  Copyright ¬© 2019 Tencent. All rights reserved.
+//
+
 #pragma once
 
-#include "VideoDlg.h"
-#include "BoardDlg.h"
 #include <memory>
 
-class CTICDemoDlg
-	: public CDialogEx
-	, public TICIMStatusListener
-	, public std::enable_shared_from_this< CTICDemoDlg>
-{
-	DECLARE_MESSAGE_MAP()
-public:
-	CTICDemoDlg(CWnd* pParent = nullptr);
-	~CTICDemoDlg();
+#include "BoardDlg.h"
+#include "VideoDlg.h"
 
-	// ∂‘ª∞øÚ ˝æ›
+class CTICDemoDlg : public CDialogEx,
+                    public TICIMStatusListener,
+                    public std::enable_shared_from_this<CTICDemoDlg> {
+  DECLARE_MESSAGE_MAP()
+ public:
+  CTICDemoDlg(CWnd* pParent = nullptr);
+  ~CTICDemoDlg();
+
+  // ÂØπËØùÊ°ÜÊï∞ÊçÆ
 #ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_TICDEMO_DIALOG };
+  enum { IDD = IDD_TICDEMO_DIALOG };
 #endif
 
-private:
-	virtual void DoDataExchange(CDataExchange* pDX);
-	virtual BOOL OnInitDialog();
+ private:
+  void DoDataExchange(CDataExchange* pDX);
+  BOOL OnInitDialog();
 
-	// œ˚œ¢”≥…‰∫Ø ˝
-	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
-	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg void OnDestroy();
-	afx_msg void OnPaint();
-	afx_msg HCURSOR OnQueryDragIcon();
+  // Ê∂àÊÅØÊò†Â∞ÑÂáΩÊï∞
+  afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
+  afx_msg void OnSize(UINT nType, int cx, int cy);
+  afx_msg void OnDestroy();
+  afx_msg void OnPaint();
+  afx_msg HCURSOR OnQueryDragIcon();
 
-	afx_msg void OnTabSelChange(NMHDR *pNMHDR, LRESULT *pResult);
-	
-	afx_msg void OnBtnLogin();
-	afx_msg void OnBtnLogout();
+  afx_msg void OnTabSelChange(NMHDR* pNMHDR, LRESULT* pResult);
 
-	afx_msg void OnBtnCreateRoom();
-	afx_msg void OnBtnDestroyRoom();
-	afx_msg void OnBtnJoinRoom();
-	afx_msg void OnBtnQuitRoom();
+  afx_msg void OnBtnLogin();
+  afx_msg void OnBtnLogout();
 
-	//TICIMStatusListener
-	virtual void onTICForceOffline() override;
-	virtual void onTICUserSigExpired() override;
+  afx_msg void OnBtnCreateRoom();
+  afx_msg void OnBtnDestroyRoom();
+  afx_msg void OnBtnJoinRoom();
+  afx_msg void OnBtnQuitRoom();
 
-	void UpdateUI(UserState state = UserState::Unknown);
+  // TICIMStatusListener
+  void onTICForceOffline() override;
+  void onTICUserSigExpired() override;
 
-private:
-	HICON hIcon_;
+  void UpdateUI(UserState state = UserState::Unknown);
 
-	CComboBox cbUser_;
-	CEdit editClassId_;
+ private:
+  HICON hIcon_;
 
-	CButton btnLogin_;
-	CButton btnLogout_;
+  CComboBox cbUser_;
+  CEdit editClassId_;
 
-	CButton btnCreateRoom_;
-	CButton btnDestroyRoom_;
-	CButton btnJoinRoom_;
-	CButton btnQuitRoom_;
+  CButton btnLogin_;
+  CButton btnLogout_;
 
-	CTabCtrl tabCtrl_;
-	std::shared_ptr<CVideoDlg> videoDlg_ = nullptr;
-	std::shared_ptr<CBoardDlg> boardDlg_ = nullptr;
+  CButton btnCreateRoom_;
+  CButton btnDestroyRoom_;
+  CButton btnJoinRoom_;
+  CButton btnQuitRoom_;
 
-	UserState state_ = UserState::NotInit;
+  CTabCtrl tabCtrl_;
+  std::shared_ptr<CVideoDlg> videoDlg_ = nullptr;
+  std::shared_ptr<CBoardDlg> boardDlg_ = nullptr;
+
+  UserState state_ = UserState::NotInit;
 };
