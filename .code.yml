@@ -1,0 +1,72 @@
+#-----------------------------
+#该文件整理完善可参考：https://iwiki.oa.tencent.com/pages/viewpage.action?pageId=113587682
+
+#-----------------------------
+
+#必选项，定义项目分支命名规范,可以根据业务实际分支类型，填写相应的命名规范，对不适合的分支项可以删除
+#所有分支命名推荐统一使用小写字母
+branch:
+  #主干，推荐命名为master
+  trunk_name: "master"
+
+#必选项，用于说明仓库对应发布单元发布制品以及依赖制品配置文件信息
+artifact:
+  #大仓的情况，可能不同目录是不同的发布单元,下面path指定代码仓库里相应发布单元目录
+  #若整个仓库代码是一个发布单元，该path为当前目录
+  - path: "/"
+    #发布单元名称，如AndroidQQ、epc-demo
+    artifact_name: "TIC"
+    #发布单元类型，可选类型字段有，移动端/PC端/后台单体应用/后台微服务/web/sdk/lib/框架
+    #比如发布单元为腾讯视频Android客户端，则发布单元类型为如下样例 移动端
+    artifact_type: "框架"
+
+#可选项，需要定义区分不同类别代码时才需要配置source
+source:
+  # 文件或目录可使用绝对或相对路径，绝对路径按代码库根目录计算，以/开头。相对路径按.code.yml所在目录来判断，以 ./开头。
+  # 提供产品代码库中编写的测试代码存放目录或文件名格式,以便后续代码统计环节进行排除等特殊处理
+  test_source:
+    #用于匹配文件; 匹配方式为正则表达式
+    filepath_regex:
+      - "/Windows/Demo/.*"
+      - "/Android/Demo/.*"
+      - "/iOS/Demo/.*"
+      - "/macOS/Demo/.*"
+      - "/Web/Demo/.*"
+
+  # 提供产品代码库中直接以源码形式存在的第三方代码目录或代码文件名的正则表达。
+    # 此处备注的第三方代码在后续统计代码量环节会被排除，若代码库中不存在需要排除的第三方代码，该项配置标识可为空
+  third_party_source:
+    #第三方代码文件的正则表达式，若无统一标识格式，可以指定具体目录，样例可参考test_source举例
+    filepath_regex:
+      - "/Windows/SDK/TIC/jsoncpp/.*"
+
+file:
+  - path: /Windows/.*
+    owners:
+      - alderzhang
+    owner_rule: 1
+  - path: /iOS/.*
+    owners:
+      - kennethmiao
+    owner_rule: 1
+  - path: /macOS/.*
+    owners:
+      - kennethmiao
+    owner_rule: 1
+  - path: /Android/.*
+    owners:
+      - gregzeng
+    owner_rule: 1
+  - path: /Web/.*
+    owners:
+      - rackeyyang
+    owner_rule: 1
+  - path: /小程序/.*
+    owners:
+      - rackeyyang
+    owner_rule: 1
+
+log-helper:
+  auto-correct: true
+  correct-angular: true
+  correct-tapd: true
