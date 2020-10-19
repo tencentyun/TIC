@@ -41,6 +41,8 @@ source:
     filepath_regex:
       - "/Windows/SDK/TIC/jsoncpp/.*"
       - "/Windows/SDK/Updater/.*"
+  auto_generate_source:
+    filepath_regex: ["/Web/SDK/TIC/dist/.*"] 
 
 file:
   - path: /Windows/.*

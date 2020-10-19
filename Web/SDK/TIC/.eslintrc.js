@@ -4,7 +4,7 @@ module.exports = {
     "node": true,
     "es6": true
   },
-  "extends": "eslint:recommended",
+  "extends": '@tencent/eslint-config-tencent',
   "parserOptions": {
     "ecmaVersion": 2016,
     "sourceType": "module"

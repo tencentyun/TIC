@@ -9,6 +9,6 @@ function WebRTCOptionModel() {
 
 WebRTCOptionModel.prototype.setData = function (data) {
   Object.assign(this, data);
-}
+};
 
 export default WebRTCOptionModel;

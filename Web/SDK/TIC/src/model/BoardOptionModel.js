@@ -10,14 +10,14 @@ function BoardOptionModel() {
   this.brushThin = 100;
   this.toolType = 1;
   this.globalBackgroundColor = '#ffffff';
-  this.boardFileFitMode = 0; // 
-  this.scale = 100; // 
+  this.boardFileFitMode = 0; //
+  this.scale = 100; //
   this.smoothLevel = 0.1; // 平滑系数
   this.preloadDepth = 5; // 预加载深度
 }
 
 BoardOptionModel.prototype.setData = function (data) {
   Object.assign(this, data);
-}
+};
 
 export default BoardOptionModel;

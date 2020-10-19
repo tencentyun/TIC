@@ -1,4 +1,4 @@
-import LogReport from '../log/LogReport'
+import LogReport from '../log/LogReport';
 
 function WebBoard(accountModel, boardOptionModel) {
   this.board = null;
@@ -8,19 +8,19 @@ function WebBoard(accountModel, boardOptionModel) {
 
 WebBoard.prototype.getInstance = function () {
   return this.board;
-}
+};
 
 WebBoard.prototype.setLog = function (log) {
   this.log = log;
-}
+};
 
 WebBoard.prototype.render = function () {
   this.board = null;
   this.board = new TEduBoard(Object.assign({}, this.boardOptionModel, {
     classId: this.accountModel.classId,
     sdkAppId: this.accountModel.sdkAppId,
-    userId: this.accountModel.userId + '',
-    userSig: this.accountModel.userSig
+    userId: `${this.accountModel.userId}`,
+    userSig: this.accountModel.userSig,
   }));
 
   // 错误
@@ -55,19 +55,19 @@ WebBoard.prototype.render = function () {
       ext: '',
     });
   });
-}
+};
 
 WebBoard.prototype.addSyncDataEventCallback = function (callback) {
-  this.board.on(TEduBoard.EVENT.TEB_SYNCDATA, data => {
+  this.board.on(TEduBoard.EVENT.TEB_SYNCDATA, (data) => {
     callback && callback(data);
   });
-}
+};
 
 WebBoard.prototype.addAckData = function (data) {
   if (this.board) {
     this.board.addAckData && this.board.addAckData(data);
   }
-}
+};
 
 WebBoard.prototype.quit = function () {
   if (this.board) {
@@ -75,13 +75,13 @@ WebBoard.prototype.quit = function () {
     this.board.off && this.board.off();
     this.board = null;
   }
-}
+};
 
 // 清空课堂数据
 WebBoard.prototype.clearAll = function () {
   if (this.board) {
     this.board && this.board.reset();
   }
-}
+};
 
 export default WebBoard;
