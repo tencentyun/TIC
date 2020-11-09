@@ -7,29 +7,29 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class TICEventObservable extends  TICObservable<TICManager.TICEventListener> implements TICManager.TICEventListener {
+public class TICEventObservable extends TICObservable<TICManager.TICEventListener>
+        implements TICManager.TICEventListener {
 
     @Override
     public void onTICVideoDisconnect(int i, String s) {
         LinkedList<WeakReference<TICManager.TICEventListener>> tmpList = new LinkedList<>(listObservers);
         Iterator<WeakReference<TICManager.TICEventListener>> it = tmpList.iterator();
 
-        while(it.hasNext())
-        {
+        while (it.hasNext()) {
             TICManager.TICEventListener t = it.next().get();
             if (t != null) {
                 t.onTICVideoDisconnect(i, s);
             }
         }
     }
+
     @Override
     public void onTICUserVideoAvailable(final String userId, boolean available) {
 
         LinkedList<WeakReference<TICManager.TICEventListener>> tmpList = new LinkedList<>(listObservers);
         Iterator<WeakReference<TICManager.TICEventListener>> it = tmpList.iterator();
 
-        while(it.hasNext())
-        {
+        while (it.hasNext()) {
             TICManager.TICEventListener t = it.next().get();
             if (t != null) {
                 t.onTICUserVideoAvailable(userId, available);
@@ -42,8 +42,7 @@ public class TICEventObservable extends  TICObservable<TICManager.TICEventListen
         LinkedList<WeakReference<TICManager.TICEventListener>> tmpList = new LinkedList<>(listObservers);
         Iterator<WeakReference<TICManager.TICEventListener>> it = tmpList.iterator();
 
-        while(it.hasNext())
-        {
+        while (it.hasNext()) {
             TICManager.TICEventListener t = it.next().get();
             if (t != null) {
                 t.onTICUserSubStreamAvailable(userId, available);
@@ -56,8 +55,7 @@ public class TICEventObservable extends  TICObservable<TICManager.TICEventListen
         LinkedList<WeakReference<TICManager.TICEventListener>> tmpList = new LinkedList<>(listObservers);
         Iterator<WeakReference<TICManager.TICEventListener>> it = tmpList.iterator();
 
-        while(it.hasNext())
-        {
+        while (it.hasNext()) {
             TICManager.TICEventListener t = it.next().get();
             if (t != null) {
                 t.onTICUserAudioAvailable(userId, available);
@@ -71,8 +69,7 @@ public class TICEventObservable extends  TICObservable<TICManager.TICEventListen
         LinkedList<WeakReference<TICManager.TICEventListener>> tmpList = new LinkedList<>(listObservers);
         Iterator<WeakReference<TICManager.TICEventListener>> it = tmpList.iterator();
 
-        while(it.hasNext())
-        {
+        while (it.hasNext()) {
             TICManager.TICEventListener t = it.next().get();
             if (t != null) {
                 t.onTICClassroomDestroy();
@@ -86,8 +83,7 @@ public class TICEventObservable extends  TICObservable<TICManager.TICEventListen
         LinkedList<WeakReference<TICManager.TICEventListener>> tmpList = new LinkedList<>(listObservers);
         Iterator<WeakReference<TICManager.TICEventListener>> it = tmpList.iterator();
 
-        while(it.hasNext())
-        {
+        while (it.hasNext()) {
             TICManager.TICEventListener t = it.next().get();
             if (t != null) {
                 t.onTICMemberJoin(list);
@@ -101,8 +97,7 @@ public class TICEventObservable extends  TICObservable<TICManager.TICEventListen
         LinkedList<WeakReference<TICManager.TICEventListener>> tmpList = new LinkedList<>(listObservers);
         Iterator<WeakReference<TICManager.TICEventListener>> it = tmpList.iterator();
 
-        while(it.hasNext())
-        {
+        while (it.hasNext()) {
             TICManager.TICEventListener t = it.next().get();
             if (t != null) {
                 t.onTICMemberQuit(list);
@@ -116,8 +111,7 @@ public class TICEventObservable extends  TICObservable<TICManager.TICEventListen
         LinkedList<WeakReference<TICManager.TICEventListener>> tmpList = new LinkedList<>(listObservers);
         Iterator<WeakReference<TICManager.TICEventListener>> it = tmpList.iterator();
 
-        while(it.hasNext())
-        {
+        while (it.hasNext()) {
             TICManager.TICEventListener t = it.next().get();
             if (t != null) {
                 t.onTICSendOfflineRecordInfo(code, desc);

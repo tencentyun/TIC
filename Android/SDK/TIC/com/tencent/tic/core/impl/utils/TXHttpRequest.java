@@ -25,16 +25,17 @@ public class TXHttpRequest {
     private static final int READ_TIMEOUT = 1000 * 5;
 
     public interface TXHttpListenner {
-        void OnRecvMessage(int errCode, final String msg, final byte[] data);
+        void onRecvMessage(int errCode, final String msg, final byte[] data);
     }
 
-    public int sendHttpsRequest(String url, byte[] data, TXHttpListenner callback){
-        TXCLog.i(TAG, "sendHttpsRequest->enter action: "+url+", data size: "+data.length);
+    public int sendHttpsRequest(String url, byte[] data, TXHttpListenner callback) {
+        TXCLog.i(TAG, "sendHttpsRequest->enter action: " + url + ", data size: " + data.length);
         asyncPostRequest(url.getBytes(), data, callback, null);
         return 0;
     }
-    public int sendHttpsRequest(String url, byte[] data,  TXHttpListenner callback, String contentType){
-        TXCLog.i(TAG, "sendHttpsRequest->enter action: "+url+", data size: "+data.length);
+
+    public int sendHttpsRequest(String url, byte[] data, TXHttpListenner callback, String contentType) {
+        TXCLog.i(TAG, "sendHttpsRequest->enter action: " + url + ", data size: " + data.length);
         asyncPostRequest(url.getBytes(), data, callback, contentType);
         return 0;
     }
@@ -45,16 +46,17 @@ public class TXHttpRequest {
         request.execute(action, data);
     }
 
-    static class TXResult{
+    static class TXResult {
         public int errCode = -1;
         public String errMsg = "";
         public byte[] data = "".getBytes();
     }
 
-    static class TXPostRequest extends AsyncTask<byte[], Void, TXResult>{
+    static class TXPostRequest extends AsyncTask<byte[], Void, TXResult> {
         private WeakReference<TXHttpListenner> mHttpRequest;
         private Handler mHandler = null;
         private String mContentType;
+
         public TXPostRequest(TXHttpListenner callback, String contentType) {
             mContentType = contentType;
             mHttpRequest = new WeakReference<>(callback);
@@ -65,20 +67,21 @@ public class TXHttpRequest {
                 mHandler = null;
             }
         }
+
         @Override
         protected TXResult doInBackground(byte[]... bytes) {
             TXResult result = new TXResult();
             try {
                 if (new String(bytes[0]).startsWith("https")) {
                     result.data = getHttpsPostRsp(new String(bytes[0]), bytes[1], mContentType);
-                }else{
+                } else {
                     result.data = getHttpPostRsp(new String(bytes[0]), bytes[1]);
                 }
                 result.errCode = 0;
-            }catch (Exception e){
+            } catch (Exception e) {
                 result.errMsg = e.toString();
             }
-            TXCLog.i(TAG, "TXPostRequest->result: "+result.errCode+"|"+result.errMsg);
+            TXCLog.i(TAG, "TXPostRequest->result: " + result.errCode + "|" + result.errMsg);
             return result;
         }
 
@@ -91,11 +94,11 @@ public class TXHttpRequest {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            request.OnRecvMessage(txResult.errCode, txResult.errMsg, txResult.data);
+                            request.onRecvMessage(txResult.errCode, txResult.errMsg, txResult.data);
                         }
                     });
                 } else {
-                    request.OnRecvMessage(txResult.errCode, txResult.errMsg, txResult.data);
+                    request.onRecvMessage(txResult.errCode, txResult.errMsg, txResult.data);
                 }
             }
         }
@@ -124,7 +127,7 @@ public class TXHttpRequest {
             ByteArrayOutputStream byBuffer = new ByteArrayOutputStream();
             byte[] byData = new byte[1024];
             int nRead;
-            while ((nRead = in.read(data, 0, data.length)) != -1){
+            while ((nRead = in.read(data, 0, data.length)) != -1) {
                 byBuffer.write(data, 0, nRead);
             }
             byBuffer.flush();
@@ -165,7 +168,7 @@ public class TXHttpRequest {
             ByteArrayOutputStream byBuffer = new ByteArrayOutputStream();
             byte[] byData = new byte[1024];
             int nRead;
-            while ((nRead = in.read(data, 0, data.length)) != -1){
+            while ((nRead = in.read(data, 0, data.length)) != -1) {
                 byBuffer.write(data, 0, nRead);
             }
             byBuffer.flush();

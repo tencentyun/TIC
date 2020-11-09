@@ -16,6 +16,7 @@ BEGIN_MESSAGE_MAP(CDrawTabDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BTN_BACK_COLOR, &CDrawTabDlg::OnBnClickedBtnBackColor)
 	ON_BN_CLICKED(IDC_BTN_TEXT_COLOR, &CDrawTabDlg::OnBnClickedBtnTextColor)
 	ON_CBN_SELCHANGE(IDC_COMBO_TOOL_TYPE, &CDrawTabDlg::OnCbnSelchangeComboToolType)
+	ON_CBN_SELCHANGE(IDC_COMBO_CUSTOM_GRAPH, &CDrawTabDlg::OnCbnSelchangeComboCustomGraph)
 	ON_NOTIFY(NM_CUSTOMDRAW, IDC_SLIDER_BRUSH_THIN, &CDrawTabDlg::OnNMCustomdrawSliderBrushThin)
 	ON_NOTIFY(NM_CUSTOMDRAW, IDC_SLIDER_TEXT_SIZE, &CDrawTabDlg::OnNMCustomdrawSliderTextSize)
 	ON_BN_CLICKED(IDC_BTN_SET_BACK_H5, &CDrawTabDlg::OnBnClickedBtnSetBackH5)
@@ -79,7 +80,7 @@ BOOL CDrawTabDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	//白板工具
+	// 白板工具
 	comboToolType_.AddString(L"鼠标");
 	comboToolType_.AddString(L"画笔");
 	comboToolType_.AddString(L"橡皮擦");
@@ -93,6 +94,19 @@ BOOL CDrawTabDlg::OnInitDialog()
 	comboToolType_.AddString(L"框选");
 	comboToolType_.AddString(L"文本");
 	comboToolType_.AddString(L"缩放移动");
+	comboToolType_.AddString(L"空心正方形");
+	comboToolType_.AddString(L"实心正方形");
+	comboToolType_.AddString(L"空心正圆形");
+	comboToolType_.AddString(L"实心正圆形");
+	comboToolType_.AddString(L"自定义图形");
+
+	// 自定义图形
+	comboCustomGraph_.AddString(L"三角形");
+	comboCustomGraph_.AddString(L"心形");
+	comboCustomGraph_.AddString(L"五角星");
+	customGraphUrl_.push_back("https://demo.qcloudtiw.com/resource/triangle.svg");
+	customGraphUrl_.push_back("https://demo.qcloudtiw.com/resource/heart.svg");
+	customGraphUrl_.push_back("https://demo.qcloudtiw.com/resource/star.svg");
 
 	sliderBrushThin_.SetRange(1, 200);
 
@@ -120,6 +134,7 @@ void CDrawTabDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BTN_TEXT_COLOR, btnTextColor_);
 
 	DDX_Control(pDX, IDC_COMBO_TOOL_TYPE, comboToolType_);
+	DDX_Control(pDX, IDC_COMBO_CUSTOM_GRAPH, comboCustomGraph_);
 
 	DDX_Control(pDX, IDC_SLIDER_BRUSH_THIN, sliderBrushThin_);
 	DDX_Control(pDX, IDC_SLIDER_TEXT_SIZE, sliderTextSize_);
@@ -263,6 +278,15 @@ void CDrawTabDlg::OnCbnSelchangeComboToolType()
 	}
 }
 
+void CDrawTabDlg::OnCbnSelchangeComboCustomGraph()
+{
+	auto *boardCtrl = TICManager::GetInstance().GetBoardController();
+	if (boardCtrl)
+	{
+		boardCtrl->AddElement(TEDU_BOARD_ELEMENT_CUSTOM_GRAPH, customGraphUrl_[comboCustomGraph_.GetCurSel()].c_str());
+	}
+}
+
 void CDrawTabDlg::OnNMCustomdrawSliderBrushThin(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMCUSTOMDRAW pNMCD = reinterpret_cast<LPNMCUSTOMDRAW>(pNMHDR);
@@ -305,7 +329,7 @@ void CDrawTabDlg::OnBnClickedBtnAddImage()
 		CString imageUrl;
 		editAddImage_.GetWindowText(imageUrl);
 		std::string url = w2a(imageUrl.GetString());
-		boardCtrl->AddImageElement(url.c_str());
+		boardCtrl->AddElement(TEDU_BOARD_ELEMENT_IMAGE, url.c_str());
 	}
 }
 

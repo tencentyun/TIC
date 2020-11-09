@@ -340,13 +340,32 @@
                   <el-option label="实心矩形" v-bind:value="TEduBoard.TOOL_TYPE.TEDU_BOARD_TOOL_TYPE_RECT_SOLID">
                   </el-option>
                   <el-option label="空心矩形" v-bind:value="TEduBoard.TOOL_TYPE.TEDU_BOARD_TOOL_TYPE_RECT"></el-option>
+                  <el-option label="空心正方形" v-bind:value="TEduBoard.TOOL_TYPE.TEDU_BOARD_TOOL_TYPE_SQUARE"></el-option>
+                  <el-option label="实心正方形" v-bind:value="TEduBoard.TOOL_TYPE.TEDU_BOARD_TOOL_TYPE_SQUARE_SOLID">
+                  </el-option>
                   <el-option label="文字输入" v-bind:value="TEduBoard.TOOL_TYPE.TEDU_BOARD_TOOL_TYPE_TEXT"></el-option>
+                  <el-option label="空心正圆形" v-bind:value="TEduBoard.TOOL_TYPE.TEDU_BOARD_TOOL_TYPE_CIRCLE"></el-option>
+                  <el-option label="实心正圆形" v-bind:value="TEduBoard.TOOL_TYPE.TEDU_BOARD_TOOL_TYPE_CIRCLE_SOLID">
+                  </el-option>
+
                   <el-option label="橡皮擦" v-bind:value="TEduBoard.TOOL_TYPE.TEDU_BOARD_TOOL_TYPE_ERASER"></el-option>
                   <el-option label="激光笔" v-bind:value="TEduBoard.TOOL_TYPE.TEDU_BOARD_TOOL_TYPE_LASER"></el-option>
                   <el-option label="框选" v-bind:value="TEduBoard.TOOL_TYPE.TEDU_BOARD_TOOL_TYPE_RECT_SELECT"></el-option>
                   <el-option label="点选" v-bind:value="TEduBoard.TOOL_TYPE.TEDU_BOARD_TOOL_TYPE_POINT_SELECT">
                   </el-option>
-                  <el-option label="移动" v-bind:value="TEduBoard.TOOL_TYPE.TEDU_BOARD_TOOL_TYPE_ZOOM_DRAG"></el-option>
+                  <el-option label="缩放移动" v-bind:value="TEduBoard.TOOL_TYPE.TEDU_BOARD_TOOL_TYPE_ZOOM_DRAG"></el-option>
+                  <el-option label="自定义图形" v-bind:value="TEduBoard.TOOL_TYPE.TEDU_BOARD_TOOL_TYPE_BOARD_CUSTOM_GRAPH">
+                  </el-option>
+
+                </el-select>
+              </el-form-item>
+              <el-form-item v-if="toolType === TEduBoard.TOOL_TYPE.TEDU_BOARD_TOOL_TYPE_LINE" label="箭头类型">
+                <el-select placeholder="直线样式" v-model="lineStyle" @change="onSetLineStyle">
+                  <el-option label="实线，无箭头" v-bind:value="0"></el-option>
+                  <el-option label="虚线，无箭头" v-bind:value="1"></el-option>
+                  <el-option label="实线，终点实箭头" v-bind:value="2"></el-option>
+                  <el-option label="虚线，起点普通箭头" v-bind:value="3"></el-option>
+                  <el-option label="虚线，起点实箭头，终点普通箭头" v-bind:value="4"></el-option>
                 </el-select>
               </el-form-item>
 
@@ -401,17 +420,28 @@
                 <el-select placeholder="工具" v-model="backgroundImageH5" @change="onSetBackgroundH5">
                   <el-option label="QQ" v-bind:value="'https://www.qq.com/'"></el-option>
                   <el-option label="腾讯云" v-bind:value="'https://cloud.tencent.com'"></el-option>
+
                 </el-select>
               </el-form-item>
 
               <el-form-item label="添加图片资源">
                 <el-select placeholder="图片url" @change="onAddImageElement">
-                  <el-option label="腾讯云"
-                    v-bind:value="'https://res.qcloudtiw.com/demo/qcloud.jpg'">
+                  <el-option label="腾讯云" v-bind:value="'https://res.qcloudtiw.com/demo/qcloud.jpg'">
+                  </el-option>
+                  <el-option label="车辆图片" v-bind:value="'http://open.youtu.qq.com/static/img/ocr_car_01.b3c3834.jpg'">
                   </el-option>
                 </el-select>
               </el-form-item>
 
+              <el-form-item label="默认文本输入">
+                <el-input id="text" v-model.trim="nextText" placeholder="默认文本内容" style="width: 50%;"></el-input>
+                <el-tooltip content="是否继续拿到焦点" placement="top">
+                  <el-switch v-model="keepFocus" active-color="#13ce66" inactive-color="#ff4949" :active-value="true"
+                    :inactive-value="false">
+                  </el-switch>
+                </el-tooltip>
+                <el-button @click="onSetNextText" v-text="'设置'"></el-button>
+              </el-form-item>
 
               <el-form-item label="添加H5资源">
                 <el-input id="h5Url" v-model.trim="h5Url" placeholder="h5 url" style="width: 50%;"></el-input>
@@ -473,8 +503,7 @@
 
               <el-form-item label="新增视频文件">
                 <el-select placeholder="视频文件" @change="onAddVideoFile">
-                  <el-option label="腾讯教育"
-                    v-bind:value="'https://res.qcloudtiw.com/demo/tiw-vod.mp4'">
+                  <el-option label="腾讯教育" v-bind:value="'https://res.qcloudtiw.com/demo/tiw-vod.mp4'">
                   </el-option>
                 </el-select>
               </el-form-item>
@@ -506,7 +535,25 @@
 
           </el-tab-pane>
 
-
+          <el-tab-pane label="自定义图形">
+            <el-row v-for="(item, index) in customGraphImages" style="margin-bottom: 10px;">
+              <el-col :span="24" :key="index">
+                <el-card :body-style="{ padding: '0px' }">
+                  <div slot="header" >
+                    <div style="font-size: 12px;">1.先在涂鸦面板设置为自定义图形工具<br />2.在自定义图形面板选择要使用的图形<br />3.在白板上拖动就可以绘制</div>
+                  </div>
+                  <el-row>
+                    <el-col :span="16" style="text-align: center;">
+                      <img :src="item" style="margin: 10px auto; max-height: 50px;max-width: 50px;">
+                    </el-col>
+                    <el-col :span="8">
+                      <el-button size="mini" @click="setCustomGraphUrl(item)">使用</el-button>
+                    </el-col>
+                  </el-row>
+                </el-card>
+              </el-col>
+            </el-row>
+          </el-tab-pane>
         </el-tabs>
 
       </el-aside>
@@ -529,8 +576,9 @@
   <script src="./libs/tim-js.js"></script>
 
   <!-- 白板SDK -->
-  <script src="https://res.qcloudtiw.com/board/2.5.1/TEduBoard.min.js"></script>
+  <script src="https://res.qcloudtiw.com/board/2.5.5/TEduBoard.min.js"></script>
   <script src="https://res.qcloudtiw.com/tic/2.5.1/TIC.min.js"></script>
+  <!-- <script src="./tiwsdk/TIC.js"></script> -->
 
   <!--  生成测试账号，只建议在开发中过程中使用，应用到生产环境时，请由服务端生成  -->
   <script src="./js/generateusersig/lib-generate-test-usersig.min.js"></script>

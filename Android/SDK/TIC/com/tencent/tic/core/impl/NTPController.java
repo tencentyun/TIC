@@ -10,14 +10,15 @@ import java.lang.ref.WeakReference;
 
 
 public class NTPController {
-    final static int SUCC = 0;
-    final static int FAILED = 1;
-    final static int MAX_RETRY = 5;
-    final static String NTP_HOST = "time1.cloud.tencent.com";
+    static final int SUCC = 0;
+    static final int FAILED = 1;
+    static final int MAX_RETRY = 5;
+    static final String NTP_HOST = "time1.cloud.tencent.com";
 
     public interface TrueTimeListener {
         void onGotTrueTimeRusult(int code, final String msg);
     }
+
     WeakReference<TrueTimeListener> mWeakListener;
     Handler mHandler;
 
@@ -30,20 +31,19 @@ public class NTPController {
     public void start(final String ntpServer) {
         if (!TrueTime.build().isInitialized()) {
             new Thread(new MyRunnable(this, ntpServer)).start();
-        }
-        else {
+        } else {
             //直接回调成功
             callback(SUCC);
         }
     }
 
-    void callback (final int result) {
+    void callback(final int result) {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
                 TrueTimeListener listener = mWeakListener.get();
                 if (listener != null) {
-                    listener.onGotTrueTimeRusult(result, (result == SUCC)?"succ":"ntp time out");
+                    listener.onGotTrueTimeRusult(result, (result == SUCC) ? "succ" : "ntp time out");
                 }
             }
         });
@@ -67,7 +67,7 @@ public class NTPController {
                     TrueTime.build().withNtpHost(mNtpServer).initialize();
                     result = SUCC;
                     break;
-                }  catch (IOException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }

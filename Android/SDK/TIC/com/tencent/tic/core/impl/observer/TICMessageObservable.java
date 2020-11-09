@@ -7,7 +7,8 @@ import java.lang.ref.WeakReference;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public class TICMessageObservable extends TICObservable<TICManager.TICMessageListener> implements TICManager.TICMessageListener {
+public class TICMessageObservable extends TICObservable<TICManager.TICMessageListener>
+        implements TICManager.TICMessageListener {
 
     @Override
     public void onTICRecvTextMessage(String s, String s1) {
@@ -15,8 +16,7 @@ public class TICMessageObservable extends TICObservable<TICManager.TICMessageLis
         LinkedList<WeakReference<TICManager.TICMessageListener>> tmpList = new LinkedList<>(listObservers);
         Iterator<WeakReference<TICManager.TICMessageListener>> it = tmpList.iterator();
 
-        while(it.hasNext())
-        {
+        while (it.hasNext()) {
             TICManager.TICMessageListener t = it.next().get();
             if (t != null) {
                 t.onTICRecvTextMessage(s, s1);
@@ -30,8 +30,7 @@ public class TICMessageObservable extends TICObservable<TICManager.TICMessageLis
         LinkedList<WeakReference<TICManager.TICMessageListener>> tmpList = new LinkedList<>(listObservers);
         Iterator<WeakReference<TICManager.TICMessageListener>> it = tmpList.iterator();
 
-        while(it.hasNext())
-        {
+        while (it.hasNext()) {
             TICManager.TICMessageListener t = it.next().get();
             if (t != null) {
                 t.onTICRecvCustomMessage(s, bytes);
@@ -45,8 +44,7 @@ public class TICMessageObservable extends TICObservable<TICManager.TICMessageLis
         LinkedList<WeakReference<TICManager.TICMessageListener>> tmpList = new LinkedList<>(listObservers);
         Iterator<WeakReference<TICManager.TICMessageListener>> it = tmpList.iterator();
 
-        while(it.hasNext())
-        {
+        while (it.hasNext()) {
             TICManager.TICMessageListener t = it.next().get();
             if (t != null) {
                 t.onTICRecvGroupTextMessage(fromUserId, text);
@@ -55,13 +53,12 @@ public class TICMessageObservable extends TICObservable<TICManager.TICMessageLis
     }
 
     @Override
-    public void onTICRecvGroupCustomMessage(String fromUserId, byte[] data){
+    public void onTICRecvGroupCustomMessage(String fromUserId, byte[] data) {
 
         LinkedList<WeakReference<TICManager.TICMessageListener>> tmpList = new LinkedList<>(listObservers);
         Iterator<WeakReference<TICManager.TICMessageListener>> it = tmpList.iterator();
 
-        while(it.hasNext())
-        {
+        while (it.hasNext()) {
             TICManager.TICMessageListener t = it.next().get();
             if (t != null) {
                 t.onTICRecvGroupCustomMessage(fromUserId, data);
@@ -75,8 +72,7 @@ public class TICMessageObservable extends TICObservable<TICManager.TICMessageLis
         LinkedList<WeakReference<TICManager.TICMessageListener>> tmpList = new LinkedList<>(listObservers);
         Iterator<WeakReference<TICManager.TICMessageListener>> it = tmpList.iterator();
 
-        while(it.hasNext())
-        {
+        while (it.hasNext()) {
             TICManager.TICMessageListener t = it.next().get();
             if (t != null) {
                 t.onTICRecvMessage(message);

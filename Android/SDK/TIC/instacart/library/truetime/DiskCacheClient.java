@@ -11,18 +11,18 @@ class DiskCacheClient {
 
     private static final String TAG = DiskCacheClient.class.getSimpleName();
 
-    private CacheInterface _cacheInterface = null;
+    private CacheInterface cacheInterface = null;
 
     /**
      * Provide your own cache interface to cache the true time information.
      * @param cacheInterface the customized cache interface to save the true time data.
      */
     void enableCacheInterface(CacheInterface cacheInterface) {
-        this._cacheInterface = cacheInterface;
+        this.cacheInterface = cacheInterface;
     }
 
     void clearCachedInfo() {
-        clearCachedInfo(this._cacheInterface);
+        clearCachedInfo(this.cacheInterface);
     }
 
     /**
@@ -50,9 +50,9 @@ class DiskCacheClient {
                         cachedDeviceUptime,
                         bootTime));
 
-        _cacheInterface.put(KEY_CACHED_BOOT_TIME, bootTime);
-        _cacheInterface.put(KEY_CACHED_DEVICE_UPTIME, cachedDeviceUptime);
-        _cacheInterface.put(KEY_CACHED_SNTP_TIME, cachedSntpTime);
+        cacheInterface.put(KEY_CACHED_BOOT_TIME, bootTime);
+        cacheInterface.put(KEY_CACHED_DEVICE_UPTIME, cachedDeviceUptime);
+        cacheInterface.put(KEY_CACHED_SNTP_TIME, cachedSntpTime);
 
     }
 
@@ -61,7 +61,7 @@ class DiskCacheClient {
             return false;
         }
 
-        long cachedBootTime = _cacheInterface.get(KEY_CACHED_BOOT_TIME, 0L);
+        long cachedBootTime = cacheInterface.get(KEY_CACHED_BOOT_TIME, 0L);
         if (cachedBootTime == 0) {
             return false;
         }
@@ -77,7 +77,7 @@ class DiskCacheClient {
             return 0L;
         }
 
-        return _cacheInterface.get(KEY_CACHED_DEVICE_UPTIME, 0L);
+        return cacheInterface.get(KEY_CACHED_DEVICE_UPTIME, 0L);
     }
 
     long getCachedSntpTime() {
@@ -85,13 +85,13 @@ class DiskCacheClient {
             return 0L;
         }
 
-        return _cacheInterface.get(KEY_CACHED_SNTP_TIME, 0L);
+        return cacheInterface.get(KEY_CACHED_SNTP_TIME, 0L);
     }
 
     // -----------------------------------------------------------------------------------
 
     private boolean cacheUnavailable() {
-        if (_cacheInterface == null) {
+        if (cacheInterface == null) {
             Log.w(TAG, "Cannot use disk caching strategy for TrueTime. CacheInterface unavailable");
             return true;
         }

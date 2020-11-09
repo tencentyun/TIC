@@ -9,20 +9,20 @@ class SharedPreferenceCacheImpl implements CacheInterface {
 
     private static final String KEY_CACHED_SHARED_PREFS = "com.instacart.library.truetime.shared_preferences";
 
-    private SharedPreferences _sharedPreferences;
+    private SharedPreferences sharedPreferences;
 
     public SharedPreferenceCacheImpl(Context context) {
-        _sharedPreferences = context.getSharedPreferences(KEY_CACHED_SHARED_PREFS, MODE_PRIVATE);
+        sharedPreferences = context.getSharedPreferences(KEY_CACHED_SHARED_PREFS, MODE_PRIVATE);
     }
 
     @Override
     public void put(String key, long value) {
-        _sharedPreferences.edit().putLong(key, value).apply();
+        sharedPreferences.edit().putLong(key, value).apply();
     }
 
     @Override
     public long get(String key, long defaultValue) {
-        return _sharedPreferences.getLong(key, defaultValue);
+        return sharedPreferences.getLong(key, defaultValue);
     }
 
     @Override
@@ -33,6 +33,6 @@ class SharedPreferenceCacheImpl implements CacheInterface {
     }
 
     private void remove(String keyCachedBootTime) {
-        _sharedPreferences.edit().remove(keyCachedBootTime).apply();
+        sharedPreferences.edit().remove(keyCachedBootTime).apply();
     }
 }

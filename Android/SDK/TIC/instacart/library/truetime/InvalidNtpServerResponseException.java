@@ -19,7 +19,7 @@ public class InvalidNtpServerResponseException
     }
 
   /**
-   *
+   * 
    * @param message An informative message that api users can use to know what went wrong.
    *                should contain {@link this#property} {@link this#expectedValue} and
    *                {@link this#actualValue} as format specifiers (in that order)

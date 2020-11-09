@@ -59,17 +59,17 @@ public class SntpClient {
     // 70 years plus 17 leap days
     private static final long OFFSET_1900_TO_1970 = ((365L * 70L) + 17L) * 24L * 60L * 60L;
 
-    private AtomicLong _cachedDeviceUptime = new AtomicLong();
-    private AtomicLong _cachedSntpTime = new AtomicLong();
-    private AtomicBoolean _sntpInitialized = new AtomicBoolean(false);
+    private AtomicLong cachedDeviceUptime = new AtomicLong();
+    private AtomicLong cachedSntpTime = new AtomicLong();
+    private AtomicBoolean sntpInitialized = new AtomicBoolean(false);
 
     /**
      * See δ :
      * https://en.wikipedia.org/wiki/Network_Time_Protocol#Clock_synchronization_algorithm
      */
     public static long getRoundTripDelay(long[] response) {
-        return (response[RESPONSE_INDEX_RESPONSE_TIME] - response[RESPONSE_INDEX_ORIGINATE_TIME]) -
-               (response[RESPONSE_INDEX_TRANSMIT_TIME] - response[RESPONSE_INDEX_RECEIVE_TIME]);
+        return (response[RESPONSE_INDEX_RESPONSE_TIME] - response[RESPONSE_INDEX_ORIGINATE_TIME])
+                - (response[RESPONSE_INDEX_TRANSMIT_TIME] - response[RESPONSE_INDEX_RECEIVE_TIME]);
     }
 
     /**
@@ -77,22 +77,22 @@ public class SntpClient {
      * https://en.wikipedia.org/wiki/Network_Time_Protocol#Clock_synchronization_algorithm
      */
     public static long getClockOffset(long[] response) {
-        return ((response[RESPONSE_INDEX_RECEIVE_TIME] - response[RESPONSE_INDEX_ORIGINATE_TIME]) +
-                (response[RESPONSE_INDEX_TRANSMIT_TIME] - response[RESPONSE_INDEX_RESPONSE_TIME])) / 2;
+        return ((response[RESPONSE_INDEX_RECEIVE_TIME] - response[RESPONSE_INDEX_ORIGINATE_TIME])
+                + (response[RESPONSE_INDEX_TRANSMIT_TIME] - response[RESPONSE_INDEX_RESPONSE_TIME])) / 2;
     }
 
     /**
      * Sends an NTP request to the given host and processes the response.
      *
-     * @param ntpHost           host name of the server.
+     * @param ntpHost host name of the server.
      */
     synchronized long[] requestTime(String ntpHost,
-        float rootDelayMax,
-        float rootDispersionMax,
-        int serverResponseDelayMax,
-        int timeoutInMillis
+                                    float rootDelayMax,
+                                    float rootDispersionMax,
+                                    int serverResponseDelayMax,
+                                    int timeoutInMillis
     )
-        throws IOException {
+            throws IOException {
 
         DatagramSocket socket = null;
 
@@ -101,45 +101,38 @@ public class SntpClient {
             byte[] buffer = new byte[NTP_PACKET_SIZE];
             InetAddress address = InetAddress.getByName(ntpHost);
 
-            DatagramPacket request = new DatagramPacket(buffer, buffer.length, address, NTP_PORT);
-
+            final DatagramPacket request = new DatagramPacket(buffer, buffer.length, address, NTP_PORT);
             writeVersion(buffer);
-
             // -----------------------------------------------------------------------------------
             // get current time and write it to the request packet
-
             long requestTime = System.currentTimeMillis();
             long requestTicks = SystemClock.elapsedRealtime();
-
             writeTimeStamp(buffer, INDEX_TRANSMIT_TIME, requestTime);
 
             socket = new DatagramSocket();
             socket.setSoTimeout(timeoutInMillis);
             socket.send(request);
 
-            // -----------------------------------------------------------------------------------
-            // read the response
-
-            long t[] = new long[RESPONSE_INDEX_SIZE];
+            long[] t = new long[RESPONSE_INDEX_SIZE];
             DatagramPacket response = new DatagramPacket(buffer, buffer.length);
             socket.receive(response);
 
             long responseTicks = SystemClock.elapsedRealtime();
             t[RESPONSE_INDEX_RESPONSE_TICKS] = responseTicks;
-
             // -----------------------------------------------------------------------------------
             // extract the results
             // See here for the algorithm used:
             // https://en.wikipedia.org/wiki/Network_Time_Protocol#Clock_synchronization_algorithm
-
             long originateTime = readTimeStamp(buffer, INDEX_ORIGINATE_TIME);     // T0
-            long receiveTime = readTimeStamp(buffer, INDEX_RECEIVE_TIME);         // T1
-            long transmitTime = readTimeStamp(buffer, INDEX_TRANSMIT_TIME);       // T2
-            long responseTime = requestTime + (responseTicks - requestTicks);       // T3
-
             t[RESPONSE_INDEX_ORIGINATE_TIME] = originateTime;
+            
+            long receiveTime = readTimeStamp(buffer, INDEX_RECEIVE_TIME);         // T1
             t[RESPONSE_INDEX_RECEIVE_TIME] = receiveTime;
+            
+            long transmitTime = readTimeStamp(buffer, INDEX_TRANSMIT_TIME);       // T2
             t[RESPONSE_INDEX_TRANSMIT_TIME] = transmitTime;
+            
+            long responseTime = requestTime + (responseTicks - requestTicks);       // T3
             t[RESPONSE_INDEX_RESPONSE_TIME] = responseTime;
 
             // -----------------------------------------------------------------------------------
@@ -149,20 +142,20 @@ public class SntpClient {
             double rootDelay = doubleMillis(t[RESPONSE_INDEX_ROOT_DELAY]);
             if (rootDelay > rootDelayMax) {
                 throw new InvalidNtpServerResponseException(
-                    "Invalid response from NTP server. %s violation. %f [actual] > %f [expected]",
-                    "root_delay",
-                    (float) rootDelay,
-                    rootDelayMax);
+                        "Invalid response from NTP server. %s violation. %f [actual] > %f [expected]",
+                        "root_delay",
+                        (float) rootDelay,
+                        rootDelayMax);
             }
 
             t[RESPONSE_INDEX_DISPERSION] = read(buffer, INDEX_ROOT_DISPERSION);
             double rootDispersion = doubleMillis(t[RESPONSE_INDEX_DISPERSION]);
             if (rootDispersion > rootDispersionMax) {
                 throw new InvalidNtpServerResponseException(
-                    "Invalid response from NTP server. %s violation. %f [actual] > %f [expected]",
-                    "root_dispersion",
-                    (float) rootDispersion,
-                    rootDispersionMax);
+                        "Invalid response from NTP server. %s violation. %f [actual] > %f [expected]",
+                        "root_dispersion",
+                        (float) rootDispersion,
+                        rootDispersionMax);
             }
 
             final byte mode = (byte) (buffer[0] & 0x7);
@@ -184,19 +177,19 @@ public class SntpClient {
             double delay = Math.abs((responseTime - originateTime) - (transmitTime - receiveTime));
             if (delay >= serverResponseDelayMax) {
                 throw new InvalidNtpServerResponseException(
-                    "%s too large for comfort %f [actual] >= %f [expected]",
-                    "server_response_delay",
-                    (float) delay,
-                    serverResponseDelayMax);
+                        "%s too large for comfort %f [actual] >= %f [expected]",
+                        "server_response_delay",
+                        (float) delay,
+                        serverResponseDelayMax);
             }
 
             long timeElapsedSinceRequest = Math.abs(originateTime - System.currentTimeMillis());
             if (timeElapsedSinceRequest >= 10_000) {
-                throw new InvalidNtpServerResponseException("Request was sent more than 10 seconds back " +
-                                                            timeElapsedSinceRequest);
+                throw new InvalidNtpServerResponseException("Request was sent more than 10 seconds back " 
+                        + timeElapsedSinceRequest);
             }
 
-            _sntpInitialized.set(true);
+            sntpInitialized.set(true);
             Log.i(TAG, "---- SNTP successful response from " + ntpHost);
 
             // -----------------------------------------------------------------------------------
@@ -215,8 +208,8 @@ public class SntpClient {
     }
 
     void cacheTrueTimeInfo(long[] response) {
-        _cachedSntpTime.set(sntpTime(response));
-        _cachedDeviceUptime.set(response[RESPONSE_INDEX_RESPONSE_TICKS]);
+        cachedSntpTime.set(sntpTime(response));
+        cachedDeviceUptime.set(response[RESPONSE_INDEX_RESPONSE_TICKS]);
     }
 
     long sntpTime(long[] response) {
@@ -226,21 +219,21 @@ public class SntpClient {
     }
 
     boolean wasInitialized() {
-        return _sntpInitialized.get();
+        return sntpInitialized.get();
     }
 
     /**
      * @return time value computed from NTP server response
      */
     long getCachedSntpTime() {
-        return _cachedSntpTime.get();
+        return cachedSntpTime.get();
     }
 
     /**
      * @return device uptime computed at time of executing the NTP request
      */
     long getCachedDeviceUptime() {
-        return _cachedDeviceUptime.get();
+        return cachedDeviceUptime.get();
     }
 
     // -----------------------------------------------------------------------------------
@@ -309,10 +302,10 @@ public class SntpClient {
         byte b2 = buffer[offset + 2];
         byte b3 = buffer[offset + 3];
 
-        return ((long) ui(b0) << 24) +
-               ((long) ui(b1) << 16) +
-               ((long) ui(b2) << 8) +
-               (long) ui(b3);
+        return ((long) ui(b0) << 24) 
+                + ((long) ui(b1) << 16)
+                + ((long) ui(b2) << 8)
+                + (long) ui(b3);
     }
 
     /***
@@ -330,7 +323,7 @@ public class SntpClient {
 
     /**
      * Used for root delay and dispersion
-     *
+     * <p>
      * According to the NTP spec, they are in the NTP Short format
      * viz. signed 16.16 fixed point
      *

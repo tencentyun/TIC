@@ -17,7 +17,7 @@ public class SdkUtil {
         int mypid = android.os.Process.myPid();
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningAppProcessInfo> infos = manager.getRunningAppProcesses();
-        for(ActivityManager.RunningAppProcessInfo info : infos) {
+        for (ActivityManager.RunningAppProcessInfo info : infos) {
             if (info.pid == mypid) {
                 return info.processName;
             }

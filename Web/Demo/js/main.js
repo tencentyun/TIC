@@ -10,7 +10,8 @@ window.app = new Vue({
       roomInfo: '',
       roomID: purl().param('roomid') * 1 || null,
       h5Url: purl().param('h5Url') * 1 || null,
-
+      nextText: '',
+      keepFocus: false,
       //音视频及设备
       enableCamera: true,
       enableMic: true,
@@ -40,6 +41,7 @@ window.app = new Vue({
       ration: "16:9",
       canRedo: 0,
       canUndo: 0,
+      lineStyle: 0,
 
       //board(白板操作)
       boardData: {
@@ -74,7 +76,15 @@ window.app = new Vue({
       isPushing: 0, // 是否正在推流
       isPushCamera: 0, // 是否推摄像头流
       remoteVideos: {},
-      imReady: false
+      imReady: false,
+      customGraphImages: [
+        'https://test-1259648581.cos.ap-shanghai.myqcloud.com/%E4%B8%89%E8%A7%92%E5%BD%A2.svg',
+        'https://test-1259648581.cos.ap-shanghai.myqcloud.com/%E6%8A%9B%E7%89%A9%E7%BA%BF_parabolic9.svg',
+        'https://test-1259648581.cos.ap-shanghai.myqcloud.com/%E8%8F%B1%E5%BD%A2.svg',
+        'https://test-1259648581.cos.ap-shanghai.myqcloud.com/%E6%B1%BD%E8%BD%A6.svg',
+        'https://test-1259648581.cos.ap-shanghai.myqcloud.com/%E7%83%A7%E6%9D%AF.svg',
+        'https://test-1259648581.cos.ap-shanghai.myqcloud.com/%E7%A3%81%E9%93%81.svg'
+      ]
     }
   },
 
@@ -156,8 +166,8 @@ window.app = new Vue({
     },
 
     // 初始化SDK
-    init() {
-      var res = window.genTestUserSig(this.userId) // 生成测试账号，只建议在开发中过程中使用，应用到生产环境时，请由服务端生成
+    async init() {
+      var res = await window.genTestUserSig(this.userId) // 生成测试账号，只建议在开发中过程中使用，应用到生产环境时，请由服务端生成
       this.sdkAppId = res.sdkAppId;
       this.userSig = res.userSig;
 
@@ -429,6 +439,12 @@ window.app = new Vue({
       teduBoard.on(TEduBoard.EVENT.TEB_WARNING, (code, msg) => {
         console.error('======================:  ', 'TEB_WARNING', ' code:', code, ' msg:', msg);
         this.showMessageInBox('TIC', "onTEBWarning code=" + code + " msg:" + msg);
+        if (code === TEduBoard.TEduBoardWarningCode.TEDU_BOARD_WARNING_CUSTOM_GRAPH_URL_NON_EXISTS) {
+          this.$message({
+            message: '需要设置自定义图形的url',
+            type: 'warning'
+          });
+        }
       });
 
       // 图片状态加载回调
@@ -445,6 +461,7 @@ window.app = new Vue({
       // 跳转白板页回调
       teduBoard.on(TEduBoard.EVENT.TEB_GOTOBOARD, (boardId, fid) => {
         console.log('======================:  ', 'TEB_GOTOBOARD', ' boardId:', boardId, ' fid:', fid);
+        console.log(teduBoard.getFileInfo(fid))
         this.proBoardData();
       });
 
@@ -467,7 +484,7 @@ window.app = new Vue({
 
       // 增加转码文件回调
       teduBoard.on(TEduBoard.EVENT.TEB_ADDTRANSCODEFILE, (fid) => {
-        console.log('======================:  ', 'TEB_ADDTRANSCODEFILE', ' fid:', fid);
+        console.log('======================:  ', 'TEB_ADDTRANSCODEFILE', ' fid:', fid, teduBoard.getCurrentFile());
         this.proBoardData();
       });
       // 增加Images文件回调
@@ -509,6 +526,11 @@ window.app = new Vue({
         console.log('======================:  ', 'TEB_ADDIMAGEELEMENT', '  fileName:', fileName, '  fileUrl:', fileUrl, ' userData:', userData);
       });
 
+      // 预设文本自动填写
+      teduBoard.on(TEduBoard.EVENT.TEB_setNextTextInput, (status, errMessage) => {
+        console.log('======================:  ', 'TEB_setNextTextInput', '  status:', status, '  errMessage:', errMessage);
+      });
+
       // 文件上传进度
       teduBoard.on(TEduBoard.EVENT.TEB_FILEUPLOADPROGRESS, (data) => {
         console.log('======================:  ', 'TEB_FILEUPLOADPROGRESS:: ', data);
@@ -527,17 +549,17 @@ window.app = new Vue({
           this.showErrorTip('转码失败code:' + res.code + ' message:' + res.message);
         } else {
           let status = res.status;
-          if (status === 'ERROR') {
+          if (status === TEduBoard.TEduBoardTranscodeFileStatus.TEDU_BOARD_TRANSCODEFILE_STATUS_ERROR) {
             this.showErrorTip('转码失败');
-          } else if (status === 'UPLOADING') {
+          } else if (status === TEduBoard.TEduBoardTranscodeFileStatus.TEDU_BOARD_TRANSCODEFILE_STATUS_UPLOADING) {
             this.showTip('上传中，当前进度:' + parseInt(res.progress) + '%');
-          } else if (status === 'CREATED') {
+          } else if (status === TEduBoard.TEduBoardTranscodeFileStatus.TEDU_BOARD_TRANSCODEFILE_STATUS_CREATED) {
             this.showTip('创建转码任务');
-          } else if (status === 'QUEUED') {
+          } else if (status === TEduBoard.TEduBoardTranscodeFileStatus.TEDU_BOARD_TRANSCODEFILE_STATUS_QUEUED) {
             this.showTip('正在排队等待转码');
-          } else if (status === 'PROCESSING') {
+          } else if (status === TEduBoard.TEduBoardTranscodeFileStatus.TEDU_BOARD_TRANSCODEFILE_STATUS_PROCESSING) {
             this.showTip('转码中，当前进度:' + res.progress + '%');
-          } else if (status === 'FINISHED') {
+          } else if (status === TEduBoard.TEduBoardTranscodeFileStatus.TEDU_BOARD_TRANSCODEFILE_STATUS_FINISHED) {
             this.showTip('转码完成');
             let config = {
               url: res.resultUrl,
@@ -562,6 +584,51 @@ window.app = new Vue({
         userData
       }) => {
         console.log('id:', id, ' userData:', userData);
+      });
+
+
+
+      // h5ppt加载状态
+      teduBoard.on(TEduBoard.EVENT.TEB_H5PPT_STATUS_CHANGED, (code, data) => {
+        switch (code) {
+          case TEduBoard.TEduBoardH5PPTStatus.TEDU_BOARD_H5_PPT_STATUS_LOADING:
+            console.log('h5ppt开始加载', data);
+            break;
+          case TEduBoard.TEduBoardH5PPTStatus.TEDU_BOARD_H5_PPT_STATUS_LOADED:
+            console.log('h5ppt完成加载', data);
+            break;
+          case TEduBoard.TEduBoardH5PPTStatus.TEDU_BOARD_H5_PPT_STATUS_CANCEL:
+            console.log('h5ppt取消加载', data);
+            break;
+          case TEduBoard.TEduBoardH5PPTStatus.TEDU_BOARD_H5_PPT_STATUS_TIMEOUT:
+            console.error('h5ppt加载超时', data);
+            this.$alert('ppt加载错误', {
+              confirmButtonText: '刷新白板',
+              callback: action => {
+                teduBoard.refresh();
+              }
+            });
+            break;
+          case TEduBoard.TEduBoardH5PPTStatus.TEDU_BOARD_H5_PPT_STATUS_RESOURCES_LOADING_ERROR:
+            console.error('h5ppt资源加载错误', data);
+            this.$alert('ppt加载错误', {
+              confirmButtonText: '刷新白板',
+              callback: action => {
+                teduBoard.refresh();
+              }
+            });
+            break;
+          case TEduBoard.TEduBoardH5PPTStatus.TEDU_BOARD_H5_PPT_STATUS_RUNTIME_ERROR:
+            console.error('h5ppt内部运行错误', data);
+            this.$alert('ppt加载错误', {
+              confirmButtonText: '刷新白板',
+              callback: action => {
+                teduBoard.refresh();
+              }
+            });
+            break;
+        }
+
       });
     },
 
@@ -744,12 +811,12 @@ window.app = new Vue({
       this.tic.addTICStatusListener({
         onTICForceOffline: (event) => {
           if (event.data) {
-            if(event.data.type) {
-              if(event.data.type == window.TIM.TYPES.KICKED_OUT_MULT_ACCOUNT) {
+            if (event.data.type) {
+              if (event.data.type == window.TIM.TYPES.KICKED_OUT_MULT_ACCOUNT) {
                 this.showErrorTip(`同一账号，多页面登录被踢`);
-              } else if(event.data.type == window.TIM.TYPES.KICKED_OUT_MULT_DEVICE){
+              } else if (event.data.type == window.TIM.TYPES.KICKED_OUT_MULT_DEVICE) {
                 this.showErrorTip(`同一账号，多端登录被踢`);
-              } else if(event.data.type == window.TIM.TYPES.KICKED_OUT_USERSIG_EXPIRED){
+              } else if (event.data.type == window.TIM.TYPES.KICKED_OUT_USERSIG_EXPIRED) {
                 this.showErrorTip(`userSig过期`);
               } else {
                 this.showErrorTip(`帐号其他地方登录，被T了`);
@@ -1025,14 +1092,10 @@ window.app = new Vue({
     uploadFile() {
       var file = document.getElementById('file_input').files[0];
       if (/\.(bmp|jpg|jpeg|png|gif)/i.test(file.name)) {
-        // this.teduBoard.setBackgroundImage({
-        //   data: file,
-        //   userData: 'image'
-        // });
-        this.teduBoard.addImageElement({
+        this.teduBoard.addElement(TEduBoard.TEduBoardElementType.TEDU_BOARD_ELEMENT_IMAGE, {
           data: file,
-          userData: 'image'
-        });
+          userData: 'tiw' //透传数据，会在ADDELEMENT事件回调中带回
+        })
       } else {
         this.teduBoard.applyFileTranscode({
           data: file,
@@ -1061,8 +1124,11 @@ window.app = new Vue({
 
     onAddH5Element() {
       if (this.h5Url) {
-        this.teduBoard.addH5Element(this.h5Url);
+        this.teduBoard.addElement(TEduBoard.TEduBoardElementType.TEDU_BOARD_ELEMENT_H5, this.h5Url);
       }
+    },
+    onSetNextText() {
+      this.teduBoard.setNextTextInput(this.nextText, this.keepFocus);
     },
 
     // 动画上一步
@@ -1153,7 +1219,62 @@ window.app = new Vue({
 
 
     onSetToolType(toolType) {
+      // if(toolType == TEduBoard.TOOL_TYPE.TEDU_BOARD_TOOL_TYPE_BOARD_SCALE) {
+      //   // 设置画笔样式
+      //   this.teduBoard.setCursorIcon(TEduBoard.TOOL_TYPE.TEDU_BOARD_TOOL_TYPE_BOARD_SCALE,
+      //   {
+      //       cursor: 'url',
+      //       url: "http://127.0.0.1:4040/enlarge.png",
+      //       offsetX: 22,
+      //       offsetY: 66
+      //   },
+      //   {
+      //     cursor: 'url',
+      //     url: "http://127.0.0.1:4040/shrink.png",
+      //     offsetX: 22,
+      //     offsetY: 66
+      // })
+      // }
       this.teduBoard.setToolType(toolType);
+    },
+
+    onSetLineStyle(type) {
+      switch (type) {
+        case 0: // 设置实线直线，无箭头
+          this.teduBoard.setLineStyle({
+            lineType: TEduBoard.TEduBoardLineType.TEDU_BOARD_LINE_TYPE_SOLID,
+            startArrowType: TEduBoard.TEduBoardArrowType.TEDU_BOARD_ARROW_TYPE_NONE,
+            endArrowType: TEduBoard.TEduBoardArrowType.TEDU_BOARD_ARROW_TYPE_NONE
+          })
+          break;
+        case 1: // 设置虚线直线，无箭头
+          this.teduBoard.setLineStyle({
+            lineType: TEduBoard.TEduBoardLineType.TEDU_BOARD_LINE_TYPE_DOTTED,
+            startArrowType: TEduBoard.TEduBoardArrowType.TEDU_BOARD_ARROW_TYPE_NONE,
+            endArrowType: TEduBoard.TEduBoardArrowType.TEDU_BOARD_ARROW_TYPE_NONE
+          })
+          break;
+        case 2: // 设置实现直线，终点实心箭头
+          this.teduBoard.setLineStyle({
+            lineType: TEduBoard.TEduBoardLineType.TEDU_BOARD_LINE_TYPE_SOLID,
+            startArrowType: TEduBoard.TEduBoardArrowType.TEDU_BOARD_ARROW_TYPE_NONE,
+            endArrowType: TEduBoard.TEduBoardArrowType.TEDU_BOARD_ARROW_TYPE_SOLID
+          })
+          break;
+        case 3: // 设置虚线直线，起点普通箭头
+          this.teduBoard.setLineStyle({
+            lineType: TEduBoard.TEduBoardLineType.TEDU_BOARD_LINE_TYPE_DOTTED,
+            startArrowType: TEduBoard.TEduBoardArrowType.TEDU_BOARD_ARROW_TYPE_NORMAL,
+            endArrowType: TEduBoard.TEduBoardArrowType.TEDU_BOARD_ARROW_TYPE_NONE
+          })
+          break;
+        case 4: // 设置实线直线，起点实心箭头，终点普通箭头
+          this.teduBoard.setLineStyle({
+            lineType: TEduBoard.TEduBoardLineType.TEDU_BOARD_LINE_TYPE_DOTTED,
+            startArrowType: TEduBoard.TEduBoardArrowType.TEDU_BOARD_ARROW_TYPE_SOLID,
+            endArrowType: TEduBoard.TEduBoardArrowType.TEDU_BOARD_ARROW_TYPE_NORMAL
+          })
+      }
     },
 
     //Board(涂鸦操作)
@@ -1222,6 +1343,10 @@ window.app = new Vue({
 
     testFontColor(e) {
       // e.preventDefault();
+    },
+
+    setCustomGraphUrl(url) {
+      this.teduBoard.addElement(TEduBoard.TEduBoardElementType.TEDU_BOARD_ELEMENT_CUSTOM_GRAPH, url);
     }
   },
 

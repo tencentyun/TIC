@@ -6,10 +6,10 @@ package com.tencent.tic.core.impl;
  */
 public class Error {
 
-    public final static int ERR_INVALID_PARAMS = 40001;
-    public final static String ERR_MSG_INVALID_PARAMS = "invalid config params, pls check.";
+    public static final int ERR_INVALID_PARAMS = 40001;
+    public static final String ERR_MSG_INVALID_PARAMS = "invalid config params, pls check.";
 
-    public final static int ERR_NOT_IN_CLASS = 40005;
-    public final static String ERR_MSG_NOT_IN_CLASS = "please join class first.";
+    public static final int ERR_NOT_IN_CLASS = 40005;
+    public static final String ERR_MSG_NOT_IN_CLASS = "please join class first.";
 
 }

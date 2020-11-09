@@ -50,6 +50,8 @@ private:
 
 	afx_msg void OnCbnSelchangeComboToolType();
 
+	afx_msg void OnCbnSelchangeComboCustomGraph();
+
 	afx_msg void OnNMCustomdrawSliderBrushThin(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnNMCustomdrawSliderTextSize(NMHDR *pNMHDR, LRESULT *pResult);
 
@@ -70,6 +72,9 @@ private:
 	CMFCButton btnTextColor_;
 
 	CComboBox comboToolType_;
+
+	CComboBox comboCustomGraph_;
+	std::vector<std::string> customGraphUrl_;
 
 	CSliderCtrl sliderBrushThin_;
 	CSliderCtrl sliderTextSize_;

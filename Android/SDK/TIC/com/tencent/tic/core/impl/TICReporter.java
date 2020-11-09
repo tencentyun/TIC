@@ -13,36 +13,36 @@ import java.security.NoSuchAlgorithmException;
 
 public class TICReporter {
     public static class EventId {
-        public static final String initSdk_start = "initSdk_start";
-        public static final String initSdk_end = "initSdk_end";
-        public static final String login_start = "login_start";
-        public static final String login_end = "login_end";
-        public static final String logout_start = "logout_start";
-        public static final String logout_end = "logout_end";
-        public static final String createGroup_start = "createGroup_start";
-        public static final String createGroup_end = "createGroup_end";
-        public static final String deleteGroup_start = "deleteGroup_start";
-        public static final String deleteGroup_end = "deleteGroup_end";
-        public static final String joinGroup_start = "joinGroup_start";
-        public static final String joinGroup_end = "joinGroup_end";
-        public static final String initBoard_start = "initBoard_start";
-        public static final String initBoard_end = "initBoard_end";
-        public static final String unInitBoard = "unInitBoard";
-        public static final String syncBoardHistory_end = "syncBoardHistory_end";
-        public static final String enterRoom_start = "enterRoom_start";
-        public static final String enterRoom_end = "enterRoom_end";
-        public static final String quitGroup_start = "quitGroup_start";
-        public static final String quitGroup_end = "quitGroup_end";
-        public static final String sendOfflineRecordInfo_start = "sendOfflineRecordInfo_start";
-        public static final String sendOfflineRecordInfo_end = "sendOfflineRecordInfo_end";
-        public static final String onUserAudioAvailable = "onUserAudioAvailable";
-        public static final String onUserVideoAvailable = "onUserVideoAvailable";
-        public static final String onUserSubStreamAvailable = "onUserSubStreamAvailable";
-        public static final String onForceOffline = "onForceOffline";
-        public static final String onUserSigExpired = "onUserSigExpired";
-        public static final String onTEBError = "onTEBError";
-        public static final String onTEBWarning = "onTEBWarning";
-    };
+        public static final String INIT_SDK_START = "initSdk_start";
+        public static final String INIT_SDK_END = "initSdk_end";
+        public static final String LOGIN_START = "login_start";
+        public static final String LOGIN_END = "login_end";
+        public static final String LOGOUT_START = "logout_start";
+        public static final String LOGOUT_END = "logout_end";
+        public static final String CREATE_GROUP_START = "createGroup_start";
+        public static final String CREATE_GROUP_END = "createGroup_end";
+        public static final String DELETE_GROUP_START = "deleteGroup_start";
+        public static final String DELETE_GROUP_END = "deleteGroup_end";
+        public static final String JOIN_GROUP_START = "joinGroup_start";
+        public static final String JOIN_GROUP_END = "joinGroup_end";
+        public static final String INIT_BOARD_START = "initBoard_start";
+        public static final String INIT_BOARD_END = "initBoard_end";
+        public static final String UN_INIT_BOARD = "unInitBoard";
+        public static final String SYNC_BOARD_HISTORY_END = "syncBoardHistory_end";
+        public static final String ENTER_ROOM_START = "enterRoom_start";
+        public static final String ENTER_ROOM_END = "enterRoom_end";
+        public static final String QUIT_GROUP_START = "quitGroup_start";
+        public static final String QUIT_GROUP_END = "quitGroup_end";
+        public static final String SEND_OFFLINE_RECORD_INFO_START = "sendOfflineRecordInfo_start";
+        public static final String SEND_OFFLINE_RECORD_INFO_END = "sendOfflineRecordInfo_end";
+        public static final String ON_USER_AUDIO_AVAILABLE = "onUserAudioAvailable";
+        public static final String ON_USER_VIDEO_AVAILABLE = "onUserVideoAvailable";
+        public static final String ON_USER_SUB_STREAM_AVAILABLE = "onUserSubStreamAvailable";
+        public static final String ON_FORCE_OFFLINE = "onForceOffline";
+        public static final String ON_USER_SIG_EXPIRED = "onUserSigExpired";
+        public static final String ON_TEBERROR = "onTEBError";
+        public static final String ON_TEBWARNING = "onTEBWarning";
+    }
 
     static final String TAG = "TICReporter";
     static final String URL = "https://ilivelog.qcloud.com/log/report?sign=";
@@ -52,9 +52,11 @@ public class TICReporter {
     public static void updateAppId(int sdkAppid) {
         businessHeader.setAppId(sdkAppid);
     }
+
     public static void updateUserId(String userId) {
         businessHeader.setUserId(userId);
     }
+
     public static void updateRoomId(int roomid) {
         businessHeader.setRoomId(roomid);
     }
@@ -63,10 +65,10 @@ public class TICReporter {
         public String business = "tic2.0"; //固定“tic”
         public String dcid = "dc0000";     //固定“dc0000”
         public int version = 0;  //固定“0”
-        public String kv_str;  //key-value格式的业务字段字符串，格式为“key1=value1&key2=value2“
+        public String kvStr;  //key-value格式的业务字段字符串，格式为“key1=value1&key2=value2“
 
         public JsonBody(String kvalue) {
-            this.kv_str = kvalue;
+            this.kvStr = kvalue;
         }
 
         public String toString() {
@@ -76,7 +78,7 @@ public class TICReporter {
                 json.put("business", business);
                 json.put("dcid", dcid);
                 json.put("version", version);
-                json.put("kv_str", kv_str);
+                json.put("kv_str", kvStr);
                 result = json.toString();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -84,7 +86,7 @@ public class TICReporter {
 
             return result;
         }
-    };
+    }
 
     static class BusinessHeader {
         int sdkAppId; //应用标识
@@ -104,6 +106,7 @@ public class TICReporter {
 
             result = null;
         }
+
         public void setUserId(String userId) {
             this.userId = userId;
 
@@ -145,8 +148,7 @@ public class TICReporter {
 
             return result;
         }
-    };
-
+    }
 
     static class EventBody {
         public String event;
@@ -169,7 +171,7 @@ public class TICReporter {
                 result += ("data=" + data + Connection);
             }
             if (!TextUtils.isEmpty(ext)) {
-                result += ("ext=" + ext  + Connection);
+                result += ("ext=" + ext + Connection);
             }
 
             return result;
@@ -184,7 +186,7 @@ public class TICReporter {
 
             this.timestamp = System.currentTimeMillis();
         }
-    };
+    }
 
     public static void report(final String event) {
         report(event, 0, null, null);
@@ -195,7 +197,7 @@ public class TICReporter {
     }
 
     public static void report(final String event, int code, final String msg) {
-        report(event, code, msg,  null);
+        report(event, code, msg, null);
     }
 
     public static void report(final String event, int code, final String msg, final String data) {
@@ -207,9 +209,9 @@ public class TICReporter {
         String kvalue = eventStr + value;
 
         //2. 删除最后的连接符&
-        String lastString = kvalue.substring(kvalue.length() -1);
+        String lastString = kvalue.substring(kvalue.length() - 1);
         if (lastString.equals(Connection)) {
-            kvalue = kvalue.substring(0, kvalue.length() -1);
+            kvalue = kvalue.substring(0, kvalue.length() - 1);
         }
 
         JsonBody jsonBody = new JsonBody(kvalue);

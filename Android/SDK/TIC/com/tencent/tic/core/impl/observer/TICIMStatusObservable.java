@@ -8,16 +8,16 @@ import java.lang.ref.WeakReference;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-public class TICIMStatusObservable extends TICObservable<TICManager.TICIMStatusListener>  implements TIMUserStatusListener {
+public class TICIMStatusObservable extends TICObservable<TICManager.TICIMStatusListener>
+        implements TIMUserStatusListener {
 
     @Override
     public void onForceOffline() {
-        TICReporter.report(TICReporter.EventId.onForceOffline);
+        TICReporter.report(TICReporter.EventId.ON_FORCE_OFFLINE);
         LinkedList<WeakReference<TICManager.TICIMStatusListener>> tmpList = new LinkedList<>(listObservers);
         Iterator<WeakReference<TICManager.TICIMStatusListener>> it = tmpList.iterator();
 
-        while(it.hasNext())
-        {
+        while (it.hasNext()) {
             TICManager.TICIMStatusListener t = it.next().get();
             if (t != null) {
                 t.onTICForceOffline();
@@ -27,12 +27,11 @@ public class TICIMStatusObservable extends TICObservable<TICManager.TICIMStatusL
 
     @Override
     public void onUserSigExpired() {
-        TICReporter.report(TICReporter.EventId.onUserSigExpired);
+        TICReporter.report(TICReporter.EventId.ON_USER_SIG_EXPIRED);
         LinkedList<WeakReference<TICManager.TICIMStatusListener>> tmpList = new LinkedList<>(listObservers);
         Iterator<WeakReference<TICManager.TICIMStatusListener>> it = tmpList.iterator();
 
-        while(it.hasNext())
-        {
+        while (it.hasNext()) {
             TICManager.TICIMStatusListener t = it.next().get();
             if (t != null) {
                 t.onTICUserSigExpired();
