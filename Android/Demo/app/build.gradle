@@ -62,7 +62,7 @@ dependencies {
     //IMSDK
     implementation 'com.tencent.imsdk:imsdk:4.6.56'
     //TEduBoard
-    implementation 'com.tencent.teduboard:TEduBoardSdk:2.5.5.70'
+    implementation 'com.tencent.teduboard:TEduBoardSdk:2.5.6.85'
     //implementation project(':TEduBoardSdk')
 }
 
