@@ -90,7 +90,10 @@ DWORD HttpRequest::errorCode() const {
   return m_dwErrorCode;
 }
 
-void HttpRequest::init(const std::wstring &userAgent, const std::wstring &url, const std::wstring &method, HttpAsynCallback asynCallback /*= nullptr*/) {
+void HttpRequest::init(const std::wstring &userAgent,
+                       const std::wstring &url,
+                       const std::wstring &method,
+                       HttpAsynCallback asynCallback /*= nullptr*/) {
   _release();
 
   m_asynCallback = asynCallback;
@@ -113,9 +116,14 @@ void HttpRequest::init(const std::wstring &userAgent, const std::wstring &url, c
   }
 
   //hSession
-  DWORD dwAccessType = ::IsWindows8Point1OrGreater() ? WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY : WINHTTP_ACCESS_TYPE_DEFAULT_PROXY;
+  DWORD dwAccessType = ::IsWindows8Point1OrGreater() ? WINHTTP_ACCESS_TYPE_AUTOMATIC_PROXY
+                                                     : WINHTTP_ACCESS_TYPE_DEFAULT_PROXY;
   DWORD dwFlag = bAsynMode ? WINHTTP_FLAG_ASYNC : 0;
-  m_hSession = ::WinHttpOpen(userAgent.c_str(), dwAccessType, WINHTTP_NO_PROXY_NAME, WINHTTP_NO_PROXY_BYPASS, dwFlag);
+  m_hSession = ::WinHttpOpen(userAgent.c_str(),
+                             dwAccessType,
+                             WINHTTP_NO_PROXY_NAME,
+                             WINHTTP_NO_PROXY_BYPASS,
+                             dwFlag);
   if (!m_hSession) {
     m_dwErrorCode = GetLastError();
     return;
@@ -130,7 +138,13 @@ void HttpRequest::init(const std::wstring &userAgent, const std::wstring &url, c
 
   //hRequest
   DWORD dwRequestFlags = (INTERNET_SCHEME_HTTP == url_comp.nScheme ? 0 : WINHTTP_FLAG_SECURE);
-  m_hRequest = ::WinHttpOpenRequest(m_hConnect, method.c_str(), urlPath.c_str(), NULL, NULL, NULL, dwRequestFlags);
+  m_hRequest = ::WinHttpOpenRequest(m_hConnect,
+                                    method.c_str(),
+                                    urlPath.c_str(),
+                                    NULL,
+                                    NULL,
+                                    NULL,
+                                    dwRequestFlags);
   if (!m_hRequest) {
     m_dwErrorCode = GetLastError();
     return;
@@ -140,7 +154,8 @@ void HttpRequest::init(const std::wstring &userAgent, const std::wstring &url, c
   if (bAsynMode) {
     if (WINHTTP_INVALID_STATUS_CALLBACK == ::WinHttpSetStatusCallback(
         m_hRequest, _onWinHttpStatusCallback,
-        WINHTTP_CALLBACK_FLAG_ALL_COMPLETIONS | WINHTTP_CALLBACK_FLAG_REDIRECT | WINHTTP_CALLBACK_FLAG_HANDLES,
+        WINHTTP_CALLBACK_FLAG_ALL_COMPLETIONS | WINHTTP_CALLBACK_FLAG_REDIRECT
+            | WINHTTP_CALLBACK_FLAG_HANDLES,
         NULL)) {
       m_dwErrorCode = GetLastError();
       return;
@@ -148,10 +163,17 @@ void HttpRequest::init(const std::wstring &userAgent, const std::wstring &url, c
   }
 }
 
-void HttpRequest::setTimeouts(int nResolveTimeout, int nConnectTimeout, int nSendTimeout, int nReceiveTimeout) {
+void HttpRequest::setTimeouts(int nResolveTimeout,
+                              int nConnectTimeout,
+                              int nSendTimeout,
+                              int nReceiveTimeout) {
   if (m_dwErrorCode != 0) return;
 
-  if (FALSE == ::WinHttpSetTimeouts(m_hRequest, nResolveTimeout, nConnectTimeout, nSendTimeout, nReceiveTimeout)) {
+  if (FALSE == ::WinHttpSetTimeouts(m_hRequest,
+                                    nResolveTimeout,
+                                    nConnectTimeout,
+                                    nSendTimeout,
+                                    nReceiveTimeout)) {
     m_dwErrorCode = GetLastError();
   }
 }
@@ -165,7 +187,11 @@ void HttpRequest::setRequestHeaders(const HttpHeaders &reqHeaders) {
       header += L": ";
       header += var.second;
     }
-    if (FALSE == ::WinHttpAddRequestHeaders(m_hRequest, header.c_str(), (ULONG) - 1L, WINHTTP_ADDREQ_FLAG_ADD | WINHTTP_ADDREQ_FLAG_REPLACE)) {
+    if (FALSE == ::WinHttpAddRequestHeaders(m_hRequest,
+                                            header.c_str(),
+                                            (ULONG) - 1L,
+                                            WINHTTP_ADDREQ_FLAG_ADD
+                                                | WINHTTP_ADDREQ_FLAG_REPLACE)) {
       m_dwErrorCode = GetLastError();
       break;
     }
@@ -185,7 +211,9 @@ void HttpRequest::sendRequest(DWORD totalSize /*= 0*/) {
   }
 }
 
-void HttpRequest::writeData(const void *buffer, DWORD dwBytesToWrite, DWORD *pdwBytesWritten /*= nullptr*/) {
+void HttpRequest::writeData(const void *buffer,
+                            DWORD dwBytesToWrite,
+                            DWORD *pdwBytesWritten /*= nullptr*/) {
   if (m_dwErrorCode != 0) return;
 
   if (FALSE == ::WinHttpWriteData(m_hRequest, buffer, dwBytesToWrite, pdwBytesWritten)) {
@@ -282,7 +310,13 @@ void HttpRequest::readData(void *buffer, DWORD dwBytesToRead, DWORD *pdwBytesRea
   }
 }
 
-void CALLBACK HttpRequest::_onWinHttpStatusCallback(HINTERNET hInternet, DWORD_PTR dwContext, DWORD dwInternetStatus, LPVOID lpvStatusInformation, DWORD dwStatusInformationLength) {
+void CALLBACK
+HttpRequest::_onWinHttpStatusCallback(HINTERNET
+                                      hInternet,
+                                      DWORD_PTR dwContext, DWORD
+                                      dwInternetStatus,
+                                      LPVOID lpvStatusInformation, DWORD
+                                      dwStatusInformationLength) {
   HttpRequest *pThis = reinterpret_cast<HttpRequest *>(dwContext);
   if (!pThis) return;
   switch (dwInternetStatus) {
@@ -308,7 +342,8 @@ void CALLBACK HttpRequest::_onWinHttpStatusCallback(HINTERNET hInternet, DWORD_P
           dwBytesWritten = *((LPDWORD) lpvStatusInformation);
       if (pThis->m_asynCallback)
         pThis->
-            m_asynCallback(HttpAsynCBType::WriteComplete, &param);
+            m_asynCallback(HttpAsynCBType::WriteComplete, &param
+        );
       break;
     }
     case WINHTTP_CALLBACK_STATUS_HEADERS_AVAILABLE: {
@@ -373,7 +408,10 @@ void HttpClient::setUserAgent(const std::wstring &userAgent) {
   m_userAgent = userAgent;
 }
 
-void HttpClient::setTimeouts(int nResolveTimeout, int nConnectTimeout, int nSendTimeout, int nReceiveTimeout) {
+void HttpClient::setTimeouts(int nResolveTimeout,
+                             int nConnectTimeout,
+                             int nSendTimeout,
+                             int nReceiveTimeout) {
   m_nResolveTimeout = nResolveTimeout;
   m_nConnectTimeout = nConnectTimeout;
   m_nSendTimeout = nSendTimeout;
@@ -384,7 +422,11 @@ void HttpClient::enableRespEncodeConvert(bool bEnable) {
   m_bEnableEncodeConvert = bEnable;
 }
 
-int HttpClient::get(const std::wstring &url, std::string &rspBody, const HttpHeaders *reqHeaders /*= nullptr*/, HttpHeaders *rspHeaders /*= nullptr*/, HttpProgressCallback progressCB /*= nullptr*/) {
+int HttpClient::get(const std::wstring &url,
+                    std::string &rspBody,
+                    const HttpHeaders *reqHeaders /*= nullptr*/,
+                    HttpHeaders *rspHeaders /*= nullptr*/,
+                    HttpProgressCallback progressCB /*= nullptr*/) {
   DWORD dwStatusCode = 0;
   HttpHeaders tempRspHeaders_;
   HttpHeaders &theRspHeaders = rspHeaders ? (*rspHeaders) : tempRspHeaders_;
@@ -532,7 +574,10 @@ int HttpClient::download(const std::wstring &url,
   return 0;
 }
 
-void HttpClient::asynGet(const std::wstring &url, HttpRspCallback rspCB, const HttpHeaders *reqHeaders /*= nullptr*/, HttpProgressCallback progressCB /*= nullptr*/) {
+void HttpClient::asynGet(const std::wstring &url,
+                         HttpRspCallback rspCB,
+                         const HttpHeaders *reqHeaders /*= nullptr*/,
+                         HttpProgressCallback progressCB /*= nullptr*/) {
   HttpRequestInfo *requestInfo = new HttpRequestInfo();
   if ((!requestInfo) || (!requestInfo->request)) {
     if (requestInfo) delete requestInfo;
@@ -541,11 +586,15 @@ void HttpClient::asynGet(const std::wstring &url, HttpRspCallback rspCB, const H
   }
 
   requestInfo->request->init(m_userAgent, url, L"GET",
-                             [requestInfo, rspCB, progressCB, this](HttpAsynCBType type, const HttpAsynParam *param) {
+                             [requestInfo, rspCB, progressCB, this](HttpAsynCBType type,
+                                                                    const HttpAsynParam *param) {
                                HttpRequest &request = *requestInfo->request;
                                switch (type) {
                                  case HttpAsynCBType::RequestError: {
-                                   if (rspCB) rspCB(request.errorCode(), requestInfo->rspHeaders, requestInfo->rspBody);
+                                   if (rspCB)
+                                     rspCB(request.errorCode(),
+                                           requestInfo->rspHeaders,
+                                           requestInfo->rspBody);
                                    delete requestInfo;
                                    break;
                                  }
@@ -554,9 +603,13 @@ void HttpClient::asynGet(const std::wstring &url, HttpRspCallback rspCB, const H
                                    break;
                                  }
                                  case HttpAsynCBType::HeadersAvailable: {
-                                   if (m_bEnableEncodeConvert) request.receiveResponseHeaders(requestInfo->dwStatusCode, requestInfo->rspHeaders);
+                                   if (m_bEnableEncodeConvert)
+                                     request.receiveResponseHeaders(requestInfo->dwStatusCode,
+                                                                    requestInfo->rspHeaders);
                                    if (request.errorCode() == 0) {
-                                     requestInfo->dwRspBodyTotalSize = static_cast<DWORD>(requestInfo->rspHeaders.GetHeaderAsUInt64(L"Content-Length"));
+                                     requestInfo->dwRspBodyTotalSize =
+                                         static_cast<DWORD>(requestInfo->rspHeaders.GetHeaderAsUInt64(
+                                             L"Content-Length"));
                                      requestInfo->rspBody.resize(requestInfo->dwRspBodyTotalSize);
                                      request.queryDataAvailable();
                                    }
@@ -568,35 +621,56 @@ void HttpClient::asynGet(const std::wstring &url, HttpRspCallback rspCB, const H
                                      int code = request.errorCode();
                                      if (code == 0) code = requestInfo->dwStatusCode;
                                      if (code == 200) code = 0;
-                                     convertRespEncode(requestInfo->rspHeaders, requestInfo->rspBody, requestInfo->rspBody);
-                                     if (rspCB) rspCB(code, requestInfo->rspHeaders, requestInfo->rspBody);
+                                     convertRespEncode(requestInfo->rspHeaders,
+                                                       requestInfo->rspBody,
+                                                       requestInfo->rspBody);
+                                     if (rspCB)
+                                       rspCB(code,
+                                             requestInfo->rspHeaders,
+                                             requestInfo->rspBody);
                                      delete requestInfo;
                                    } else {
                                      std::string &rspBody = requestInfo->rspBody;
-                                     const DWORD &dwRspBodyReadSize = requestInfo->dwRspBodyReadSize;
-                                     if (rspBody.size() < dwRspBodyReadSize + nAvailable) rspBody.resize(dwRspBodyReadSize + nAvailable);
-                                     if (dwRspBodyReadSize == 0 && progressCB) progressCB(HttpAction::Response, 0, requestInfo->dwRspBodyTotalSize);
+                                     const DWORD
+                                         &dwRspBodyReadSize = requestInfo->dwRspBodyReadSize;
+                                     if (rspBody.size() < dwRspBodyReadSize + nAvailable)
+                                       rspBody.resize(dwRspBodyReadSize + nAvailable);
+                                     if (dwRspBodyReadSize == 0 && progressCB)
+                                       progressCB(HttpAction::Response,
+                                                  0,
+                                                  requestInfo->dwRspBodyTotalSize);
                                      request.readData(&rspBody[dwRspBodyReadSize], nAvailable);
                                    }
                                    break;
                                  }
                                  case HttpAsynCBType::ReadComplete: {
                                    char *buf = param->pReadBuffer;
-                                   size_t nBufferSize = static_cast<size_t>(param->dwReadBufferSize);
+                                   size_t
+                                       nBufferSize = static_cast<size_t>(param->dwReadBufferSize);
                                    requestInfo->dwRspBodyReadSize += nBufferSize;
-                                   if (progressCB) progressCB(HttpAction::Response, requestInfo->dwRspBodyReadSize, requestInfo->dwRspBodyTotalSize);
+                                   if (progressCB)
+                                     progressCB(HttpAction::Response,
+                                                requestInfo->dwRspBodyReadSize,
+                                                requestInfo->dwRspBodyTotalSize);
                                    request.queryDataAvailable();
                                    break;
                                  }
                                  default: break;
                                }
                              });
-  requestInfo->request->setTimeouts(m_nResolveTimeout, m_nConnectTimeout, m_nSendTimeout, m_nReceiveTimeout);
+  requestInfo->request->setTimeouts(m_nResolveTimeout,
+                                    m_nConnectTimeout,
+                                    m_nSendTimeout,
+                                    m_nReceiveTimeout);
   if (reqHeaders) requestInfo->request->setRequestHeaders(*reqHeaders);
   requestInfo->request->sendRequest();
 }
 
-void HttpClient::asynPost(const std::wstring &url, const std::string &reqBody, HttpRspCallback rspCB, const HttpHeaders *reqHeaders /*= nullptr*/, HttpProgressCallback progressCB /*= nullptr*/) {
+void HttpClient::asynPost(const std::wstring &url,
+                          const std::string &reqBody,
+                          HttpRspCallback rspCB,
+                          const HttpHeaders *reqHeaders /*= nullptr*/,
+                          HttpProgressCallback progressCB /*= nullptr*/) {
   HttpRequestInfo *requestInfo = new HttpRequestInfo();
   if ((!requestInfo) || (!requestInfo->request)) {
     if (requestInfo) delete requestInfo;
@@ -606,19 +680,28 @@ void HttpClient::asynPost(const std::wstring &url, const std::string &reqBody, H
   requestInfo->reqBody = reqBody;
 
   requestInfo->request->init(m_userAgent, url, L"POST",
-                             [requestInfo, rspCB, progressCB, this](HttpAsynCBType type, const HttpAsynParam *param) {
+                             [requestInfo, rspCB, progressCB, this](HttpAsynCBType type,
+                                                                    const HttpAsynParam *param) {
                                HttpRequest &request = *requestInfo->request;
                                switch (type) {
                                  case HttpAsynCBType::RequestError: {
-                                   if (rspCB) rspCB(request.errorCode(), requestInfo->rspHeaders, requestInfo->rspBody);
+                                   if (rspCB)
+                                     rspCB(request.errorCode(),
+                                           requestInfo->rspHeaders,
+                                           requestInfo->rspBody);
                                    delete requestInfo;
                                    break;
                                  }
                                  case HttpAsynCBType::SendRequestComplete: {
                                    std::string &reqBody = requestInfo->reqBody;
                                    if (reqBody.size() > 0) {
-                                     DWORD dwSendSize = reqBody.size() > m_skMaxFragSize ? m_skMaxFragSize : reqBody.size();
-                                     if (progressCB) progressCB(HttpAction::Request, 0, reqBody.size());
+                                     DWORD dwSendSize =
+                                         reqBody.size() > m_skMaxFragSize ? m_skMaxFragSize
+                                                                          : reqBody.size();
+                                     if (progressCB)
+                                       progressCB(HttpAction::Request,
+                                                  0,
+                                                  reqBody.size());
                                      request.writeData(&reqBody[0], dwSendSize);
                                    } else {
                                      request.receiveResponse();
@@ -627,23 +710,31 @@ void HttpClient::asynPost(const std::wstring &url, const std::string &reqBody, H
                                  }
                                  case HttpAsynCBType::WriteComplete: {
                                    std::string &reqBody = requestInfo->reqBody;
-                                   DWORD & dwReqBodySentSize = requestInfo->dwReqBodySentSize;
+                                   DWORD &dwReqBodySentSize = requestInfo->dwReqBodySentSize;
                                    const DWORD &dwWritten = param->dwBytesWritten;
                                    dwReqBodySentSize += dwWritten;
-                                   if (progressCB) progressCB(HttpAction::Request, dwReqBodySentSize, reqBody.size());
+                                   if (progressCB)
+                                     progressCB(HttpAction::Request,
+                                                dwReqBodySentSize,
+                                                reqBody.size());
                                    DWORD dwRemainSize = reqBody.size() - dwReqBodySentSize;
                                    if (dwRemainSize == 0) {
                                      request.receiveResponse();
                                    } else {
-                                     DWORD dwSendSize = dwRemainSize > m_skMaxFragSize ? m_skMaxFragSize : dwRemainSize;
+                                     DWORD dwSendSize =
+                                         dwRemainSize > m_skMaxFragSize ? m_skMaxFragSize
+                                                                        : dwRemainSize;
                                      request.writeData(&reqBody[dwReqBodySentSize], dwSendSize);
                                    }
                                    break;
                                  }
                                  case HttpAsynCBType::HeadersAvailable: {
-                                   request.receiveResponseHeaders(requestInfo->dwStatusCode, requestInfo->rspHeaders);
+                                   request.receiveResponseHeaders(requestInfo->dwStatusCode,
+                                                                  requestInfo->rspHeaders);
                                    if (request.errorCode() == 0) {
-                                     requestInfo->dwRspBodyTotalSize = static_cast<DWORD>(requestInfo->rspHeaders.GetHeaderAsUInt64(L"Content-Length"));
+                                     requestInfo->dwRspBodyTotalSize =
+                                         static_cast<DWORD>(requestInfo->rspHeaders.GetHeaderAsUInt64(
+                                             L"Content-Length"));
                                      requestInfo->rspBody.resize(requestInfo->dwRspBodyTotalSize);
                                      request.queryDataAvailable();
                                    }
@@ -655,30 +746,48 @@ void HttpClient::asynPost(const std::wstring &url, const std::string &reqBody, H
                                      int code = request.errorCode();
                                      if (code == 0) code = requestInfo->dwStatusCode;
                                      if (code == 200) code = 0;
-                                     if (m_bEnableEncodeConvert) convertRespEncode(requestInfo->rspHeaders, requestInfo->rspBody, requestInfo->rspBody);
-                                     if (rspCB) rspCB(code, requestInfo->rspHeaders, requestInfo->rspBody);
+                                     if (m_bEnableEncodeConvert)
+                                       convertRespEncode(requestInfo->rspHeaders,
+                                                         requestInfo->rspBody,
+                                                         requestInfo->rspBody);
+                                     if (rspCB)
+                                       rspCB(code,
+                                             requestInfo->rspHeaders,
+                                             requestInfo->rspBody);
                                      delete requestInfo;
                                    } else {
                                      std::string &rspBody = requestInfo->rspBody;
-                                     const DWORD &dwRspBodyReadSize = requestInfo->dwRspBodyReadSize;
-                                     if (rspBody.size() < dwRspBodyReadSize + nAvailable) rspBody.resize(dwRspBodyReadSize + nAvailable);
-                                     if (dwRspBodyReadSize == 0 && progressCB) progressCB(HttpAction::Response, 0, requestInfo->dwRspBodyTotalSize);
+                                     const DWORD
+                                         &dwRspBodyReadSize = requestInfo->dwRspBodyReadSize;
+                                     if (rspBody.size() < dwRspBodyReadSize + nAvailable)
+                                       rspBody.resize(dwRspBodyReadSize + nAvailable);
+                                     if (dwRspBodyReadSize == 0 && progressCB)
+                                       progressCB(HttpAction::Response,
+                                                  0,
+                                                  requestInfo->dwRspBodyTotalSize);
                                      request.readData(&rspBody[dwRspBodyReadSize], nAvailable);
                                    }
                                    break;
                                  }
                                  case HttpAsynCBType::ReadComplete: {
                                    char *buf = param->pReadBuffer;
-                                   size_t nBufferSize = static_cast<size_t>(param->dwReadBufferSize);
+                                   size_t
+                                       nBufferSize = static_cast<size_t>(param->dwReadBufferSize);
                                    requestInfo->dwRspBodyReadSize += nBufferSize;
-                                   if (progressCB) progressCB(HttpAction::Response, requestInfo->dwRspBodyReadSize, requestInfo->dwRspBodyTotalSize);
+                                   if (progressCB)
+                                     progressCB(HttpAction::Response,
+                                                requestInfo->dwRspBodyReadSize,
+                                                requestInfo->dwRspBodyTotalSize);
                                    request.queryDataAvailable();
                                    break;
                                  }
                                  default: break;
                                }
                              });
-  requestInfo->request->setTimeouts(m_nResolveTimeout, m_nConnectTimeout, m_nSendTimeout, m_nReceiveTimeout);
+  requestInfo->request->setTimeouts(m_nResolveTimeout,
+                                    m_nConnectTimeout,
+                                    m_nSendTimeout,
+                                    m_nReceiveTimeout);
   if (reqHeaders) requestInfo->request->setRequestHeaders(*reqHeaders);
   requestInfo->request->sendRequest(requestInfo->reqBody.size());
 }
@@ -703,11 +812,14 @@ void HttpClient::asynDownload(const std::wstring &url,
   }
 
   requestInfo->request->init(m_userAgent, url, L"GET",
-                             [requestInfo, fp, completeCB, progressCB](HttpAsynCBType type, const HttpAsynParam *param) {
+                             [requestInfo, fp, completeCB, progressCB](HttpAsynCBType type,
+                                                                       const HttpAsynParam *param) {
                                HttpRequest &request = *requestInfo->request;
                                switch (type) {
                                  case HttpAsynCBType::RequestError: {
-                                   if (completeCB) completeCB(request.errorCode(), requestInfo->rspHeaders);
+                                   if (completeCB)
+                                     completeCB(request.errorCode(),
+                                                requestInfo->rspHeaders);
                                    delete requestInfo;
                                    break;
                                  }
@@ -716,9 +828,12 @@ void HttpClient::asynDownload(const std::wstring &url,
                                    break;
                                  }
                                  case HttpAsynCBType::HeadersAvailable: {
-                                   request.receiveResponseHeaders(requestInfo->dwStatusCode, requestInfo->rspHeaders);
+                                   request.receiveResponseHeaders(requestInfo->dwStatusCode,
+                                                                  requestInfo->rspHeaders);
                                    if (request.errorCode() == 0) {
-                                     requestInfo->dwRspBodyTotalSize = static_cast<DWORD>(requestInfo->rspHeaders.GetHeaderAsUInt64(L"Content-Length"));
+                                     requestInfo->dwRspBodyTotalSize =
+                                         static_cast<DWORD>(requestInfo->rspHeaders.GetHeaderAsUInt64(
+                                             L"Content-Length"));
                                      request.queryDataAvailable();
                                    }
                                    break;
@@ -734,32 +849,45 @@ void HttpClient::asynDownload(const std::wstring &url,
                                      delete requestInfo;
                                    } else {
                                      std::string &rspBody = requestInfo->rspBody;
-                                     const DWORD &dwRspBodyReadSize = requestInfo->dwRspBodyReadSize;
+                                     const DWORD
+                                         &dwRspBodyReadSize = requestInfo->dwRspBodyReadSize;
                                      rspBody.resize(nAvailable);
-                                     if (dwRspBodyReadSize == 0 && progressCB) progressCB(HttpAction::Response, 0, requestInfo->dwRspBodyTotalSize);
+                                     if (dwRspBodyReadSize == 0 && progressCB)
+                                       progressCB(HttpAction::Response,
+                                                  0,
+                                                  requestInfo->dwRspBodyTotalSize);
                                      request.readData(&rspBody[0], nAvailable);
                                    }
                                    break;
                                  }
                                  case HttpAsynCBType::ReadComplete: {
                                    char *buf = param->pReadBuffer;
-                                   size_t nBufferSize = static_cast<size_t>(param->dwReadBufferSize);
+                                   size_t
+                                       nBufferSize = static_cast<size_t>(param->dwReadBufferSize);
                                    requestInfo->dwRspBodyReadSize += nBufferSize;
                                    size_t nWrite = fwrite(buf, 1, nBufferSize, fp);
                                    if (nWrite != nBufferSize) break;
-                                   if (progressCB) progressCB(HttpAction::Response, requestInfo->dwRspBodyReadSize, requestInfo->dwRspBodyTotalSize);
+                                   if (progressCB)
+                                     progressCB(HttpAction::Response,
+                                                requestInfo->dwRspBodyReadSize,
+                                                requestInfo->dwRspBodyTotalSize);
                                    request.queryDataAvailable();
                                    break;
                                  }
                                  default: break;
                                }
                              });
-  requestInfo->request->setTimeouts(m_nResolveTimeout, m_nConnectTimeout, m_nSendTimeout, m_nReceiveTimeout);
+  requestInfo->request->setTimeouts(m_nResolveTimeout,
+                                    m_nConnectTimeout,
+                                    m_nSendTimeout,
+                                    m_nReceiveTimeout);
   if (reqHeaders) requestInfo->request->setRequestHeaders(*reqHeaders);
   requestInfo->request->sendRequest();
 }
 
-void HttpClient::convertRespEncode(const HttpHeaders &headers, const std::string &src, std::string &dst) {
+void HttpClient::convertRespEncode(const HttpHeaders &headers,
+                                   const std::string &src,
+                                   std::string &dst) {
   if (src.empty()) return;
   std::wstring contentType = headers.GetHeader(L"Content-Type");
   if (contentType.empty()) return;
@@ -787,11 +915,19 @@ std::wstring HttpClient::a2w(const std::string &str, unsigned int codePage /*= C
 }
 
 std::string HttpClient::w2a(const std::wstring &wstr, unsigned int codePage /*= CP_ACP*/) {
-  const int nSize = WideCharToMultiByte(codePage, 0, wstr.c_str(), wstr.size(), nullptr, 0, nullptr, nullptr);
+  const int nSize =
+      WideCharToMultiByte(codePage, 0, wstr.c_str(), wstr.size(), nullptr, 0, nullptr, nullptr);
   if (nSize <= 0) return "";
 
   std::string str(nSize, '\0');
-  WideCharToMultiByte(codePage, 0, wstr.c_str(), wstr.size(), &str[0], str.size(), nullptr, nullptr);
+  WideCharToMultiByte(codePage,
+                      0,
+                      wstr.c_str(),
+                      wstr.size(),
+                      &str[0],
+                      str.size(),
+                      nullptr,
+                      nullptr);
 
   return str;
 }

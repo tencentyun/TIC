@@ -14,11 +14,19 @@
 #pragma comment(lib, "TEduBoard.lib")
 
 static std::string wstr2str(const std::wstring &wstr, unsigned int codePage = CP_ACP) {
-  const int nSize = WideCharToMultiByte(codePage, 0, wstr.c_str(), wstr.size(), nullptr, 0, nullptr, nullptr);
+  const int nSize =
+      WideCharToMultiByte(codePage, 0, wstr.c_str(), wstr.size(), nullptr, 0, nullptr, nullptr);
   if (nSize <= 0) return "";
 
   std::string str(nSize, '\0');
-  WideCharToMultiByte(codePage, 0, wstr.c_str(), wstr.size(), &str[0], str.size(), nullptr, nullptr);
+  WideCharToMultiByte(codePage,
+                      0,
+                      wstr.c_str(),
+                      wstr.size(),
+                      &str[0],
+                      str.size(),
+                      nullptr,
+                      nullptr);
 
   return str;
 }
@@ -64,12 +72,12 @@ void TICManagerImpl::Init(int sdkappid, TICCallback callback, uint32_t disableMo
   }, this);
 
   Json::Value json_user_config;
-  json_user_config[kTIMUserConfigIsSyncReport] = true; //�����ɾ���Ѷ�״̬
+  json_user_config[kTIMUserConfigIsSyncReport] = true;  // 服务端删除已读状态
   Json::Value json_config;
   json_config[kTIMSetConfigUserConfig] = json_user_config;
   TIMSetConfig(json_config.toStyledString().c_str(), nullptr, nullptr);
 
-  //��ȡAPPDATA·��
+  // 获取APPDATA目录
   wchar_t my_documents[MAX_PATH] = {0};
   HRESULT result = SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, my_documents);
   std::wstring szIMLogDir = my_documents;
@@ -78,7 +86,7 @@ void TICManagerImpl::Init(int sdkappid, TICCallback callback, uint32_t disableMo
   std::wstring configFile = szIMLogDir + L"\\imsdk_config";
   DeleteFileW(configFile.c_str());
 
-  //ָ��IMSDK��־·��
+  // 设置IMSDK日志和配置文件路径
   Json::Value json_value_init;
   json_value_init[kTIMSdkConfigLogFilePath] = wstr2str(szIMLogDir, CP_UTF8).c_str();
   json_value_init[kTIMSdkConfigConfigFilePath] = wstr2str(szIMLogDir, CP_UTF8).c_str();
@@ -112,16 +120,24 @@ void TICManagerImpl::Uninit(TICCallback callback) {
   util.IMCallback(ret, (ret == 0) ? "" : "IMSDK unInit failed");
 }
 
-void TICManagerImpl::Login(const std::string &userId, const std::string &userSig, TICCallback callback) {
+void TICManagerImpl::Login(const std::string &userId,
+                           const std::string &userSig,
+                           TICCallback callback) {
   userId_ = userId;
   userSig_ = userSig;
 
-  int ret = TIMLogin(userId.c_str(), userSig.c_str(), [](int32_t code, const char *desc, const char *json_params, const void *user_data) {
-    TICCallbackUtil *util = (TICCallbackUtil *) user_data;
-    util->IMCallback(code, desc);
-    delete util;
-  }, new TICCallbackUtil(this, callback));
-  if (ret != TIM_SUCC) //����ֵ����TIM_SUCCʱ���ᴥ���ص������Ҫ�Լ����ûص�
+  int ret = TIMLogin(userId.c_str(),
+                     userSig.c_str(),
+                     [](int32_t code,
+                        const char *desc,
+                        const char *json_params,
+                        const void *user_data) {
+                       TICCallbackUtil *util = (TICCallbackUtil *) user_data;
+                       util->IMCallback(code, desc);
+                       delete util;
+                     },
+                     new TICCallbackUtil(this, callback));
+  if (ret != TIM_SUCC) // 返回必须是TIM_SUCC
   {
     TICCallbackUtil util(this, callback);
     util.IMCallback(ret, "IMSDK login failed");
@@ -129,33 +145,42 @@ void TICManagerImpl::Login(const std::string &userId, const std::string &userSig
 }
 
 void TICManagerImpl::Logout(TICCallback callback) {
-  int ret = TIMLogout([](int32_t code, const char *desc, const char *json_params, const void *user_data) {
-    TICCallbackUtil *util = (TICCallbackUtil *) user_data;
-    util->IMCallback(code, desc);
-    delete util;
-  }, new TICCallbackUtil(this, callback));
-  if (ret != TIM_SUCC) //����ֵ����TIM_SUCCʱ���ᴥ���ص������Ҫ�Լ����ûص�
+  int ret =
+      TIMLogout([](int32_t code, const char *desc, const char *json_params, const void *user_data) {
+        TICCallbackUtil *util = (TICCallbackUtil *) user_data;
+        util->IMCallback(code, desc);
+        delete util;
+      }, new TICCallbackUtil(this, callback));
+  if (ret != TIM_SUCC) // 返回必须是TIM_SUCC
   {
     TICCallbackUtil util(this, callback);
     util.IMCallback(ret, "IMSDK logout failed");
   }
 }
 
-void TICManagerImpl::CreateClassroom(uint32_t classId, TICClassScene classScene, TICCallback callback) {
+void TICManagerImpl::CreateClassroom(uint32_t classId,
+                                     TICClassScene classScene,
+                                     TICCallback callback) {
   std::string groupId = std::to_string(classId);
   Json::Value json_value_param;
   json_value_param[kTIMCreateGroupParamGroupId] = groupId;
-  json_value_param[kTIMCreateGroupParamGroupType] = (classScene == TIC_CLASS_SCENE_LIVE) ? kTIMGroup_AVChatRoom : kTIMGroup_Public;
+  json_value_param[kTIMCreateGroupParamGroupType] =
+      (classScene == TIC_CLASS_SCENE_LIVE) ? kTIMGroup_AVChatRoom : kTIMGroup_Public;
   json_value_param[kTIMCreateGroupParamGroupName] = groupId;
   json_value_param[kTIMCreateGroupParamGroupMemberArray] = Json::Value(Json::arrayValue);
   json_value_param[kTIMCreateGroupParamAddOption] = kTIMGroupAddOpt_Any;
 
-  int ret = TIMGroupCreate(json_value_param.toStyledString().c_str(), [](int32_t code, const char *desc, const char *json_params, const void *user_data) {
-    TICCallbackUtil *util = (TICCallbackUtil *) user_data;
-    util->IMCallback(code, desc);
-    delete util;
-  }, new TICCallbackUtil(this, callback));
-  if (ret != TIM_SUCC) //����ֵ����TIM_SUCCʱ���ᴥ���ص������Ҫ�Լ����ûص�
+  int ret = TIMGroupCreate(json_value_param.toStyledString().c_str(),
+                           [](int32_t code,
+                              const char *desc,
+                              const char *json_params,
+                              const void *user_data) {
+                             TICCallbackUtil *util = (TICCallbackUtil *) user_data;
+                             util->IMCallback(code, desc);
+                             delete util;
+                           },
+                           new TICCallbackUtil(this, callback));
+  if (ret != TIM_SUCC)  // 返回必须是TIM_SUCC
   {
     TICCallbackUtil util(this, callback);
     util.IMCallback(ret, "IMSDK create group failed");
@@ -164,12 +189,17 @@ void TICManagerImpl::CreateClassroom(uint32_t classId, TICClassScene classScene,
 
 void TICManagerImpl::DestroyClassroom(uint32_t classId, TICCallback callback) {
   std::string groupId = std::to_string(classId);
-  int ret = TIMGroupDelete(groupId.c_str(), [](int32_t code, const char *desc, const char *json_params, const void *user_data) {
-    TICCallbackUtil *util = (TICCallbackUtil *) user_data;
-    util->IMCallback(code, desc);
-    delete util;
-  }, new TICCallbackUtil(this, callback));
-  if (ret != TIM_SUCC) //����ֵ����TIM_SUCCʱ���ᴥ���ص������Ҫ�Լ����ûص�
+  int ret = TIMGroupDelete(groupId.c_str(),
+                           [](int32_t code,
+                              const char *desc,
+                              const char *json_params,
+                              const void *user_data) {
+                             TICCallbackUtil *util = (TICCallbackUtil *) user_data;
+                             util->IMCallback(code, desc);
+                             delete util;
+                           },
+                           new TICCallbackUtil(this, callback));
+  if (ret != TIM_SUCC)  // 返回必须是TIM_SUCC
   {
     TICCallbackUtil util(this, callback);
     util.IMCallback(ret, "IMSDK destroy group failed");
@@ -198,29 +228,30 @@ void TICManagerImpl::JoinClassroom(const TICClassroomOption &option, TICCallback
       return;
     }
 
-    //���ü���Saas
+    // 兼容空中课堂
     if (!compatSaas_) {
       OnJoinIMGroupComplete(callback);
       return;
     }
 
-    //����Saas
-    JoinIMGroup(groupIdChat_.c_str(), [this, callback](TICModule module, int code, const char *desc) {
-      if (code != TIM_SUCC) {
-        TICCallbackUtil util(this, callback);
-        util.IMCallback(code, desc);
-        return;
-      }
+    // 兼容空中课堂
+    JoinIMGroup(groupIdChat_.c_str(),
+                [this, callback](TICModule module, int code, const char *desc) {
+                  if (code != TIM_SUCC) {
+                    TICCallbackUtil util(this, callback);
+                    util.IMCallback(code, desc);
+                    return;
+                  }
 
-      OnJoinIMGroupComplete(callback);
-    });
+                  OnJoinIMGroupComplete(callback);
+                });
   });
 }
 
 void TICManagerImpl::QuitClassroom(bool clearBoard, TICCallback callback) {
   StopSyncTimer();
-  TRTCExitRoom(); //ִ��TRTC�˷�
-  BoardDestroy(clearBoard); //���ٰװ������
+  TRTCExitRoom();  // TRTC退房
+  BoardDestroy(clearBoard);  // 销毁白板
 
   QuitIMGroup(groupId_.c_str(), [this, callback](TICModule module, int code, const char *desc) {
     if (!compatSaas_) {
@@ -229,11 +260,12 @@ void TICManagerImpl::QuitClassroom(bool clearBoard, TICCallback callback) {
       return;
     }
 
-    QuitIMGroup(groupIdChat_.c_str(), [this, callback](TICModule module, int code, const char *desc) {
-      TICCallbackUtil util(this, callback);
-      util.IMCallback(code, desc);
-      return;
-    });
+    QuitIMGroup(groupIdChat_.c_str(),
+                [this, callback](TICModule module, int code, const char *desc) {
+                  TICCallbackUtil util(this, callback);
+                  util.IMCallback(code, desc);
+                  return;
+                });
   });
 }
 
@@ -250,7 +282,9 @@ void TICManagerImpl::SwitchRole(TICRoleType role) {
   roleType_ = role;
 }
 
-void TICManagerImpl::SendTextMessage(const std::string &userId, const std::string &text, TICCallback callback) {
+void TICManagerImpl::SendTextMessage(const std::string &userId,
+                                     const std::string &text,
+                                     TICCallback callback) {
   Json::Value jsonMsgElem;
   jsonMsgElem[kTIMElemType] = kTIMElem_Text;
   jsonMsgElem[kTIMTextElemContent] = text;
@@ -263,19 +297,28 @@ void TICManagerImpl::SendTextMessage(const std::string &userId, const std::strin
   jsonMessage[kTIMMsgConvId] = userId;
   jsonMessage[kTIMMsgConvType] = kTIMConv_C2C;
 
-  int ret = TIMMsgSendNewMsg(userId.c_str(), kTIMConv_C2C, jsonMessage.toStyledString().c_str(), [](int32_t code, const char *desc, const char *json_params, const void *user_data) {
-    TICCallbackUtil *util = (TICCallbackUtil *) user_data;
-    util->IMCallback(code, desc);
-    delete util;
-  }, new TICCallbackUtil(this, callback));
-  if (ret != TIM_SUCC) //����ֵ����TIM_SUCCʱ���ᴥ���ص������Ҫ�Լ����ûص�
+  int ret = TIMMsgSendNewMsg(userId.c_str(),
+                             kTIMConv_C2C,
+                             jsonMessage.toStyledString().c_str(),
+                             [](int32_t code,
+                                const char *desc,
+                                const char *json_params,
+                                const void *user_data) {
+                               TICCallbackUtil *util = (TICCallbackUtil *) user_data;
+                               util->IMCallback(code, desc);
+                               delete util;
+                             },
+                             new TICCallbackUtil(this, callback));
+  if (ret != TIM_SUCC)  // 返回必须是TIM_SUCC
   {
     TICCallbackUtil util(this, callback);
     util.IMCallback(ret, "IMSDK send c2c text message failed");
   }
 }
 
-void TICManagerImpl::SendCustomMessage(const std::string &userId, const std::string &data, TICCallback callback) {
+void TICManagerImpl::SendCustomMessage(const std::string &userId,
+                                       const std::string &data,
+                                       TICCallback callback) {
   Json::Value jsonMsgElem;
   jsonMsgElem[kTIMElemType] = kTIMElem_Custom;
   jsonMsgElem[kTIMCustomElemData] = data;
@@ -288,25 +331,41 @@ void TICManagerImpl::SendCustomMessage(const std::string &userId, const std::str
   jsonMessage[kTIMMsgConvId] = userId;
   jsonMessage[kTIMMsgConvType] = kTIMConv_C2C;
 
-  int ret = TIMMsgSendNewMsg(userId.c_str(), kTIMConv_C2C, jsonMessage.toStyledString().c_str(), [](int32_t code, const char *desc, const char *json_params, const void *user_data) {
-    TICCallbackUtil *util = (TICCallbackUtil *) user_data;
-    util->IMCallback(code, desc);
-    delete util;
-  }, new TICCallbackUtil(this, callback));
-  if (ret != TIM_SUCC) //����ֵ����TIM_SUCCʱ���ᴥ���ص������Ҫ�Լ����ûص�
+  int ret = TIMMsgSendNewMsg(userId.c_str(),
+                             kTIMConv_C2C,
+                             jsonMessage.toStyledString().c_str(),
+                             [](int32_t code,
+                                const char *desc,
+                                const char *json_params,
+                                const void *user_data) {
+                               TICCallbackUtil *util = (TICCallbackUtil *) user_data;
+                               util->IMCallback(code, desc);
+                               delete util;
+                             },
+                             new TICCallbackUtil(this, callback));
+  if (ret != TIM_SUCC)  // 返回必须是TIM_SUCC
   {
     TICCallbackUtil util(this, callback);
     util.IMCallback(ret, "IMSDK send c2c custom message failed");
   }
 }
 
-void TICManagerImpl::SendMessage(const std::string &userId, const std::string &jsonMsg, TICCallback callback) {
-  int ret = TIMMsgSendNewMsg(userId.c_str(), kTIMConv_C2C, jsonMsg.c_str(), [](int32_t code, const char *desc, const char *json_params, const void *user_data) {
-    TICCallbackUtil *util = (TICCallbackUtil *) user_data;
-    util->IMCallback(code, desc);
-    delete util;
-  }, new TICCallbackUtil(this, callback));
-  if (ret != TIM_SUCC) //����ֵ����TIM_SUCCʱ���ᴥ���ص������Ҫ�Լ����ûص�
+void TICManagerImpl::SendMessage(const std::string &userId,
+                                 const std::string &jsonMsg,
+                                 TICCallback callback) {
+  int ret = TIMMsgSendNewMsg(userId.c_str(),
+                             kTIMConv_C2C,
+                             jsonMsg.c_str(),
+                             [](int32_t code,
+                                const char *desc,
+                                const char *json_params,
+                                const void *user_data) {
+                               TICCallbackUtil *util = (TICCallbackUtil *) user_data;
+                               util->IMCallback(code, desc);
+                               delete util;
+                             },
+                             new TICCallbackUtil(this, callback));
+  if (ret != TIM_SUCC)  // 返回必须是TIM_SUCC
   {
     TICCallbackUtil util(this, callback);
     util.IMCallback(ret, "IMSDK send c2c message failed");
@@ -328,12 +387,19 @@ void TICManagerImpl::SendGroupTextMessage(const std::string &text, TICCallback c
   jsonMessage[kTIMMsgConvId] = groupId;
   jsonMessage[kTIMMsgConvType] = kTIMConv_Group;
 
-  int ret = TIMMsgSendNewMsg(groupId.c_str(), kTIMConv_Group, jsonMessage.toStyledString().c_str(), [](int32_t code, const char *desc, const char *json_params, const void *user_data) {
-    TICCallbackUtil *util = (TICCallbackUtil *) user_data;
-    util->IMCallback(code, desc);
-    delete util;
-  }, new TICCallbackUtil(this, callback));
-  if (ret != TIM_SUCC) //����ֵ����TIM_SUCCʱ���ᴥ���ص������Ҫ�Լ����ûص�
+  int ret = TIMMsgSendNewMsg(groupId.c_str(),
+                             kTIMConv_Group,
+                             jsonMessage.toStyledString().c_str(),
+                             [](int32_t code,
+                                const char *desc,
+                                const char *json_params,
+                                const void *user_data) {
+                               TICCallbackUtil *util = (TICCallbackUtil *) user_data;
+                               util->IMCallback(code, desc);
+                               delete util;
+                             },
+                             new TICCallbackUtil(this, callback));
+  if (ret != TIM_SUCC)  // 返回必须是TIM_SUCC
   {
     TICCallbackUtil util(this, callback);
     util.IMCallback(ret, "IMSDK send group text message failed");
@@ -355,12 +421,19 @@ void TICManagerImpl::SendGroupCustomMessage(const std::string &data, TICCallback
   jsonMessage[kTIMMsgConvId] = groupId;
   jsonMessage[kTIMMsgConvType] = kTIMConv_Group;
 
-  int ret = TIMMsgSendNewMsg(groupId.c_str(), kTIMConv_Group, jsonMessage.toStyledString().c_str(), [](int32_t code, const char *desc, const char *json_params, const void *user_data) {
-    TICCallbackUtil *util = (TICCallbackUtil *) user_data;
-    util->IMCallback(code, desc);
-    delete util;
-  }, new TICCallbackUtil(this, callback));
-  if (ret != TIM_SUCC) //����ֵ����TIM_SUCCʱ���ᴥ���ص������Ҫ�Լ����ûص�
+  int ret = TIMMsgSendNewMsg(groupId.c_str(),
+                             kTIMConv_Group,
+                             jsonMessage.toStyledString().c_str(),
+                             [](int32_t code,
+                                const char *desc,
+                                const char *json_params,
+                                const void *user_data) {
+                               TICCallbackUtil *util = (TICCallbackUtil *) user_data;
+                               util->IMCallback(code, desc);
+                               delete util;
+                             },
+                             new TICCallbackUtil(this, callback));
+  if (ret != TIM_SUCC)  // 返回必须是TIM_SUCC
   {
     TICCallbackUtil util(this, callback);
     util.IMCallback(ret, "IMSDK send group custom message failed");
@@ -369,12 +442,19 @@ void TICManagerImpl::SendGroupCustomMessage(const std::string &data, TICCallback
 
 void TICManagerImpl::SendGroupMessage(const std::string &jsonMsg, TICCallback callback) {
   std::string groupId = compatSaas_ ? groupIdChat_ : groupId_;
-  int ret = TIMMsgSendNewMsg(groupId.c_str(), kTIMConv_Group, jsonMsg.c_str(), [](int32_t code, const char *desc, const char *json_params, const void *user_data) {
-    TICCallbackUtil *util = (TICCallbackUtil *) user_data;
-    util->IMCallback(code, desc);
-    delete util;
-  }, new TICCallbackUtil(this, callback));
-  if (ret != TIM_SUCC) //����ֵ����TIM_SUCCʱ���ᴥ���ص������Ҫ�Լ����ûص�
+  int ret = TIMMsgSendNewMsg(groupId.c_str(),
+                             kTIMConv_Group,
+                             jsonMsg.c_str(),
+                             [](int32_t code,
+                                const char *desc,
+                                const char *json_params,
+                                const void *user_data) {
+                               TICCallbackUtil *util = (TICCallbackUtil *) user_data;
+                               util->IMCallback(code, desc);
+                               delete util;
+                             },
+                             new TICCallbackUtil(this, callback));
+  if (ret != TIM_SUCC)  // 返回必须是TIM_SUCC
   {
     TICCallbackUtil util(this, callback);
     util.IMCallback(ret, "IMSDK send group text message failed");
@@ -451,24 +531,24 @@ void TICManagerImpl::RemoveStatusListener(TICIMStatusListener *listener) {
 
 void TICManagerImpl::onError(TXLiteAVError errCode, const char *errMsg, void *arg) {
   if (errCode >= ERR_USER_SIG_INVALID && errCode <= ERR_ROOM_ENTER_FAIL) {
-    if (joinClassroomCallbackUtil) { //����ʧ�ܣ�����ص�
+    if (joinClassroomCallbackUtil) {  // 进房过程中出错，触发回调
       joinClassroomCallbackUtil->TRTCCallback(errCode, errMsg);
       delete joinClassroomCallbackUtil;
       joinClassroomCallbackUtil = nullptr;
       return;
     }
   }
-  //TODO TRTC ������
+  // TODO TRTC 异常处理
 }
 
 void TICManagerImpl::onWarning(TXLiteAVWarning warningCode, const char *warningMsg, void *arg) {
-  //TODO TRTC ���洦��
+  // TODO TRTC 警告处理
 }
 
 void TICManagerImpl::onEnterRoom(int result) {
   bInTRTCRoom_ = true;
 
-  //TRTC�����ɹ������������ص�
+  // TRTC进房成功，触发回调
   if (joinClassroomCallbackUtil) {
     joinClassroomCallbackUtil->BoardCallback(0, "Join classroom success");
     delete joinClassroomCallbackUtil;
@@ -486,7 +566,9 @@ void TICManagerImpl::onExitRoom(int reason) {
   bInTRTCRoom_ = false;
 }
 
-void TICManagerImpl::onConnectOtherRoom(const char *userId, TXLiteAVError errCode, const char *errMsg) {
+void TICManagerImpl::onConnectOtherRoom(const char *userId,
+                                        TXLiteAVError errCode,
+                                        const char *errMsg) {
 }
 
 void TICManagerImpl::onDisconnectOtherRoom(TXLiteAVError errCode, const char *errMsg) {
@@ -522,7 +604,9 @@ void TICManagerImpl::onUserAudioAvailable(const char *userId, bool available) {
   }
 }
 
-void TICManagerImpl::onDeviceChange(const char *deviceId, TRTCDeviceType type, TRTCDeviceState state) {
+void TICManagerImpl::onDeviceChange(const char *deviceId,
+                                    TRTCDeviceType type,
+                                    TRTCDeviceState state) {
   std::lock_guard<std::mutex> lk(mutEventListeners_);
   for (auto iter = eventListeners_.begin(); iter != eventListeners_.end(); ++iter) {
     (*iter)->onTICDevice(deviceId, type, state);
@@ -542,36 +626,43 @@ void TICManagerImpl::onRecvSEIMsg(const char *userId, const uint8_t *message, ui
 }
 
 void TICManagerImpl::onTEBError(TEduBoardErrorCode code, const char *msg) {
-  if (code == TEDU_BOARD_ERROR_INIT || code == TEDU_BOARD_ERROR_AUTH || code == TEDU_BOARD_ERROR_TIM_INVALID) {
-    if (joinClassroomCallbackUtil) { //�װ��ʼ��ʧ�ܡ���Ȩʧ�ܡ���ѶIMSDK����ʧ�ܣ�����ص�
+  if (code == TEDU_BOARD_ERROR_INIT || code == TEDU_BOARD_ERROR_AUTH
+      || code == TEDU_BOARD_ERROR_TIM_INVALID) {
+    if (joinClassroomCallbackUtil) {  // 进房过程中出错，触发回调
       joinClassroomCallbackUtil->BoardCallback(code, msg);
       delete joinClassroomCallbackUtil;
       joinClassroomCallbackUtil = nullptr;
       return;
     }
   }
-  //TODO Board ������
+  // TODO Board 异常处理
 }
 
 void TICManagerImpl::onTEBWarning(TEduBoardWarningCode code, const char *msg) {
-  //TODO Board ���洦��
+  // TODO Board 警告处理
 }
 
 void TICManagerImpl::onTEBInit() {
-  //�װ��ʼ���ɹ���ִ��TRTC����
+  // 白板初始化成功，TRTC进房
   TRTCEnterRoom();
 }
 
 void TICManagerImpl::JoinIMGroup(const char *groupId, TICCallback callback) {
-  int ret = TIMGroupJoin(groupId, NULL, [](int32_t code, const char *desc, const char *json_params, const void *user_data) {
-    TICCallbackUtil *util = (TICCallbackUtil *) user_data;
-    if (code == 10013) { // ���ڷ��䣬����
-      code = TIM_SUCC;
-    }
-    util->IMCallback(code, desc);
-    delete util;
-  }, new TICCallbackUtil(this, callback));
-  if (ret != TIM_SUCC) //����ֵ����TIM_SUCCʱ���ᴥ���ص������Ҫ�Լ����ûص�
+  int ret = TIMGroupJoin(groupId,
+                         NULL,
+                         [](int32_t code,
+                            const char *desc,
+                            const char *json_params,
+                            const void *user_data) {
+                           TICCallbackUtil *util = (TICCallbackUtil *) user_data;
+                           if (code == 10013) {  // 已在群组内，返回成功
+                             code = TIM_SUCC;
+                           }
+                           util->IMCallback(code, desc);
+                           delete util;
+                         },
+                         new TICCallbackUtil(this, callback));
+  if (ret != TIM_SUCC)  // 返回必须是TIM_SUCC
   {
     TICCallbackUtil util(this, callback);
     util.IMCallback(ret, "IMSDK join group failed");
@@ -579,17 +670,23 @@ void TICManagerImpl::JoinIMGroup(const char *groupId, TICCallback callback) {
 }
 
 void TICManagerImpl::QuitIMGroup(const char *groupId, TICCallback callback) {
-  int ret = TIMGroupQuit(groupId, [](int32_t code, const char *desc, const char *json_params, const void *user_data) {
-    TICCallbackUtil *util = (TICCallbackUtil *) user_data;
-    if (code == ERR_SVR_GROUP_SUPER_NOT_ALLOW_QUIT || code == ERR_SVR_GROUP_NOT_FOUND) //Ⱥ���������˳�Ⱥ(ֻ�ܽ�ɢȺ)||Ⱥ���ѽ�ɢ;
-    {
-      code = TIM_SUCC;
-      desc = "";
-    }
-    util->IMCallback(code, desc);
-    delete util;
-  }, new TICCallbackUtil(this, callback));
-  if (ret != TIM_SUCC) //����ֵ����TIM_SUCCʱ���ᴥ���ص������Ҫ�Լ����ûص�
+  int ret = TIMGroupQuit(groupId,
+                         [](int32_t code,
+                            const char *desc,
+                            const char *json_params,
+                            const void *user_data) {
+                           TICCallbackUtil *util = (TICCallbackUtil *) user_data;
+                           if (code == ERR_SVR_GROUP_SUPER_NOT_ALLOW_QUIT
+                               || code == ERR_SVR_GROUP_NOT_FOUND)  // 可忽略的错误
+                           {
+                             code = TIM_SUCC;
+                             desc = "";
+                           }
+                           util->IMCallback(code, desc);
+                           delete util;
+                         },
+                         new TICCallbackUtil(this, callback));
+  if (ret != TIM_SUCC)  // 返回必须是TIM_SUCC
   {
     TICCallbackUtil util(this, callback);
     util.IMCallback(ret, "IMSDK quit group failed");
@@ -597,8 +694,8 @@ void TICManagerImpl::QuitIMGroup(const char *groupId, TICCallback callback) {
 }
 
 void TICManagerImpl::OnJoinIMGroupComplete(TICCallback callback) {
-  joinClassroomCallbackUtil = new TICCallbackUtil(this, callback); //��¼�»ص���Ϣ
-  BoardCreateAndInit(); //�����װ弰��ʼ��
+  joinClassroomCallbackUtil = new TICCallbackUtil(this, callback);  // 创建回调对象，方便后面触发回调
+  BoardCreateAndInit();  // 创建白板并初始化
 }
 
 void TICManagerImpl::TRTCEnterRoom() {
@@ -607,7 +704,7 @@ void TICManagerImpl::TRTCEnterRoom() {
     return;
   }
 
-  //����������������
+  // TRTC进房
   TRTCParams params;
   params.sdkAppId = sdkAppId_;
   params.userId = userId_.c_str();
@@ -618,17 +715,17 @@ void TICManagerImpl::TRTCEnterRoom() {
   //printf("sendSEIMsg Ptr: %p\n", ptr);
   getTRTCShareInstance()->enterRoom(params, TRTCAppScene(classScene_));
 
-  //�ж��Ƿ���Ҫ������ͷ�豸
+  // 根据需要打开摄像头
   if (openCamera_) {
-    //�ж��Ƿ���Ҫѡ������ͷ�豸
+    // 摄像头ID不为空，选定设备
     if (!cameraId_.empty()) {
       getTRTCShareInstance()->setCurrentCameraDevice(cameraId_.c_str());
     }
     getTRTCShareInstance()->startLocalPreview(rendHwnd_);
   }
-  //�ж��Ƿ���Ҫ����˷��豸
+  // 根据需要打开麦克风
   if (openMic_) {
-    //�ж��Ƿ���Ҫѡ����˷��豸
+    // 麦克风ID不为空，选定设备
     if (!micId_.empty()) {
       getTRTCShareInstance()->setCurrentMicDevice(micId_.c_str());
     }
@@ -637,13 +734,13 @@ void TICManagerImpl::TRTCEnterRoom() {
 }
 
 void TICManagerImpl::BoardCreateAndInit() {
-  //�����װ������
+  // 创建白板
   boardCtrl_ = CreateTEduBoardController();
   if (boardCtrl_) {
-    // ���ûص�
+    // 注册白板回调
     boardCtrl_->AddCallback(this);
     if (boardCallback_) boardCtrl_->AddCallback(boardCallback_);
-    //����������ʼ���װ�
+    // 白板初始化
     TEduBoardAuthParam authParam;
     authParam.sdkAppId = sdkAppId_;
     authParam.userId = userId_.c_str();
@@ -704,7 +801,8 @@ void TICManagerImpl::SendSEISyncMsg() {
   writer.omitEndingLineFeed();
   std::string strSend = writer.write(root);
 
-  bool bRet = getTRTCShareInstance()->sendSEIMsg((const uint8_t *) strSend.data(), strSend.length(), 1);
+  bool bRet =
+      getTRTCShareInstance()->sendSEIMsg((const uint8_t *) strSend.data(), strSend.length(), 1);
 }
 
 void TICManagerImpl::OnIMNewMsg(const char *json_msg_array) {
@@ -714,7 +812,7 @@ void TICManagerImpl::OnIMNewMsg(const char *json_msg_array) {
   Json::Value jsonMsgs;
   if (!reader.parse(json_msg_array, jsonMsgs)) return;
 
-  bool bFilted = false; //�Ƿ�Ϊ��Ҫ���˵�����Ϣ
+  bool bFilted = false;  // 记录是否已被过滤的消息
   for (Json::ArrayIndex i = 0; i < jsonMsgs.size(); ++i) {
     const Json::Value &jsonMsg = jsonMsgs[i];
     TIMConvType convType = (TIMConvType) jsonMsg[kTIMMsgConvType].asInt();
@@ -772,15 +870,15 @@ void TICManagerImpl::OnIMC2CMsg(const Json::Value &jsonMsg) {
 }
 
 bool TICManagerImpl::OnIMGroupMsg(const Json::Value &jsonMsg) {
-  bool bFilted = false; //�Ƿ�Ϊ��Ҫ���˵�����Ϣ
+  bool bFilted = false;  // 记录是否已被过滤的消息
 
   std::string szGroupId = jsonMsg[kTIMMsgConvId].asString();
   std::string szFromUserId = jsonMsg[kTIMMsgSender].asString();
 
-  if (compatSaas_) { //����Saas
-    if (szGroupId == groupId_) return true; //���˵��װ�����Ⱥ
+  if (compatSaas_) {  // 兼容空中课堂
+    if (szGroupId == groupId_) return true;
   } else {
-    if (szGroupId != groupId_) return false; //������ǵ�ǰ���ö�ӦȺ�����Ϣ
+    if (szGroupId != groupId_) return false;
   }
 
   Json::Value jsonMsgElems = jsonMsg[kTIMMsgElemArray];
@@ -797,8 +895,7 @@ bool TICManagerImpl::OnIMGroupMsg(const Json::Value &jsonMsg) {
       }
       case kTIMElem_Custom: {
         std::string szExt = jsonMsgElems[i][kTIMCustomElemExt].asString();
-        if (szExt == "TXWhiteBoardExt" || szExt == "TXConferenceExt") //���˵��ڲ�������ص���Ϣ
-        {
+        if (szExt == "TXWhiteBoardExt" || szExt == "TXConferenceExt") {
           bFilted = true;
           break;
         }
@@ -826,7 +923,8 @@ void TICManagerImpl::OnIMSystemMsg(const Json::Value &jsonMsg) {
     TIMElemType eleType = (TIMElemType) jsonMsgElems[i][kTIMElemType].asInt();
     switch (eleType) {
       case kTIMElem_GroupReport: {
-        TIMGroupReportType groupReportType = (TIMGroupReportType) jsonMsgElems[i][kTIMGroupReportElemReportType].asInt();
+        TIMGroupReportType groupReportType =
+            (TIMGroupReportType) jsonMsgElems[i][kTIMGroupReportElemReportType].asInt();
         if (groupReportType == kTIMGroupReport_Delete) {
           std::string szReportGroupId = jsonMsgElems[i][kTIMGroupReportElemGroupId].asString();
 
@@ -846,8 +944,8 @@ void TICManagerImpl::OnIMSystemMsg(const Json::Value &jsonMsg) {
 }
 
 void TICManagerImpl::OnIMKickedOffline() {
-  if (boardCtrl_) BoardDestroy(false); //���ٰװ������
-  if (bInTRTCRoom_) TRTCExitRoom(); //�˳�TRTC����
+  if (boardCtrl_) BoardDestroy(false);
+  if (bInTRTCRoom_) TRTCExitRoom();
 
   std::lock_guard<std::mutex> lk(mutStatusListeners_);
   for (auto iter = statusListeners_.begin(); iter != statusListeners_.end(); ++iter) {
@@ -856,8 +954,8 @@ void TICManagerImpl::OnIMKickedOffline() {
 }
 
 void TICManagerImpl::OnIMUserSigExpired() {
-  if (boardCtrl_) BoardDestroy(false); //���ٰװ������
-  if (bInTRTCRoom_) TRTCExitRoom(); //�˳�TRTC����
+  if (boardCtrl_) BoardDestroy(false);
+  if (bInTRTCRoom_) TRTCExitRoom();
 
   std::lock_guard<std::mutex> lk(mutStatusListeners_);
   for (auto iter = statusListeners_.begin(); iter != statusListeners_.end(); ++iter) {
@@ -871,11 +969,10 @@ void TICManagerImpl::OnIMGroupTipsEvent(const char *jsonTips) {
 
   std::string szGroupId = root[kTIMGroupTipsElemGroupId].asString();
   std::string groupId = compatSaas_ ? groupIdChat_ : groupId_;
-  if (szGroupId != groupId) return; //������ǵ�ǰ���ö�ӦȺ����¼�֪ͨ
+  if (szGroupId != groupId) return;
 
   TIMGroupTipType groupTipType = (TIMGroupTipType) root[kTIMGroupTipsElemTipType].asInt();
-  if (groupTipType == kTIMGroupTip_Invite) //��Ⱥ
-  {
+  if (groupTipType == kTIMGroupTip_Invite) {
     std::vector<std::string> userIds;
     const Json::Value &userArray = root[kTIMGroupTipsElemUserArray];
     for (Json::ArrayIndex idx = 0; idx < userArray.size(); ++idx) {
@@ -886,8 +983,7 @@ void TICManagerImpl::OnIMGroupTipsEvent(const char *jsonTips) {
     for (auto iter = eventListeners_.begin(); iter != eventListeners_.end(); ++iter) {
       (*iter)->onTICMemberJoin(userIds);
     }
-  } else if (groupTipType == kTIMGroupTip_Quit) //��Ⱥ
-  {
+  } else if (groupTipType == kTIMGroupTip_Quit) {
     std::vector<std::string> userIds;
     std::string userId = root[kTIMGroupTipsElemOpUser].asString();
     userIds.emplace_back(userId);
@@ -895,8 +991,7 @@ void TICManagerImpl::OnIMGroupTipsEvent(const char *jsonTips) {
     for (auto iter = eventListeners_.begin(); iter != eventListeners_.end(); ++iter) {
       (*iter)->onTICMemberQuit(userIds);
     }
-  } else if (groupTipType == kTIMGroupTip_Kick) //�߳�Ⱥ
-  {
+  } else if (groupTipType == kTIMGroupTip_Kick) {
     std::vector<std::string> userIds;
     const Json::Value &userArray = root[kTIMGroupTipsElemUserArray];
     for (Json::ArrayIndex idx = 0; idx < userArray.size(); ++idx) {

@@ -99,10 +99,14 @@ class TICManagerImpl : public TICManager, public ITRTCCloudCallback, public TEdu
   virtual void Init(int sdkAppId, TICCallback callback, uint32_t disableModule) override;
   virtual void Uninit(TICCallback callback) override;
 
-  virtual void Login(const std::string &userId, const std::string &userSig, TICCallback callback) override;
+  virtual void Login(const std::string &userId,
+                     const std::string &userSig,
+                     TICCallback callback) override;
   virtual void Logout(TICCallback callback) override;
 
-  virtual void CreateClassroom(uint32_t classId, TICClassScene classScene, TICCallback callback) override;
+  virtual void CreateClassroom(uint32_t classId,
+                               TICClassScene classScene,
+                               TICCallback callback) override;
   virtual void DestroyClassroom(uint32_t classId, TICCallback callback) override;
 
   virtual void JoinClassroom(const TICClassroomOption &option, TICCallback callback) override;
@@ -110,9 +114,15 @@ class TICManagerImpl : public TICManager, public ITRTCCloudCallback, public TEdu
 
   virtual void SwitchRole(TICRoleType role) override;
 
-  virtual void SendTextMessage(const std::string &userId, const std::string &text, TICCallback callback) override;
-  virtual void SendCustomMessage(const std::string &userId, const std::string &data, TICCallback callback) override;
-  virtual void SendMessage(const std::string &userId, const std::string &jsonMsg, TICCallback callback) override;
+  virtual void SendTextMessage(const std::string &userId,
+                               const std::string &text,
+                               TICCallback callback) override;
+  virtual void SendCustomMessage(const std::string &userId,
+                                 const std::string &data,
+                                 TICCallback callback) override;
+  virtual void SendMessage(const std::string &userId,
+                           const std::string &jsonMsg,
+                           TICCallback callback) override;
 
   virtual void SendGroupTextMessage(const std::string &text, TICCallback callback) override;
   virtual void SendGroupCustomMessage(const std::string &data, TICCallback callback) override;
@@ -136,14 +146,18 @@ class TICManagerImpl : public TICManager, public ITRTCCloudCallback, public TEdu
   virtual void onWarning(TXLiteAVWarning warningCode, const char *warningMsg, void *arg) override;
   virtual void onEnterRoom(int result) override;
   virtual void onExitRoom(int reason) override;
-  virtual void onConnectOtherRoom(const char *userId, TXLiteAVError errCode, const char *errMsg) override;
+  virtual void onConnectOtherRoom(const char *userId,
+                                  TXLiteAVError errCode,
+                                  const char *errMsg) override;
   virtual void onDisconnectOtherRoom(TXLiteAVError errCode, const char *errMsg) override;
   virtual void onUserEnter(const char *userId) override;
   virtual void onUserExit(const char *userId, int reason) override;
   virtual void onUserVideoAvailable(const char *userId, bool available) override;
   virtual void onUserSubStreamAvailable(const char *userId, bool available) override;
   virtual void onUserAudioAvailable(const char *userId, bool available) override;
-  virtual void onDeviceChange(const char *deviceId, TRTCDeviceType type, TRTCDeviceState state) override;
+  virtual void onDeviceChange(const char *deviceId,
+                              TRTCDeviceType type,
+                              TRTCDeviceState state) override;
   virtual void onRecvSEIMsg(const char *userId, const uint8_t *message, uint32_t msgSize) override;
 
   // ͨ�� TEduBoardCallback �̳�

@@ -98,7 +98,10 @@ class HttpRequest {
 
   DWORD errorCode() const;
 
-  void init(const std::wstring &userAgent, const std::wstring &url, const std::wstring &method, HttpAsynCallback asynCallback = nullptr);
+  void init(const std::wstring &userAgent,
+            const std::wstring &url,
+            const std::wstring &method,
+            HttpAsynCallback asynCallback = nullptr);
 
   void setTimeouts(int nResolveTimeout, int nConnectTimeout, int nSendTimeout, int nReceiveTimeout);
   void setRequestHeaders(const HttpHeaders &reqHeaders);
@@ -131,9 +134,11 @@ class HttpRequest {
   HttpAsynCallback m_asynCallback;
 };
 
-typedef std::function<void(int code, const HttpHeaders &rspHeaders, const std::string &rspBody)> HttpRspCallback;
+typedef std::function<void(int code, const HttpHeaders &rspHeaders, const std::string &rspBody)>
+    HttpRspCallback;
 typedef std::function<void(int code, const HttpHeaders &rspHeaders)> HttpDownloadComplete;
-typedef std::function<void(HttpAction action, DWORD currentSize, DWORD totalSize)> HttpProgressCallback;
+typedef std::function<void(HttpAction action, DWORD currentSize, DWORD totalSize)>
+    HttpProgressCallback;
 class HttpClient {
   static const DWORD m_skMaxFragSize = 1024;
  public:
@@ -186,7 +191,9 @@ class HttpClient {
       HttpProgressCallback progressCB = nullptr,
       const HttpHeaders *reqHeaders = nullptr);
 
-  static void convertRespEncode(const HttpHeaders &headers, const std::string &src, std::string &dst);
+  static void convertRespEncode(const HttpHeaders &headers,
+                                const std::string &src,
+                                std::string &dst);
   static std::wstring a2w(const std::string &str, unsigned int codePage = CP_ACP);
   static std::string w2a(const std::wstring &wstr, unsigned int codePage = CP_ACP);
 
