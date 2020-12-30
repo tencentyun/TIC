@@ -1,3 +1,7 @@
+//
+//  Copyright © 2019 Tencent. All rights reserved.
+//
+
 #include "HttpClient.h"
 #include <time.h>
 #include <algorithm>
@@ -278,77 +282,68 @@ void HttpRequest::readData(void *buffer, DWORD dwBytesToRead, DWORD *pdwBytesRea
   }
 }
 
-void CALLBACK
-HttpRequest::_onWinHttpStatusCallback(HINTERNET
-hInternet,
-DWORD_PTR dwContext, DWORD
-dwInternetStatus,
-LPVOID lpvStatusInformation, DWORD
-dwStatusInformationLength)
-{
-HttpRequest *pThis = reinterpret_cast<HttpRequest *>(dwContext);
-if (!pThis) return;
-switch (dwInternetStatus)
-{
-case WINHTTP_CALLBACK_STATUS_REQUEST_ERROR:
-{
-pThis->
-m_dwErrorCode = reinterpret_cast<LPWINHTTP_ASYNC_RESULT>(lpvStatusInformation)->dwError;
-if(pThis->m_asynCallback) pThis->
-m_asynCallback(HttpAsynCBType::RequestError,
-nullptr);
-break;
-}
-case WINHTTP_CALLBACK_STATUS_SENDREQUEST_COMPLETE:
-{
-if (pThis->m_asynCallback) pThis->
-m_asynCallback(HttpAsynCBType::SendRequestComplete,
-nullptr);
-break;
-}
-case WINHTTP_CALLBACK_STATUS_WRITE_COMPLETE:
-{
-HttpAsynParam param;
-param.
-dwBytesWritten = *((LPDWORD) lpvStatusInformation);
-if (pThis->m_asynCallback) pThis->
-m_asynCallback(HttpAsynCBType::WriteComplete, &param
-);
-break;
-}
-case WINHTTP_CALLBACK_STATUS_HEADERS_AVAILABLE:
-{
-if (pThis->m_asynCallback) pThis->
-m_asynCallback(HttpAsynCBType::HeadersAvailable,
-nullptr);
-break;
-}
-case WINHTTP_CALLBACK_STATUS_DATA_AVAILABLE:
-{
-HttpAsynParam param;
-param.
-dwBytesAvailable = *((LPDWORD) lpvStatusInformation);
-if (pThis->m_asynCallback) pThis->
-m_asynCallback(HttpAsynCBType::DataAvailable, &param
-);
-break;
-}
-case WINHTTP_CALLBACK_STATUS_READ_COMPLETE:
-{
-HttpAsynParam param;
-param.
-dwReadBufferSize = dwStatusInformationLength;
-param.
-pReadBuffer = (char *) lpvStatusInformation;
-if (pThis->m_asynCallback) pThis->
-m_asynCallback(HttpAsynCBType::ReadComplete, &param
-);
-break;
-}
-case WINHTTP_CALLBACK_STATUS_REDIRECT: break;
-case WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING: break;
-default: break;
-}
+void CALLBACK HttpRequest::_onWinHttpStatusCallback(HINTERNET hInternet, DWORD_PTR dwContext, DWORD dwInternetStatus, LPVOID lpvStatusInformation, DWORD dwStatusInformationLength) {
+  HttpRequest *pThis = reinterpret_cast<HttpRequest *>(dwContext);
+  if (!pThis) return;
+  switch (dwInternetStatus) {
+    case WINHTTP_CALLBACK_STATUS_REQUEST_ERROR: {
+      pThis->
+          m_dwErrorCode = reinterpret_cast<LPWINHTTP_ASYNC_RESULT>(lpvStatusInformation)->dwError;
+      if (pThis->m_asynCallback)
+        pThis->
+            m_asynCallback(HttpAsynCBType::RequestError,
+                           nullptr);
+      break;
+    }
+    case WINHTTP_CALLBACK_STATUS_SENDREQUEST_COMPLETE: {
+      if (pThis->m_asynCallback)
+        pThis->
+            m_asynCallback(HttpAsynCBType::SendRequestComplete,
+                           nullptr);
+      break;
+    }
+    case WINHTTP_CALLBACK_STATUS_WRITE_COMPLETE: {
+      HttpAsynParam param;
+      param.
+          dwBytesWritten = *((LPDWORD) lpvStatusInformation);
+      if (pThis->m_asynCallback)
+        pThis->
+            m_asynCallback(HttpAsynCBType::WriteComplete, &param);
+      break;
+    }
+    case WINHTTP_CALLBACK_STATUS_HEADERS_AVAILABLE: {
+      if (pThis->m_asynCallback)
+        pThis->
+            m_asynCallback(HttpAsynCBType::HeadersAvailable,
+                           nullptr);
+      break;
+    }
+    case WINHTTP_CALLBACK_STATUS_DATA_AVAILABLE: {
+      HttpAsynParam param;
+      param.
+          dwBytesAvailable = *((LPDWORD) lpvStatusInformation);
+      if (pThis->m_asynCallback)
+        pThis->
+            m_asynCallback(HttpAsynCBType::DataAvailable, &param
+        );
+      break;
+    }
+    case WINHTTP_CALLBACK_STATUS_READ_COMPLETE: {
+      HttpAsynParam param;
+      param.
+          dwReadBufferSize = dwStatusInformationLength;
+      param.
+          pReadBuffer = (char *) lpvStatusInformation;
+      if (pThis->m_asynCallback)
+        pThis->
+            m_asynCallback(HttpAsynCBType::ReadComplete, &param
+        );
+      break;
+    }
+    case WINHTTP_CALLBACK_STATUS_REDIRECT: break;
+    case WINHTTP_CALLBACK_STATUS_HANDLE_CLOSING: break;
+    default: break;
+  }
 }
 
 void HttpRequest::_release() {

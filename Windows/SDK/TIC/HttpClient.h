@@ -1,3 +1,7 @@
+//
+//  Copyright © 2019 Tencent. All rights reserved.
+//
+
 #ifndef HttpClient_h_
 #define HttpClient_h_
 
