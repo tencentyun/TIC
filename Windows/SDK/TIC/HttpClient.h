@@ -2,8 +2,8 @@
 #define HttpClient_h_
 
 /*******************************************************************
-* @purpose	httpÇëÇó
-* @details	·â×°winhttpÇëÇó
+* @purpose	httpï¿½ï¿½ï¿½ï¿½
+* @details	ï¿½ï¿½×°winhttpï¿½ï¿½ï¿½ï¿½
 ********************************************************************/
 
 #include <stdint.h>
@@ -50,149 +50,149 @@
 #undef HTTP_VERSION_INFO
 #undef LPHTTP_VERSION_INFO
 
-enum class HttpAction
-{
-	Request,
-	Response
+enum class HttpAction {
+  Request,
+  Response
 };
 
-enum class HttpAsynCBType
-{
-	RequestError,
-	SendRequestComplete,
-	WriteComplete,
-	HeadersAvailable,
-	DataAvailable,
-	ReadComplete,
+enum class HttpAsynCBType {
+  RequestError,
+  SendRequestComplete,
+  WriteComplete,
+  HeadersAvailable,
+  DataAvailable,
+  ReadComplete,
 };
 
-class HttpHeaders : public std::map<std::wstring, std::wstring>
-{
-public:
-	HttpHeaders();
-	~HttpHeaders();
+class HttpHeaders : public std::map<std::wstring, std::wstring> {
+ public:
+  HttpHeaders();
+  ~HttpHeaders();
 
-	bool HasHeader(const std::wstring &key) const;
-	void SetHeader(const std::wstring &key, const std::wstring &value);
-	std::wstring GetHeader(const std::wstring &key) const;
-	uint64_t GetHeaderAsUInt64(const std::wstring &key);
+  bool HasHeader(const std::wstring &key) const;
+  void SetHeader(const std::wstring &key, const std::wstring &value);
+  std::wstring GetHeader(const std::wstring &key) const;
+  uint64_t GetHeaderAsUInt64(const std::wstring &key);
 
-	void SetDate();
-	void SetAuthorization(std::wstring authorization);
-	void SetContentType(std::wstring contentType = L"application/json");
-	void SetContentLength(uint64_t contentLength = 0);
-	void SetConnection(bool keepAlive = false);
+  void SetDate();
+  void SetAuthorization(std::wstring authorization);
+  void SetContentType(std::wstring contentType = L"application/json");
+  void SetContentLength(uint64_t contentLength = 0);
+  void SetConnection(bool keepAlive = false);
 };
 
-struct HttpAsynParam
-{
-	union { DWORD dwBytesWritten = 0; DWORD dwBytesAvailable; DWORD dwReadBufferSize; };
-	char* pReadBuffer = nullptr;
+struct HttpAsynParam {
+  union { DWORD dwBytesWritten = 0; DWORD dwBytesAvailable; DWORD dwReadBufferSize; };
+  char *pReadBuffer = nullptr;
 };
 
-typedef std::function<void(HttpAsynCBType type, const HttpAsynParam* param)> HttpAsynCallback;
-class HttpRequest
-{
-public:
-	HttpRequest();
-	~HttpRequest();
+typedef std::function<void(HttpAsynCBType type, const HttpAsynParam *param)> HttpAsynCallback;
+class HttpRequest {
+ public:
+  HttpRequest();
+  ~HttpRequest();
 
-	DWORD errorCode() const;
+  DWORD errorCode() const;
 
-	void init(const std::wstring& userAgent, const std::wstring& url, const std::wstring& method, HttpAsynCallback asynCallback = nullptr);
+  void init(const std::wstring &userAgent, const std::wstring &url, const std::wstring &method, HttpAsynCallback asynCallback = nullptr);
 
-	void setTimeouts(int nResolveTimeout, int nConnectTimeout, int nSendTimeout, int nReceiveTimeout);
-	void setRequestHeaders(const HttpHeaders& reqHeaders);
-	
-	void sendRequest(DWORD totalSize = 0);
-	void writeData(const void* buffer, DWORD dwBytesToWrite, DWORD* pdwBytesWritten = nullptr);
-	
-	void receiveResponse();
-	void receiveResponseHeaders(DWORD& dwStatusCode, HttpHeaders& rspHeaders);
-	int queryDataAvailable();//Ê§°Ü·µ»Ø-1£¬Í¬²½Ä£Ê½³É¹¦·µ»Ø¿É¶Á×Ö½ÚÊý£¬Òì²½Ä£Ê½³É¹¦Ê¼ÖÕ·µ»Ø0;
-	void readData(void* buffer, DWORD dwBytesToRead, DWORD* pdwBytesRead = nullptr);
+  void setTimeouts(int nResolveTimeout, int nConnectTimeout, int nSendTimeout, int nReceiveTimeout);
+  void setRequestHeaders(const HttpHeaders &reqHeaders);
 
-private:
-	static void CALLBACK _onWinHttpStatusCallback(HINTERNET hInternet, DWORD_PTR dwContext, DWORD dwInternetStatus, LPVOID lpvStatusInformation, DWORD dwStatusInformationLength);
-	void _release();
+  void sendRequest(DWORD totalSize = 0);
+  void writeData(const void *buffer, DWORD dwBytesToWrite, DWORD *pdwBytesWritten = nullptr);
 
-private:
-	DWORD	m_dwErrorCode = 0;
+  void receiveResponse();
+  void receiveResponseHeaders(DWORD &dwStatusCode, HttpHeaders &rspHeaders);
+  int queryDataAvailable();//Ê§ï¿½Ü·ï¿½ï¿½ï¿½-1ï¿½ï¿½Í¬ï¿½ï¿½Ä£Ê½ï¿½É¹ï¿½ï¿½ï¿½ï¿½Ø¿É¶ï¿½ï¿½Ö½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ì²½Ä£Ê½ï¿½É¹ï¿½Ê¼ï¿½Õ·ï¿½ï¿½ï¿½0;
+  void readData(void *buffer, DWORD dwBytesToRead, DWORD *pdwBytesRead = nullptr);
 
-	HINTERNET m_hSession = nullptr;
-	HINTERNET m_hConnect = nullptr;
-	HINTERNET m_hRequest = nullptr;
+ private:
+  static void CALLBACK
+  _onWinHttpStatusCallback(HINTERNET
+  hInternet,
+  DWORD_PTR dwContext, DWORD
+  dwInternetStatus,
+  LPVOID lpvStatusInformation, DWORD
+  dwStatusInformationLength);
+  void _release();
 
-	HttpAsynCallback m_asynCallback;
+ private:
+  DWORD m_dwErrorCode = 0;
+
+  HINTERNET m_hSession = nullptr;
+  HINTERNET m_hConnect = nullptr;
+  HINTERNET m_hRequest = nullptr;
+
+  HttpAsynCallback m_asynCallback;
 };
 
-typedef std::function<void(int code, const HttpHeaders& rspHeaders, const std::string& rspBody)> HttpRspCallback;
-typedef std::function<void(int code, const HttpHeaders& rspHeaders)> HttpDownloadComplete;
+typedef std::function<void(int code, const HttpHeaders &rspHeaders, const std::string &rspBody)> HttpRspCallback;
+typedef std::function<void(int code, const HttpHeaders &rspHeaders)> HttpDownloadComplete;
 typedef std::function<void(HttpAction action, DWORD currentSize, DWORD totalSize)> HttpProgressCallback;
-class HttpClient
-{
-	static const DWORD m_skMaxFragSize = 1024;
-public:
-	HttpClient();
-	~HttpClient();
+class HttpClient {
+  static const DWORD m_skMaxFragSize = 1024;
+ public:
+  HttpClient();
+  ~HttpClient();
 
-	void setUserAgent(const std::wstring& userAgent);
-	void setTimeouts(int nResolveTimeout, int nConnectTimeout, int nSendTimeout, int nReceiveTimeout);
-	void enableRespEncodeConvert(bool bEnable);//ÊÇ·ñ½«·µ»ØÊý¾Ý(½ötextºÍjsonÀàÐÍ)×ª»»Îª±¾µØ±àÂë;
+  void setUserAgent(const std::wstring &userAgent);
+  void setTimeouts(int nResolveTimeout, int nConnectTimeout, int nSendTimeout, int nReceiveTimeout);
+  void enableRespEncodeConvert(bool bEnable);//ï¿½Ç·ñ½«·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½textï¿½ï¿½jsonï¿½ï¿½ï¿½ï¿½)×ªï¿½ï¿½Îªï¿½ï¿½ï¿½Ø±ï¿½ï¿½ï¿½;
 
-	int get(
-		const std::wstring& url,
-		std::string& rspBody,
-		const HttpHeaders* reqHeaders = nullptr,
-		HttpHeaders* rspHeaders = nullptr,
-		HttpProgressCallback progressCB = nullptr);
+  int get(
+      const std::wstring &url,
+      std::string &rspBody,
+      const HttpHeaders *reqHeaders = nullptr,
+      HttpHeaders *rspHeaders = nullptr,
+      HttpProgressCallback progressCB = nullptr);
 
-	int post(
-		const std::wstring& url,
-		const std::string& reqBody,
-		std::string& rspBody,
-		const HttpHeaders* reqHeaders = nullptr,
-		HttpHeaders* rspHeaders = nullptr,
-		HttpProgressCallback progressCB = nullptr);
+  int post(
+      const std::wstring &url,
+      const std::string &reqBody,
+      std::string &rspBody,
+      const HttpHeaders *reqHeaders = nullptr,
+      HttpHeaders *rspHeaders = nullptr,
+      HttpProgressCallback progressCB = nullptr);
 
-	int download(
-		const std::wstring& url,
-		const std::string& file,
-		HttpProgressCallback progressCB = nullptr,
-		const HttpHeaders* reqHeaders = nullptr,
-		HttpHeaders* rspHeaders = nullptr);
+  int download(
+      const std::wstring &url,
+      const std::string &file,
+      HttpProgressCallback progressCB = nullptr,
+      const HttpHeaders *reqHeaders = nullptr,
+      HttpHeaders *rspHeaders = nullptr);
 
-	void asynGet(
-		const std::wstring& url,
-		HttpRspCallback rspCB,
-		const HttpHeaders* reqHeaders = nullptr,
-		HttpProgressCallback progressCB = nullptr);
+  void asynGet(
+      const std::wstring &url,
+      HttpRspCallback rspCB,
+      const HttpHeaders *reqHeaders = nullptr,
+      HttpProgressCallback progressCB = nullptr);
 
-	void asynPost(
-		const std::wstring& url,
-		const std::string& reqBody,
-		HttpRspCallback rspCB,
-		const HttpHeaders* reqHeaders = nullptr,
-		HttpProgressCallback progressCB = nullptr);
+  void asynPost(
+      const std::wstring &url,
+      const std::string &reqBody,
+      HttpRspCallback rspCB,
+      const HttpHeaders *reqHeaders = nullptr,
+      HttpProgressCallback progressCB = nullptr);
 
-	void asynDownload(
-		const std::wstring& url,
-		const std::string& file,
-		HttpDownloadComplete completeCB,
-		HttpProgressCallback progressCB = nullptr,
-		const HttpHeaders* reqHeaders = nullptr);
+  void asynDownload(
+      const std::wstring &url,
+      const std::string &file,
+      HttpDownloadComplete completeCB,
+      HttpProgressCallback progressCB = nullptr,
+      const HttpHeaders *reqHeaders = nullptr);
 
-	static void convertRespEncode(const HttpHeaders& headers, const std::string& src, std::string& dst);
- 	static std::wstring a2w(const std::string &str, unsigned int codePage = CP_ACP);
- 	static std::string w2a(const std::wstring &wstr, unsigned int codePage = CP_ACP);
+  static void convertRespEncode(const HttpHeaders &headers, const std::string &src, std::string &dst);
+  static std::wstring a2w(const std::string &str, unsigned int codePage = CP_ACP);
+  static std::string w2a(const std::wstring &wstr, unsigned int codePage = CP_ACP);
 
-private:
-	bool m_bEnableEncodeConvert = true;
-	std::wstring m_userAgent;
-	int m_nResolveTimeout = 10000;
-	int m_nConnectTimeout = 10000;
-	int m_nSendTimeout = 15000;
-	int m_nReceiveTimeout = 15000;
+ private:
+  bool m_bEnableEncodeConvert = true;
+  std::wstring m_userAgent;
+  int m_nResolveTimeout = 10000;
+  int m_nConnectTimeout = 10000;
+  int m_nSendTimeout = 15000;
+  int m_nReceiveTimeout = 15000;
 };
 
 #endif //HttpClient_h_
