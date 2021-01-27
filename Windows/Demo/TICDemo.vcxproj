@@ -118,7 +118,7 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PreBuildEvent>
-      <Command>$(ProjectDir)..\SDK\update_tools\update.bat &amp;&amp; XCOPY /Y /E $(ProjectDir)..\SDK\TEduBoard\lib\x86 $(OutDir) &amp;&amp; XCOPY /Y /E $(ProjectDir)..\SDK\TIM\lib\Win32\$(Configuration) $(OutDir) &amp;&amp; XCOPY /Y /E $(ProjectDir)..\SDK\TRTC\Win32\lib $(OutDir)</Command>
+      <Command>$(ProjectDir)..\SDK\update_tools\update.bat $(Platform) $(Configuration) $(OutDir)</Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>DEL /F /Q $(OutDir)*.lib</Command>
@@ -146,7 +146,7 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PreBuildEvent>
-      <Command>$(ProjectDir)..\SDK\update_tools\update.bat &amp;&amp; XCOPY /Y /E $(ProjectDir)..\SDK\TEduBoard\lib\x64 $(OutDir) &amp;&amp; XCOPY /Y /E $(ProjectDir)..\SDK\TIM\lib\Win64\$(Configuration) $(OutDir) &amp;&amp; XCOPY /Y /E $(ProjectDir)..\SDK\TRTC\Win64\lib $(OutDir) </Command>
+      <Command>$(ProjectDir)..\SDK\update_tools\update.bat $(Platform) $(Configuration) $(OutDir)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -179,7 +179,7 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PreBuildEvent>
-      <Command>$(ProjectDir)..\SDK\update_tools\update.bat &amp;&amp; XCOPY /Y /E $(ProjectDir)..\SDK\TEduBoard\lib\x86 $(OutDir) &amp;&amp; XCOPY /Y /E $(ProjectDir)..\SDK\TIM\lib\Win32\$(Configuration) $(OutDir)  &amp;&amp; XCOPY /Y /E $(ProjectDir)..\SDK\TRTC\Win32\lib $(OutDir) </Command>
+      <Command>$(ProjectDir)..\SDK\update_tools\update.bat $(Platform) $(Configuration) $(OutDir)</Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>DEL /F /Q $(OutDir)*.lib</Command>
@@ -211,7 +211,7 @@
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
     <PreBuildEvent>
-      <Command>$(ProjectDir)..\SDK\update_tools\update.bat &amp;&amp; XCOPY /Y /E $(ProjectDir)..\SDK\TEduBoard\lib\x64 $(OutDir) &amp;&amp; XCOPY /Y /E $(ProjectDir)..\SDK\TIM\lib\Win64\$(Configuration) $(OutDir) &amp;&amp; XCOPY /Y /E $(ProjectDir)..\SDK\TRTC\Win64\lib $(OutDir) </Command>
+      <Command>$(ProjectDir)..\SDK\update_tools\update.bat $(Platform) $(Configuration) $(OutDir)</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
