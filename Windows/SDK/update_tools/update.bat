@@ -29,17 +29,18 @@ if !errorlevel! LSS 8 (
 echo SDK binary file copy success
 ) else (
 echo SDK binary file copy failed: !errorlevel!
-exit /b !errorlevel!
+exit /B !errorlevel!
 )
 
 REM Copy header file
+mkdir %BOARD_SDK%\include
 more /P <%~dp0..\..\..\..\sdk\win\sdk\TEduBoard.h >%BOARD_SDK%\include\TEduBoard.h
 REM robocopy %~dp0..\..\..\..\sdk\win\sdk %BOARD_SDK%\include TEduBoard.h %ROBOCOPY_ARGS%
 if !errorlevel! == 0 (
 echo SDK header file copy success
 ) else (
 echo SDK header file copy failed: !errorlevel!
-exit /b !errorlevel!
+exit /B !errorlevel!
 )
 
 REM Goto copy sdk
@@ -72,12 +73,12 @@ if !errorlevel! == 0 (
 echo SDK prepare ready
 ) else (
 echo SDK unzip failed: !errorlevel!
-exit /b !errorlevel!
+exit /B !errorlevel!
 )
 ) else (
 DEL /F /Q %SDK_FILE%
 echo SDK download failed: !errorlevel!
-exit /b !errorlevel!
+exit /B !errorlevel!
 )
 )
 
@@ -90,21 +91,21 @@ if !errorlevel! LSS 8 (
 echo Board SDK copy success
 ) else (
 echo Board SDK copy failed: !errorlevel!
-exit /b !errorlevel!
+exit /B !errorlevel!
 )
 robocopy %IM_SDK%\lib\Win32\%CONFIGURATION% %OUT_DIR% %ROBOCOPY_ARGS%
 if !errorlevel! LSS 8 (
 echo IM SDK copy success
 ) else (
 echo IM SDK copy failed: !errorlevel!
-exit /b !errorlevel!
+exit /B !errorlevel!
 )
 robocopy %TRTC_SDK%\Win32\lib %OUT_DIR% %ROBOCOPY_ARGS%
 if !errorlevel! LSS 8 (
 echo TRTC SDK copy success
 ) else (
 echo TRTC SDK copy failed: !errorlevel!
-exit /b !errorlevel!
+exit /B !errorlevel!
 )
 ) else (
 robocopy %BOARD_SDK%\lib\x64 %OUT_DIR% %ROBOCOPY_ARGS%
@@ -112,20 +113,20 @@ if !errorlevel! LSS 8 (
 echo Board SDK copy success
 ) else (
 echo Board SDK copy failed: !errorlevel!
-exit /b !errorlevel!
+exit /B !errorlevel!
 )
 robocopy %IM_SDK%\lib\Win64\%CONFIGURATION% %OUT_DIR% %ROBOCOPY_ARGS%
 if !errorlevel! LSS 8 (
 echo IM SDK copy success
 ) else (
 echo IM SDK copy failed: !errorlevel!
-exit /b !errorlevel!
+exit /B !errorlevel!
 )
 robocopy %TRTC_SDK%\Win64\lib %OUT_DIR% %ROBOCOPY_ARGS%
 if !errorlevel! LSS 8 (
 echo TRTC SDK copy success
 ) else (
 echo TRTC SDK copy failed: !errorlevel!
-exit /b !errorlevel!
+exit /B !errorlevel!
 )
 )
