@@ -42,19 +42,19 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\SDK\TIC\TICManager.h">
+    <ClInclude Include="TIC\TICManager.h">
       <Filter>TIC</Filter>
     </ClInclude>
-    <ClInclude Include="..\SDK\TIC\TICManagerImpl.h">
+    <ClInclude Include="TIC\TICManagerImpl.h">
       <Filter>TIC</Filter>
     </ClInclude>
-    <ClInclude Include="..\SDK\TIC\HttpClient.h">
+    <ClInclude Include="TIC\HttpClient.h">
       <Filter>TIC</Filter>
     </ClInclude>
-    <ClInclude Include="..\SDK\TIC\jsoncpp\json.h">
+    <ClInclude Include="TIC\jsoncpp\json.h">
       <Filter>TIC\jsoncpp</Filter>
     </ClInclude>
-    <ClInclude Include="..\SDK\TIC\jsoncpp\json-forwards.h">
+    <ClInclude Include="TIC\jsoncpp\json-forwards.h">
       <Filter>TIC\jsoncpp</Filter>
     </ClInclude>
   </ItemGroup>
@@ -74,16 +74,16 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\SDK\TIC\TICManager.cpp">
+    <ClCompile Include="TIC\TICManager.cpp">
       <Filter>TIC</Filter>
     </ClCompile>
-    <ClCompile Include="..\SDK\TIC\TICManagerImpl.cpp">
+    <ClCompile Include="TIC\TICManagerImpl.cpp">
       <Filter>TIC</Filter>
     </ClCompile>
-    <ClCompile Include="..\SDK\TIC\HttpClient.cpp">
+    <ClCompile Include="TIC\HttpClient.cpp">
       <Filter>TIC</Filter>
     </ClCompile>
-    <ClCompile Include="..\SDK\TIC\jsoncpp\jsoncpp.cpp">
+    <ClCompile Include="TIC\jsoncpp\jsoncpp.cpp">
       <Filter>TIC\jsoncpp</Filter>
     </ClCompile>
   </ItemGroup>

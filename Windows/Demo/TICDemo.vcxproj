@@ -215,11 +215,11 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\SDK\TIC\HttpClient.h" />
-    <ClInclude Include="..\SDK\TIC\jsoncpp\json-forwards.h" />
-    <ClInclude Include="..\SDK\TIC\jsoncpp\json.h" />
-    <ClInclude Include="..\SDK\TIC\TICManager.h" />
-    <ClInclude Include="..\SDK\TIC\TICManagerImpl.h" />
+    <ClInclude Include="TIC\HttpClient.h" />
+    <ClInclude Include="TIC\jsoncpp\json-forwards.h" />
+    <ClInclude Include="TIC\jsoncpp\json.h" />
+    <ClInclude Include="TIC\TICManager.h" />
+    <ClInclude Include="TIC\TICManagerImpl.h" />
     <ClInclude Include="BoardDlg.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -229,19 +229,19 @@
     <ClInclude Include="VideoDlg.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\SDK\TIC\HttpClient.cpp">
+    <ClCompile Include="TIC\HttpClient.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\SDK\TIC\jsoncpp\jsoncpp.cpp">
+    <ClCompile Include="TIC\jsoncpp\jsoncpp.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\SDK\TIC\TICManager.cpp">
+    <ClCompile Include="TIC\TICManager.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\SDK\TIC\TICManagerImpl.cpp">
+    <ClCompile Include="TIC\TICManagerImpl.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>

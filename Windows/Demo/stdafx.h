@@ -34,7 +34,7 @@
 #include <afxinet.h>
 #include <thread>
 
-#include "..\SDK\TIC\TICManager.h"
+#include "TIC\TICManager.h"
 
 #define WM_UPDATE_THUMB_IMAGE WM_USER+100
 

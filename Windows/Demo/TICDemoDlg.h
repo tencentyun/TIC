@@ -3,7 +3,7 @@
 #include "VideoDlg.h"
 #include "BoardDlg.h"
 #include <memory>
-#include "..\SDK\TIC\HttpClient.h"
+#include "TIC\HttpClient.h"
 
 class CTICDemoDlg
 	: public CDialogEx

@@ -2,7 +2,7 @@
 #include "TICDemo.h"
 #include "TICDemoDlg.h"
 #include "afxdialogex.h"
-#include "../SDK/TIC/jsoncpp/json.h"
+#include "TIC/jsoncpp/json.h"
 #include <random>
 
 #ifdef _DEBUG
