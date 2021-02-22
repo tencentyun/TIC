@@ -665,8 +665,6 @@ CBoardDlg::CBoardDlg(CWnd* pParent)
 
 void CBoardDlg::Init()
 {
-	Uninit();
-
 	auto *boardCtrl = TICManager::GetInstance().GetBoardController();
 	if (boardCtrl)
 	{

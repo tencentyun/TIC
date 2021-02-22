@@ -36,6 +36,7 @@ TICManagerImpl::TICManagerImpl() {
 }
 
 TICManagerImpl::~TICManagerImpl() {
+  ClearTEduBoardSDKEnv();
   destroyTRTCShareInstance();
 }
 

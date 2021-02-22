@@ -52,15 +52,16 @@ goto :copySdk
 REM SDK download mode
 echo SDK preparing... [download mode]
 SET SDK_PATH=https://sdk.qcloudtiw.com/win32/
-SET SDK_NAME=demo_sdk_20201109@1.zip
+SET SDK_NAME=tic_sdk_2.5.7.187.zip
 SET SDK_URL=%SDK_PATH%%SDK_NAME%
-SET SDK_FILE=%~dp0..\temp\%SDK_NAME%
+SET SDK_TEMP_DIR=%~dp0..\temp\
+SET SDK_FILE=%SDK_TEMP_DIR%%SDK_NAME%
 
 REM Download SDK
 if exist %SDK_FILE% (
 echo SDK already exists
 ) else (
-%~dp0wget.exe --no-check-certificate -x -O %SDK_FILE% %SDK_URL%
+%~dp0wget.exe --no-check-certificate --directory-prefix=%SDK_TEMP_DIR% %SDK_URL%
 if !errorlevel! == 0 (
 REM Remove directories under SDK directory
 RMDIR /S /Q %BOARD_SDK%
