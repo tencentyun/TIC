@@ -9,4 +9,8 @@
 #import <UIKit/UIKit.h>
 
 @interface ClassroomJoinViewController : UIViewController
+
+@property(nonatomic, strong)NSString *userId;
+@property(nonatomic, strong)NSString *userSig;
+
 @end

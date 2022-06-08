@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ll_message_input"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:layout_gravity="bottom"
+    android:background="@color/msg_bg_color"
+    android:orientation="horizontal">
+
+    <EditText
+        android:id="@+id/et_message_input"
+        android:layout_width="0dp"
+        android:layout_height="34dp"
+        android:layout_marginBottom="@dimen/input_textbox_margin_bottom"
+        android:layout_marginLeft="@dimen/default_horizontal_margin"
+        android:layout_marginRight="@dimen/default_horizontal_margin"
+        android:layout_weight="4"
+        android:background="@color/colorGray"
+        android:gravity="center_vertical|left"
+        android:imeOptions="actionSend"
+        android:paddingLeft="@dimen/text_box_horizontal_padding"
+        android:paddingRight="@dimen/text_box_horizontal_padding"
+        android:singleLine="true"
+        android:text="Test Message on Android"
+        android:textColor="@color/colorBlack"
+        android:textSize="@dimen/small_text_size" />
+
+    <Button
+        android:id="@+id/btn_send"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="发送" />
+</LinearLayout>

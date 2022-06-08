@@ -3,15 +3,16 @@
 #define kBoardH ceil([[UIScreen mainScreen] bounds].size.width*9/16.0)
 #define kVideoH ceil([[UIScreen mainScreen] bounds].size.width*1/5.0)
 
-static const NSString *staticClassID = @"";
-
 #import "ClassroomViewController.h"
 #import "UIViewController+Utils.h"
 #import "MenuTableViewController.h"
-#import "TICRenderView.h"
-#import <TEduBoard/TEduBoard.h>
+#import "IMManager.h"
+#import "BoardManager.h"
+#import "JMToast.h"
 
-@interface ClassroomViewController () <UITextFieldDelegate, MenuTableViewControllerDelegate, TEduBoardDelegate>
+static const NSString *staticClassID = @"";
+
+@interface ClassroomViewController () <UITextFieldDelegate, MenuTableViewControllerDelegate, TEduBoardDelegate, IMManagerListener>
 //视频渲染视图容器
 @property (weak, nonatomic) IBOutlet UIView *renderViewContainer;
 //白板视图容器
@@ -58,24 +59,109 @@ static const NSString *staticClassID = @"";
                                                object:nil];
     
     //白板视图
-    [[[TICManager sharedInstance] getBoardController] addDelegate:self];
-    UIView *boardView = [[[TICManager sharedInstance] getBoardController] getBoardRenderView];
+    [self.boardController addDelegate:self];
+    UIView *boardView = [self.boardController getBoardRenderView];
     boardView.frame = CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.width * 9 / 16);
     [self.boardViewContainer addSubview:boardView];
-    
-    //更新视频视图
-    [self updateRenderViewsLayout];
+    [IMManager sharedInstance].delegate = self;
 }
 
-#pragma mark - board delegate
-- (void)onTEBRedoStatusChanged:(BOOL)canRedo
-{
+#pragma mark - 白板回调
+- (void)onTEBRedoStatusChanged:(BOOL)canRedo {
     [self.menuController setCanRedo:canRedo];
 }
 
-- (void)onTEBUndoStatusChanged:(BOOL)canUndo
-{
+- (void)onTEBUndoStatusChanged:(BOOL)canUndo {
     [self.menuController setCanUndo:canUndo];
+}
+
+- (void)onTEBHistroyDataSyncCompleted {
+}
+
+- (void)onTEBWarning:(TEduBoardWarningCode)code msg:(NSString *)msg {
+}
+
+- (void)onTEBVideoStatusChanged:(NSString *)fileId status:(TEduBoardVideoStatus)status progress:(CGFloat)progress duration:(CGFloat)duration {
+    NSLog(@"video progress = %.f", progress);
+}
+
+#pragma mark - Api使用示例
+// 添加文本元素
+- (void)addTextElement {
+    [self.boardController addTextElement:@"我是测试文本" fontColor:@"#ff0000" fontSize:500 fontFace:@"PingFangSC-Regular" fontStyle:TEDU_BOARD_TEXT_STYLE_BOLD];
+}
+
+// 添加数学函数图像
+- (void)addMathGraphElement {
+    TEduBoardElementMathBoard *mathboard = [[TEduBoardElementMathBoard alloc] init];
+    mathboard.axisColor = UIColor.orangeColor;
+    NSString *boardid = [self.boardController addElementWithBoard:mathboard options:nil];
+    TEduBoardElementMathGraph *mathGraph = [[TEduBoardElementMathGraph alloc] init];
+    mathGraph.mathBoardId = [NSString stringWithFormat:@"%@", boardid];
+    mathGraph.expression = @"cos(x)";
+    mathGraph.color = UIColor.orangeColor;
+    [self.boardController addElementWithGraph:mathGraph options:nil];
+}
+
+// 添加图片元素
+- (void)addImageElement {
+    TEduBoardAddElementOptions *op = [[TEduBoardAddElementOptions alloc] init];
+    op.left = @"100px";
+    op.top = @"100px";
+    [self.boardController addElement:@"https://main.qcloudimg.com/raw/be5d8bc407204d0e1dea30bacd6d006b.png" type:TEDU_BOARD_ELEMENT_IMAGE options:op];
+}
+
+// 添加视频元素
+- (void)addVideoElement {
+    [self.boardController  addVideoFile:@"http://test-1259648581.cos.ap-shanghai.myqcloud.com/media/%5B%E6%B8%85%E6%99%B0%20480P%5D%20%E6%9C%AA%E6%9D%A5%E5%BB%BA%E7%AD%91-%E8%85%BE%E8%AE%AF%E6%BB%A8%E6%B5%B7%E5%A4%A7%E5%8E%A6.mp4" title:@"测试视频" needSwitch:YES];
+}
+
+// 设置自定义字体
+- (void)setCustomFont {
+    [self.boardController addTextFontFamily:@"myFont" fontUrl:@"https://tic-res-1259648581.cos.ap-shanghai.myqcloud.com/board/dev_board/zhutao/fonts/XiaoDouDaoFengWuShiJianFan-Shan%28REEJI-Xiaodou-PoemGBT-Flash%29-2.ttf"];
+            [self.boardController setTextFontFamily:@"myFont"];
+    NSString *currentFont = [self.boardController getTextFontFamily];
+    NSLog(@"currentFont = %@", currentFont);
+}
+
+// 添加公式元素
+- (void)addExpressionElement {
+    [self.boardController addElementWithExpression:@"f(x) = \\\\int_{-\\\\infty}^\\\\infty \\\\hat{f}(\\\\xi)\\\\,e^{2 \\\\pi i \\\\xi x} \\\\,d\\\\xi" type:TEDU_BOARD_ELEMENT_FORMULA];
+}
+
+- (void)gotoPPTStep {
+    NSArray<TEduBoardFileInfo *> *fileList = [self.boardController getFileInfoList];
+    for (TEduBoardFileInfo *file in fileList) {
+        if (TEduBoardH5_COURSEWARE == file.fileType && file.boardInfoList.count > 0) {
+            NSString *boardid = file.boardInfoList.firstObject.boardId;
+            [self.boardController gotoStep:2 ofBoard:boardid];
+        }
+    }
+}
+
+- (void)addTranscodeFile {
+    {
+        TEduBoardTranscodeFileResult *result = [[TEduBoardTranscodeFileResult alloc] init];
+        result.url = @"https://test-1259648581.file.myqcloud.com/ppt/0001nngov3gvpvfe9p5c/";
+        result.pages = 137;
+        result.resolution = @"959x539";
+        result.title = @"《红星照耀中国》.pdf";
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.boardController addTranscodeFile:result needSwitch:YES];
+        });
+    }
+
+    {
+        TEduBoardTranscodeFileResult *result = [[TEduBoardTranscodeFileResult alloc] init];
+        result.url = @"https://test-1259648581.file.myqcloud.com/ppt/000sedd4ish31fn0kq5c/index.html";
+        result.pages = 72;
+        result.resolution = @"960x540";
+        result.title = @"第五讲定稿1635074138348e5bb779d11b8c.pptx";
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(10 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.boardController addTranscodeFile:result needSwitch:YES];
+        });
+    }
+
 }
 
 #pragma mark - button action
@@ -83,7 +169,7 @@ static const NSString *staticClassID = @"";
 {
     __weak typeof(self) ws = self;
     NSString *message = self.messageTextField.text;
-    [[TICManager sharedInstance] sendGroupTextMessage:message callback:^(TICModule module, int code, NSString *desc) {
+    [[IMManager sharedInstance] sendGroupTextMessage:message callback:^(int code, NSString * _Nullable desc) {
         if(code == 0){
             // 将自己发送的消息展示在界面上
             NSString *msgInfo = [NSString stringWithFormat:@"[我] %@", message];
@@ -97,12 +183,14 @@ static const NSString *staticClassID = @"";
 
 - (void)onQuitClassRoom
 {
-    [[[TICManager sharedInstance] getBoardController] removeDelegate:self];
+    [self.boardController removeDelegate:self];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [[TICManager sharedInstance] removeEventListener:self];
-    [[TICManager sharedInstance] removeMessageListener:self];
+    
+    [[BoardManager sharedInstance] destroyBoard];
+    
     __weak typeof(self) ws = self;
-    [[TICManager sharedInstance] quitClassroom:NO callback:^(TICModule module, int code, NSString *desc) {
+    [IMManager sharedInstance].delegate = nil;
+    [[IMManager sharedInstance] quitIMGroup:self.classId callback:^(int code, NSString * _Nullable desc) {
         if(code == 0){
             //退出课堂成功
         }
@@ -119,210 +207,198 @@ static const NSString *staticClassID = @"";
 }
 
 
-#pragma mark - menu delegate
-- (void)onSwitchCamera
-{
-    [[[TICManager sharedInstance] getTRTCCloud] switchCamera];
-}
-- (void)onCameraStateChanged:(BOOL)state
-{
-    if(state){
-        TICRenderView *render = [[TICRenderView alloc] init];
-        render.userId = _userId;
-        render.streamType = TICStreamType_Main;
-        [self.renderViewContainer addSubview:render];
-        [self.renderViews addObject:render];
-        [[[TICManager sharedInstance] getTRTCCloud] startLocalPreview:YES view:render];
-    }
-    else{
-        TICRenderView *render = [self getRenderView:_userId streamType:TICStreamType_Main];
-        [self.renderViews removeObject:render];
-        [render removeFromSuperview];
-        [[[TICManager sharedInstance] getTRTCCloud] stopLocalPreview];
-    }
-    [self updateRenderViewsLayout];
+#pragma mark - MenuTableViewController点击
+
+- (void)onMagicPenChanged:(BOOL)state {
+    [self.boardController setPenAutoFittingMode: state ? TEduBoardPenFittingModeAuto : TEduBoardPenFittingModeNone];
 }
 
-- (void)onMicStateChaged:(BOOL)state
-{
-    if(state){
-        [[[TICManager sharedInstance] getTRTCCloud] startLocalAudio];
-    }
-    else{
-        [[[TICManager sharedInstance] getTRTCCloud] stopLocalAudio];
-    }
-}
-
-- (void)onSpeakerStateChaged:(BOOL)state
-{
-    [[[TICManager sharedInstance] getTRTCCloud] setAudioRoute:(TRTCAudioRoute)(!state)];
+- (void)onPiecewiseErasureChanged:(BOOL)state {
+    [self.boardController setPiecewiseErasureEnable:state];
 }
 
 - (void)onSelectToolType:(int)toolType
 {
-    [[[TICManager sharedInstance] getBoardController] setToolType:(TEduBoardToolType)toolType];
+    [self.boardController setToolType:(TEduBoardToolType)toolType];
+}
+
+- (void)onSelectCustomGraph:(NSString *)url
+{
+    [self.boardController addElement:url type:TEDU_BOARD_ELEMENT_CUSTOM_GRAPH];
 }
 
 - (void)onSelectBrushColor:(UIColor *)color
 {
-    [[[TICManager sharedInstance] getBoardController] setBrushColor:color];
+    [self.boardController setBrushColor:color];
 }
 
 - (void)onBrushThinChanged:(float)thin
 {
-    [[[TICManager sharedInstance] getBoardController] setBrushThin:thin];
+    [self.boardController setBrushThin:thin];
 }
 
 
 - (void)onSelectTextColor:(UIColor *)color
 {
-    [[[TICManager sharedInstance] getBoardController] setTextColor:color];
+    [self.boardController setTextColor:color];
 }
 
 - (void)onSelectBackgroundColor:(UIColor *)color
 {
-    [[[TICManager sharedInstance] getBoardController] setBackgroundColor:color];
+    [self.boardController setBackgroundColor:color];
 }
 
 - (void)onTextSizeChanged:(float)thin
 {
-    [[[TICManager sharedInstance] getBoardController] setTextSize:thin];
+    [self.boardController setTextSize:thin];
 }
 
 - (void)onDrawStateChanged:(BOOL)state
 {
-    [[[TICManager sharedInstance] getBoardController] setDrawEnable:state];
+    [self.boardController setDrawEnable:state];
 }
 
 - (void)onSyncDataChanged:(BOOL)state
 {
-    [[[TICManager sharedInstance] getBoardController] setDataSyncEnable:state];
+    [self.boardController setDataSyncEnable:state];
 }
 
 - (void)onSetBackgroundH5:(NSString *)url
 {
-    [[[TICManager sharedInstance] getBoardController] setBackgroundH5:url];
+    [self.boardController setBackgroundH5:url];
 }
 
 - (void)onAddH5File:(NSString *)url
 {
-    [[[TICManager sharedInstance] getBoardController] addH5File:url];
+    [self.boardController addH5File:url title:@"" needSwitch:YES];
 }
 
 - (void)onSetTextStyle:(int)style
 {
-    [[[TICManager sharedInstance] getBoardController] setTextStyle:(TEduBoardTextStyle)style];
+    [self.boardController setTextStyle:(TEduBoardTextStyle)style];
 }
 
 - (void)onUndo
 {
-    [[[TICManager sharedInstance] getBoardController] undo];
+    [self.boardController undo];
 }
 
 - (void)onRedo
 {
-    [[[TICManager sharedInstance] getBoardController] redo];
+    [self.boardController redo];
 }
 - (void)onClear
 {
-    [[[TICManager sharedInstance] getBoardController] clear];
+    [self.boardController clear];
 }
 - (void)onClearDraw
 {
-    [[[TICManager sharedInstance] getBoardController] clearDraws];
+    [self.boardController clearDraws];
 }
 
 - (void)onReset
 {
-    [[[TICManager sharedInstance] getBoardController] reset];
+    [self.boardController reset];
 }
 
 - (void)onSetBackgroundImage:(NSString *)path
 {
-    [[[TICManager sharedInstance] getBoardController] setBackgroundImage:path mode:TEDU_BOARD_IMAGE_FIT_MODE_CENTER];
+    [self.boardController setBackgroundImage:path mode:TEDU_BOARD_IMAGE_FIT_MODE_CENTER];
 }
 
 - (void)onAddBoard
 {
-    [[[TICManager sharedInstance] getBoardController] addBoardWithBackgroundImage:nil];
+    [self.boardController addBoard:nil model:TEDU_BOARD_IMAGE_FIT_MODE_CENTER type:TEDU_BOARD_BACKGROUND_IMAGE needSwitch:YES];
 }
 
 - (void)onDeleteBoard:(NSString *)boardId
 {
-    [[[TICManager sharedInstance] getBoardController] deleteBoard:boardId];
+    [self.boardController deleteBoard:boardId];
 }
 
 - (void)onGotoBoard:(NSString *)boardId resetStep:(BOOL)resetStep
 {
-    [[[TICManager sharedInstance] getBoardController] gotoBoard:boardId resetStep:resetStep];
+    [self.boardController gotoBoard:boardId resetStep:resetStep];
 }
 
 - (void)onBoardScaleChanged:(int)scale
 {
-    [[[TICManager sharedInstance] getBoardController] setBoardScale:scale];
+    [self.boardController setBoardScale:scale];
 }
 
 - (void)onBoardContentFitMode:(int)mode
 {
-    [[[TICManager sharedInstance] getBoardController] setBoardContentFitMode:(TEduBoardContentFitMode)mode];
+    [self.boardController setBoardContentFitMode:(TEduBoardContentFitMode)mode];
 }
 
 - (int)getBoardContentFitMode
 {
-    return [[[TICManager sharedInstance] getBoardController] getBoardContentFitMode];
+    return (int)[self.boardController getBoardContentFitMode];
 }
 
 - (void)onBoardRatioChanged:(NSString *)ratio
 {
-    [[[TICManager sharedInstance] getBoardController] setBoardRatio:ratio];
+    [self.boardController setBoardRatio:ratio];
 }
 
 - (NSString *)getBoardRatio
 {
-    return [[[TICManager sharedInstance] getBoardController] getBoardRatio];
+    return [self.boardController getBoardRatio];
 }
 
 - (NSArray<NSString *> *)getBoardList
 {
-    return [[[TICManager sharedInstance] getBoardController] getBoardList];
+    return [self.boardController getBoardList];
 }
 
 - (NSString *)getCurrentBoard
 {
-    return [[[TICManager sharedInstance] getBoardController] getCurrentBoard];
+    return [self.boardController getCurrentBoard];
 }
 
 - (void)onPreStep
 {
-    [[[TICManager sharedInstance] getBoardController] prevStep];
+    [self.boardController prevStep];
 }
 - (void)onNextStep
 {
-    [[[TICManager sharedInstance] getBoardController] nextStep];
+    [self.boardController nextStep];
 }
 
 - (void)onPreBoard:(BOOL)resetStep
 {
-    [[[TICManager sharedInstance] getBoardController] preBoard:resetStep];
+    [self.boardController preBoard:resetStep];
 }
 - (void)onNextBoard:(BOOL)resetStep
 {
-    [[[TICManager sharedInstance] getBoardController] nextBoard:resetStep];
+    [self.boardController nextBoard:resetStep];
 }
 
 - (void)onSwitchFile:(NSString *)fileId
 {
-    [[[TICManager sharedInstance] getBoardController] switchFile:fileId];
+    [self.boardController switchFile:fileId];
 }
 
 - (void)onDeleteFile:(NSString *)fileId
 {
-    [[[TICManager sharedInstance] getBoardController] deleteFile:fileId];
+    if ([[fileId uppercaseString] isEqualToString:@"#DEFAULT"]) {
+        [[JMToast sharedToast] showDialogWithMsg:@"不能删除默认白板"];
+        return;
+    }
+    [self.boardController deleteFile:fileId];
+}
+
+- (void)onTEBBoardCursorPosition:(CGPoint)position {
+    NSLog(@"onTEBBoardCursorPosition, x = %.1f, y= %.1f......", position.x, position.y);
+}
+
+- (void)onSetOwnerNickNameVisible:(BOOL)state {
+    [self.boardController setOwnerNickNameVisible:state];
 }
 
 - (NSArray<NSString *> *)getFileList
 {
-    NSArray<TEduBoardFileInfo *> *files = [[[TICManager sharedInstance] getBoardController] getFileInfoList];
+    NSArray<TEduBoardFileInfo *> *files = [self.boardController getFileInfoList];
     NSMutableArray *names = [NSMutableArray array];
     for (TEduBoardFileInfo *file in files) {
         [names addObject:file.fileId];
@@ -331,8 +407,19 @@ static const NSString *staticClassID = @"";
 }
 - (NSString *)getCurrentFile
 {
-    return [[[TICManager sharedInstance] getBoardController] getCurrentFile];
+    return [self.boardController getCurrentFile];
 }
+
+- (void)onAddMathBoard {
+    TEduBoardElementMathBoard *mathboard = [[TEduBoardElementMathBoard alloc] init];
+    mathboard.axisColor = UIColor.orangeColor;
+    [self.boardController addElementWithBoard:mathboard options:nil];
+}
+
+- (void)onSetMathGraphType:(NSInteger)type {
+    [self.boardController setMathGraphType:type mouseTool:YES];
+}
+
 
 #pragma mark - keyboard
 
@@ -384,21 +471,9 @@ static const NSString *staticClassID = @"";
 }
 
 
-#pragma mark - message listener
+#pragma mark - IMManagerListener
 
-- (void)onTICRecvTextMessage:(NSString *)text fromUserId:(NSString *)fromUserId
-{
-}
-
-- (void)onTICRecvCustomMessage:(NSData *)data fromUserId:(NSString *)fromUserId
-{
-}
-
-- (void)onTICRecvMessage:(TIMMessage *)message
-{
-}
-
-- (void)onTICRecvGroupTextMessage:(NSString *)text groupId:(NSString *)groupId fromUserId:(NSString *)fromUserId
+- (void)onRecvGroupTextMessage:(NSString *)text groupId:(NSString *)groupId fromUserId:(NSString *)fromUserId
 {
     // 接收到房间内其他成员发出的文本消息，将消息按"[发送者] 消息内容"格式展示在界面上
     NSString *msgInfo = [NSString stringWithFormat:@"[%@] %@",fromUserId, text];
@@ -406,126 +481,11 @@ static const NSString *staticClassID = @"";
     [self.chatView scrollRangeToVisible:NSMakeRange(self.chatView.text.length, 1)];
 }
 
-- (void)onTICRecvGroupCustomMessage:(NSData *)data groupId:(NSString *)groupId fromUserId:(NSString *)fromUserId
-{
-    // 接收到房间内其他成员发出的自定义消息，将消息按"[发送者] 消息内容"格式展示在界面上
-    NSString *msgInfo = [NSString stringWithFormat:@"[%@] %@",fromUserId, @"CUSTOM"];
+// 接收到个人文本消息
+- (void)onRecvCTCTextMessage:(NSString *)text fromUserId:(NSString *)fromUserId {
+    NSString *msgInfo = [NSString stringWithFormat:@"[%@]（私聊）：%@",fromUserId, text];
     self.chatView.text = [NSString stringWithFormat:@"%@\n%@",self.chatView.text, msgInfo];
     [self.chatView scrollRangeToVisible:NSMakeRange(self.chatView.text.length, 1)];
-}
-
-#pragma mark - render view
-- (void)updateRenderViewsLayout
-{
-    NSArray *rects = [self getRenderViewFrames];
-    if(rects.count != self.renderViews.count){
-        return;
-    }
-    for (int i = 0; i < self.renderViews.count; ++i) {
-        UIView *view = self.renderViews[i];
-        CGRect frame = [rects[i] CGRectValue];
-        view.frame = frame;
-        if(!view.superview){
-            [self.renderViewContainer addSubview:view];
-        }
-    }
-}
-
-- (NSArray *)getRenderViewFrames
-{
-    CGFloat height = self.renderViewContainer.frame.size.height;
-    CGFloat width = self.renderViewContainer.frame.size.width / 5;
-    CGFloat xOffset = 0;
-    NSMutableArray *array = [NSMutableArray array];
-    for (int i = 0; i < self.renderViews.count; i++) {
-        CGRect frame = CGRectMake(xOffset, 0, width, height);
-        [array addObject:[NSValue valueWithCGRect:frame]];
-        xOffset += width;
-    }
-    return array;
-}
-
-- (TICRenderView *)getRenderView:(NSString *)userId streamType:(TICStreamType)streamType
-{
-    for (TICRenderView *render in self.renderViews) {
-        if([render.userId isEqualToString:userId] && render.streamType == streamType){
-            return render;
-        }
-    }
-    return nil;
-}
-
-#pragma mark - event listener
-- (void)onTICUserVideoAvailable:(NSString *)userId available:(BOOL)available
-{
-    if(available){
-        TICRenderView *render = [[TICRenderView alloc] init];
-        render.userId = userId;
-        render.streamType = TICStreamType_Main;
-        [self.renderViewContainer addSubview:render];
-        [self.renderViews addObject:render];
-        [[[TICManager sharedInstance] getTRTCCloud] startRemoteView:userId view:render];
-    }
-    else{
-        TICRenderView *render = [self getRenderView:userId streamType:TICStreamType_Main];
-        [self.renderViews removeObject:render];
-        [render removeFromSuperview];
-        [[[TICManager sharedInstance] getTRTCCloud] stopRemoteView:userId];
-    }
-    [self updateRenderViewsLayout];
-}
-
-- (void)onTICUserSubStreamAvailable:(NSString *)userId available:(BOOL)available
-{
-    if(available){
-        TICRenderView *render = [[TICRenderView alloc] init];
-        render.userId = userId;
-        render.streamType = TICStreamType_Sub;
-        [self.renderViewContainer addSubview:render];
-        [self.renderViews addObject:render];
-        [[[TICManager sharedInstance] getTRTCCloud] startRemoteSubStreamView:userId view:render];
-    }
-    else{
-        TICRenderView *render = [self getRenderView:userId streamType:TICStreamType_Sub];
-        [self.renderViews removeObject:render];
-        [render removeFromSuperview];
-        [[[TICManager sharedInstance] getTRTCCloud] stopRemoteSubStreamView:userId];
-    }
-    [self updateRenderViewsLayout];
-}
-
-
--(void)onTICMemberJoin:(NSArray*)members {
-    NSString *msgInfo = [NSString stringWithFormat:@"[%@] %@",members.firstObject, @"加入了房间"];
-    self.chatView.text = [NSString stringWithFormat:@"%@\n%@",self.chatView.text, msgInfo];;
-}
-
--(void)onTICMemberQuit:(NSArray*)members {
-
-    if ([members.firstObject isEqualToString:[[TIMManager sharedInstance] getLoginUser]]) {
-        [self showAlertWithTitle:@"退出课堂" msg:@"你被老师踢出了房间" handler:^(UIAlertAction *action) {
-            [self.navigationController popViewControllerAnimated:YES];
-        }];
-    }
-    NSString *msgInfo = [NSString stringWithFormat:@"[%@] %@",members.firstObject, @"退出了房间"];
-    self.chatView.text = [NSString stringWithFormat:@"%@\n%@",self.chatView.text, msgInfo];;
-}
-
-
--(void)onTICClassroomDestroy {
-    [self showAlertWithTitle:@"课程结束" msg:@"老师已经结束了该堂课程" handler:^(UIAlertAction *action) {
-        [self.navigationController popViewControllerAnimated:YES];
-    }];
-    
-}
-
-#pragma mark - Accessor
-- (NSMutableArray *)renderViews
-{
-    if(!_renderViews){
-        _renderViews = [NSMutableArray array];
-    }
-    return _renderViews;
 }
 
 @end

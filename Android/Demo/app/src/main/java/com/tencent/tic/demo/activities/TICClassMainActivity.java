@@ -1,59 +1,46 @@
 package com.tencent.tic.demo.activities;
 
-import android.Manifest;
-import android.app.Activity;
-import android.content.Intent;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.os.Build;
+import android.graphics.Point;
 import android.os.Bundle;
-//import android.support.v4.app.ActivityCompat;
-//import android.support.v4.content.ContextCompat;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import android.os.Environment;
 import android.text.TextUtils;
-import android.text.method.ScrollingMovementMethod;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-
-import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.tencent.teduboard.TEduBoardController;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
-import com.tencent.imsdk.TIMElem;
-import com.tencent.imsdk.TIMMessage;
-import com.tencent.rtmp.TXLog;
-import com.tencent.rtmp.ui.TXCloudVideoView;
-import com.tencent.tic.core.TICClassroomOption;
-import com.tencent.tic.core.TICManager;
+import com.tencent.smtt.sdk.QbSdk;
+import com.tencent.teduboard.TEduBoardController;
+import com.tencent.tic.core.BoardManager;
+import com.tencent.tic.core.IMManager;
 import com.tencent.tic.demo.R;
-import com.tencent.trtc.TRTCCloud;
-import com.tencent.trtc.TRTCCloudDef;
+import com.tencent.tic.demo.TICSDKDemoApp;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class TICClassMainActivity extends BaseActvity
-        implements View.OnClickListener,
-        TICManager.TICMessageListener,
-        TICManager.TICEventListener
-        {
+        implements View.OnClickListener {
     private final static String TAG = "TICClassMainActivity";
 
-     TICMenuDialog moreDlg;
-     MySettingCallback mySettingCallback;
-     boolean mEnableAudio = true;
-     boolean mEnableCamera = true;
-     boolean mEnableFrontCamera = true;
-     boolean mEnableAudioRouteSpeaker = true; //扬声器
-     boolean mCanRedo = false;
-     boolean mCanUndo = false;
-
+    TICMenuDialog moreDlg;
+    MySettingCallback mySettingCallback;
+    boolean mEnableAudio = true;
+    boolean mEnableCamera = true;
+    boolean mEnableFrontCamera = true;
+    boolean mEnableAudioRouteSpeaker = true; //扬声器
+    boolean mCanRedo = false;
+    boolean mCanUndo = false;
+    boolean nickNameVisiable = true;
     /**
      * 白板视图控件
      */
@@ -61,232 +48,104 @@ public class TICClassMainActivity extends BaseActvity
     TEduBoardController mBoard;
     MyBoardCallback mBoardCallback;
     boolean mHistroyDataSyncCompleted = false;
-    //trtc
-    TRTCCloud mTrtcCloud;
-
-     // 实时音视频视图控件
-    TICVideoRootView mTrtcRootView;
 
     // 消息输入
-    EditText etMessageInput;
     String mImgsFid;
+    String mAudioElementId;
+
+    private EditText inputEt;
+    private String textH5Id;
+    private String textH5Status;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_class_ex);
-
         //在白板上文本输入时，避免出现软键盘盖住情况。
-        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-
+        // getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         //1、获取用户信息
         mUserID = getIntent().getStringExtra(USER_ID);
         mUserSig = getIntent().getStringExtra(USER_SIG);
         mRoomId = getIntent().getIntExtra(USER_ROOM, 0);
 
-        //检查权限
-        checkCameraAndMicPermission();
-
-        //2.白板
-        mBoard = mTicManager.getBoardController();
-
         //3、初始化View
         initView();
 
-        initTrtc();
+        QbSdk.forceSysWebView();
 
         joinClass();
+    }
 
-        mTicManager.addIMMessageListener(this);
-        mTicManager.addEventListener(this);
+
+    @Override
+    protected void onStop() {
+        if (isFinishing()) {
+            BoardManager.getInstance().destroyBoard();
+        }
+        super.onStop();
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
-        mTicManager.quitClassroom(false, null);
-
-        unInitTrtc();
         removeBoardView();
-
-        mTicManager.removeIMMessageListener(this);
-        mTicManager.removeEventListener(this);
+        super.onDestroy();
     }
+
 
     private void initView() {
         //Title
         findViewById(R.id.tv_double_room_back_button).setOnClickListener(this);
         findViewById(R.id.tv_memu).setOnClickListener(this);
-        ((TextView)findViewById(R.id.tv_room_id)).setText(String.valueOf(mRoomId));
+        ((TextView) findViewById(R.id.tv_room_id)).setText(String.valueOf(mRoomId));
 
         tvLog = (TextView) findViewById(R.id.tv_log);
-        etMessageInput = (EditText) findViewById(R.id.et_message_input);
-        tvLog.setMovementMethod(ScrollingMovementMethod.getInstance());
-
-        //发送消息
-        findViewById(R.id.btn_send).setOnClickListener(this);
-        }
-
-     //---------trtc--------------
-
-    private void initTrtc() {
-        //1、获取trtc
-        mTrtcCloud = mTicManager.getTRTCClound();
-
-        if (mTrtcCloud != null) {
-            //2、TRTC View
-            mTrtcRootView = (TICVideoRootView) findViewById(R.id.trtc_root_view);
-            mTrtcRootView.setUserId(mUserID);
-            TXCloudVideoView localVideoView = mTrtcRootView.getCloudVideoViewByIndex(0);
-            localVideoView.setUserId(mUserID);
-
-            //3、开始本地视频图像
-            startLocalVideo(true);
-
-            //4. 开始音频
-            enableAudioCapture(true);
-        }
-    }
-
-    private void unInitTrtc() {
-        if (mTrtcCloud != null) {
-            //3、停止本地视频图像
-            mTrtcCloud.stopLocalPreview();
-            enableAudioCapture(false);
-        }
-    }
-
-    private void startLocalVideo(boolean enable) {
-        if (mTrtcCloud != null) {
-            final String usrid = mUserID;
-            TXCloudVideoView localVideoView = mTrtcRootView.getCloudVideoViewByUseId(usrid);;
-            localVideoView.setUserId(usrid);
-            localVideoView.setVisibility(View.VISIBLE);
-            if (enable) {
-                mTrtcCloud.startLocalPreview(mEnableFrontCamera, localVideoView);
-            } else {
-                mTrtcCloud.stopLocalPreview();
+      //  tvLog.setMovementMethod(ScrollingMovementMethod.getInstance());
+        ((EditText) findViewById(R.id.test_color)).setText("#FF00FF00");
+        findViewById(R.id.btn_color).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String color = ((EditText) findViewById(R.id.test_color)).getText().toString();
+                int tempColor = Color.parseColor(color);
+                boardview.setBackgroundColor(tempColor);
             }
-        }
+        });
     }
 
-    private void enableAudioCapture(boolean bEnable) {
-        if (mTrtcCloud != null) {
-            if (bEnable) {
-                mTrtcCloud.startLocalAudio();
-            }
-            else {
-                mTrtcCloud.stopLocalAudio();
-            }
+    boolean checkPermissions() {
+        String[] PERMISSIONS = {
+                "android.permission.READ_EXTERNAL_STORAGE",
+                "android.permission.WRITE_EXTERNAL_STORAGE" };
+//检测是否有写的权限
+        int permission = ContextCompat.checkSelfPermission(this,
+                "android.permission.WRITE_EXTERNAL_STORAGE");
+        if (permission != PackageManager.PERMISSION_GRANTED) {
+            // 没有写的权限，去申请写的权限，会弹出对话框
+            ActivityCompat.requestPermissions(this, PERMISSIONS,1);
+            return false;
         }
-
+        return true;
     }
-
-    //------------  From TICEventListener  ------//
-    @Override
-    public void onTICUserVideoAvailable(final String userId, boolean available) {
-
-        Log.i(TAG,"onTICUserVideoAvailable:" + userId + "|" + available);
-
-        if (available) {
-            final TXCloudVideoView renderView = mTrtcRootView.onMemberEnter(userId+ TRTCCloudDef.TRTC_VIDEO_STREAM_TYPE_BIG);
-            if (renderView != null) {
-                // 启动远程画面的解码和显示逻辑，FillMode 可以设置是否显示黑边
-                mTrtcCloud.setRemoteViewFillMode(userId, TRTCCloudDef.TRTC_VIDEO_RENDER_MODE_FIT);
-                mTrtcCloud.startRemoteView(userId, renderView);
-                renderView.setUserId(userId+TRTCCloudDef.TRTC_VIDEO_STREAM_TYPE_BIG);
-            }
-
-        } else {
-            mTrtcCloud.stopRemoteView(userId);
-            mTrtcRootView.onMemberLeave(userId+TRTCCloudDef.TRTC_VIDEO_STREAM_TYPE_BIG);
-        }
-    }
-
-    @Override
-    public void onTICUserSubStreamAvailable(String userId, boolean available) {
-
-        if (available) {
-            final TXCloudVideoView renderView = mTrtcRootView.onMemberEnter(userId+TRTCCloudDef.TRTC_VIDEO_STREAM_TYPE_SUB);
-            if (renderView != null) {
-                renderView.setUserId(userId+TRTCCloudDef.TRTC_VIDEO_STREAM_TYPE_SUB);
-                mTrtcCloud.setRemoteViewFillMode(userId, TRTCCloudDef.TRTC_VIDEO_RENDER_MODE_FIT);
-                mTrtcCloud.startRemoteSubStreamView(userId, renderView);
-            }
-        }
-        else {
-            mTrtcCloud.stopRemoteSubStreamView(userId);
-            mTrtcRootView.onMemberLeave(userId+TRTCCloudDef.TRTC_VIDEO_STREAM_TYPE_SUB);
-        }
-    }
-
-    @Override
-    public void onTICUserAudioAvailable(String userId, boolean available) {
-        if (available) {
-            final TXCloudVideoView renderView = mTrtcRootView.onMemberEnter(userId+TRTCCloudDef.TRTC_VIDEO_STREAM_TYPE_BIG);
-            if (renderView != null) {
-                renderView.setVisibility(View.VISIBLE);
-            }
-        }
-    }
-
-    @Override
-    public void onTICMemberJoin(List<String> userList) {
-
-        for (String user : userList) {
-            // 创建一个View用来显示新的一路画面，在自已进房间时，也会给这个回调
-            if (!user.equals(mUserID)) {
-                TXCloudVideoView renderView = mTrtcRootView.onMemberEnter(user+TRTCCloudDef.TRTC_VIDEO_STREAM_TYPE_BIG);
-                if (renderView != null) {
-                    renderView.setVisibility(View.VISIBLE);
-                }
-                postToast(user + " join.", false);
-            }
-        }
-    }
-
-    @Override
-    public void onTICMemberQuit(List<String> userList) {
-        for (String user : userList) {
-            final String userID_Big = user.equals(mUserID) ? mUserID : user+TRTCCloudDef.TRTC_VIDEO_STREAM_TYPE_BIG;
-            //停止观看画面
-            mTrtcCloud.stopRemoteView(userID_Big);
-            mTrtcRootView.onMemberLeave(userID_Big);
-
-            final String userID_Sub = user.equals(mUserID) ? mUserID : user+TRTCCloudDef.TRTC_VIDEO_STREAM_TYPE_SUB;
-            mTrtcCloud.stopRemoteSubStreamView(userID_Sub);
-            mTrtcRootView.onMemberLeave(userID_Sub);
-
-            postToast(user + " quit.", false);
-        }
-    }
-
-
     //------回调设置的处理------
     class MySettingCallback implements TICMenuDialog.IMoreListener {
 
         @Override
         public void onEnableAudio(boolean bEnableAudio) {
             mEnableAudio = bEnableAudio;
-            enableAudioCapture(mEnableAudio);
         }
 
         @Override
         public void onSwitchAudioRoute(boolean speaker) {
             mEnableAudioRouteSpeaker = speaker;
-            mTrtcCloud.setAudioRoute(mEnableAudioRouteSpeaker ? TRTCCloudDef.TRTC_AUDIO_ROUTE_SPEAKER : TRTCCloudDef.TRTC_AUDIO_ROUTE_EARPIECE);
         }
 
         @Override
         public void onEnableCamera(boolean bEnableCamera) {
             mEnableCamera = bEnableCamera;
-            startLocalVideo(mEnableCamera);
         }
 
         @Override
         public void onSwitchCamera(boolean bFrontCamera) {
             mEnableFrontCamera = bFrontCamera;
-            mTrtcCloud.switchCamera();
         }
 
         //------------board------------
@@ -298,6 +157,38 @@ public class TICClassMainActivity extends BaseActvity
         @Override
         public void onSyncDrawEnable(boolean syncDrawEnable) {
             mBoard.setDataSyncEnable(syncDrawEnable);
+        }
+
+        @Override
+        public void onStartSnapshot() {
+            if (checkPermissions()) {
+                TEduBoardController.TEduBoardSnapshotInfo snapshotInfo = new TEduBoardController.TEduBoardSnapshotInfo();
+                long now = System.currentTimeMillis();
+                snapshotInfo.path = Environment.getExternalStorageDirectory().getPath() + "/DCIM/ScreenShots/" + now + ".png";
+                mBoard.snapshot(snapshotInfo);
+            }
+        }
+
+        @Override
+        public void onNextTextInput(String textContent, boolean keepFocus) {
+            mBoard.setNextTextInput(textContent, keepFocus);
+        }
+
+        @Override
+        public void onTipTextInput(String textContent) {
+            TEduBoardController.TEduBoardToolTypeTitleStyle titleStyle
+                    = new TEduBoardController.TEduBoardToolTypeTitleStyle();
+            titleStyle.color = "#FF0000";
+            titleStyle.size = 1000;
+            titleStyle.style = TEduBoardController.TEduBoardTextStyle.TEDU_BOARD_TEXT_STYLE_BOLD_ITALIC;
+            titleStyle.position = TEduBoardController.TEduBoardPosition.TEDU_BOARD_POSITION_RIGHT_TOP;
+
+            mBoard.setToolTypeTitle(textContent, titleStyle, TEduBoardController.TEduBoardToolType.TEDU_BOARD_TOOL_TYPE_ERASER);
+        }
+
+        @Override
+        public void onWipeNumInput(int num) {
+            mBoard.setEraseLayerLimit(num);
         }
 
         @Override
@@ -318,6 +209,15 @@ public class TICClassMainActivity extends BaseActvity
         @Override
         public void onSetTextSize(int size) {
             mBoard.setTextSize(size);
+        }
+
+        @Override
+        public void onAddElement(int type, String url) {
+            String elementId = mBoard.addElement(type, url);
+            if (type == 4) {
+                mAudioElementId = elementId;
+            }
+            Log.d("evaluateJs", "onAddElement elementId: " + elementId + " mAudioElementId: " + mAudioElementId);
         }
 
         @Override
@@ -358,6 +258,19 @@ public class TICClassMainActivity extends BaseActvity
         }
 
         @Override
+        public void setWipeType(int wipeType) {
+            List<Integer> typeArray = new ArrayList<>();
+            typeArray.add(wipeType);
+            mBoard.setEraseLayerType(typeArray);
+        }
+
+        @Override
+        public void onSetNickNameVisiable(boolean visiable) {
+            nickNameVisiable = visiable;
+            mBoard.setOwnerNickNameVisible(visiable);
+        }
+
+        @Override
         public void onUndo() {
             mBoard.undo();
         }
@@ -378,8 +291,8 @@ public class TICClassMainActivity extends BaseActvity
         }
 
         @Override
-        public void onAddBoard(String id) {
-            mBoard.addBoard(id);
+        public void onAddBoard(String url) {
+            mBoard.addBoard(url, 0, 0, true);
         }
 
         @Override
@@ -389,7 +302,11 @@ public class TICClassMainActivity extends BaseActvity
 
         @Override
         public void onGotoBoard(String boardId) {
-            mBoard.gotoBoard(boardId);
+            //   mBoard.gotoBoard(boardId);
+            for (int i = 0; i < 50; i++) {
+                String fileId = mBoard.getCurrentFile();
+                mBoard.getFileInfo(fileId);
+            }
         }
 
         @Override
@@ -429,12 +346,12 @@ public class TICClassMainActivity extends BaseActvity
 
         @Override
         public void onTransCodeFile(TEduBoardController.TEduBoardTranscodeFileResult myresult) {
-            mBoard.addTranscodeFile(myresult);
+            mBoard.addTranscodeFile(myresult, true);
         }
 
         @Override
         public void onAddH5File(String url) {
-            mBoard.addH5File(url);
+            mBoard.addH5File(url,null,true);
         }
 
         @Override
@@ -449,33 +366,183 @@ public class TICClassMainActivity extends BaseActvity
 
         @Override
         public void onAddImagesFile(List<String> urls) {
-            mImgsFid = mBoard.addImagesFile(urls);
+            mImgsFid = mBoard.addImagesFile(urls,null,true);
         }
 
         @Override
         public void onPlayVideoFile(String url) {
-            mBoard.addVideoFile(url);
+            mBoard.addVideoFile(url,null,true);
+        }
+
+        @Override
+        public void onPlayAudio() {
+            if (!TextUtils.isEmpty(mAudioElementId)) {
+                mBoard.playAudio(mAudioElementId);
+                // mBoard.seekAudio(mAudioElementId, 120);
+                //     mBoard.setAudioVolume(mAudioElementId,0.7f);
+            }
+        }
+
+        @Override
+        public void onPauseAudio() {
+            if (!TextUtils.isEmpty(mAudioElementId)) {
+                mBoard.pauseAudio(mAudioElementId);
+                // mBoard.getAudioVolume(mAudioElementId);
+                mBoard.getBoardElementList("");
+            }
+
+        }
+
+        @Override
+        public void onAddBackupDomain() {
+            mBoard.addBackupDomain("https://test2.tencent.com", "http://b.hiphotos.baidu.com", 0);
+        }
+
+        @Override
+        public void onRemoveBackupDomain() {
+            mBoard.removeBackupDomain("https://test2.tencent.com", "http://b.hiphotos.baidu.com");
+
         }
 
         @Override
         public void onShowVideoCtrl(boolean value) {
             mBoard.showVideoControl(value);
         }
+
+        @Override
+        public void onSyncAndReload() {
+            mBoard.syncAndReload();
+        }
+
+        @Override
+        public void onSetSystemCursorEnable(boolean systemCursorEnable) {
+            mBoard.setSystemCursorEnable(systemCursorEnable);
+        }
+
+        @Override
+        public void onAddBoardToClassGroup(String groupId, String boardId) {
+            mBoard.addBoardToClassGroup(groupId, boardId);
+        }
+
+        @Override
+        public void onAddUserToClassGroup(String groupId, String userId) {
+            mBoard.addUserToClassGroup(groupId, userId);
+        }
+
+        @Override
+        public void onGetAllClassGroupIds() {
+            mBoard.getAllClassGroupIds();
+        }
+
+        @Override
+        public void onGetClassGroupEnable() {
+            mBoard.getClassGroupEnable();
+        }
+
+        @Override
+        public void onGetClassGroupIdByUserId(String userId) {
+            mBoard.getClassGroupIdByUserId(userId);
+        }
+
+        @Override
+        public void onGetClassGroupInfoByGroupId(String groupId) {
+            mBoard.getClassGroupInfoByGroupId(groupId);
+        }
+
+        @Override
+        public void onGotoClassGroupBoard(String boardId) {
+            mBoard.gotoClassGroupBoard(boardId);
+        }
+
+        @Override
+        public void onRemoveBoardInClassGroup(String groupId, String boardId) {
+            mBoard.removeBoardInClassGroup(groupId, boardId);
+        }
+
+        @Override
+        public void onRemoveClassGroup(String groupId) {
+            mBoard.removeClassGroup(groupId);
+        }
+
+        @Override
+        public void onRemoveUserInClassGroup(String groupId, String userId) {
+            mBoard.removeUserInClassGroup(groupId, userId);
+        }
+
+        @Override
+        public void onResetClassGroup() {
+            mBoard.resetClassGroup();
+        }
+
+        @Override
+        public void onSetClassGroup(String groupId, List<String> boards, List<String> users, String title, String currentBoardId) {
+            mBoard.setClassGroup(groupId, boards, users, title, currentBoardId);
+        }
+
+        @Override
+        public void onSetClassGroupEnable(boolean enable) {
+            mBoard.setClassGroupEnable(enable);
+        }
+
+        @Override
+        public void onSetClassGroupTitle(String groupId, String title) {
+            mBoard.setClassGroupTitle(groupId, title);
+        }
     }
+
+    View boardview;
 
     void addBoardView() {
         mBoardContainer = (FrameLayout) findViewById(R.id.board_view_container);
-        View boardview = mBoard.getBoardRenderView();
+        boardview = mBoard.getBoardRenderView();
+        //  boardview.setBackgroundColor(Color.RED);
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
-        mBoardContainer.addView(boardview, layoutParams);
+        //  mBoardContainer.addView(boardview, layoutParams);
+        mBoard.addBoardViewToContainer(mBoardContainer,boardview, layoutParams);
+        //  boardview.setBackgroundColor(getResources().getColor(R.color.colorRed));
+     /*   TEduBoardController.TEduBoardColor boardColor = new TEduBoardController.TEduBoardColor(0, 0, 255, 1);
+        mBoard.setBackgroundColor(boardColor);*/
+        //   Log.d(TAG, "boardview tag: " + mBoard.getBoardRenderView().getTag());
+     /*   DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        int width = dm.widthPixels;
+        int height = dm.heightPixels;
+        FrameLayout.LayoutParams linearParams = (FrameLayout.LayoutParams) boardview.getLayoutParams();
+        linearParams.height = height;
+        linearParams.width = width;
+        boardview.setLayoutParams(linearParams);*/
+       /* boardview.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+                int width = v.getWidth();
+                int height = v.getHeight();
+                TLogger.i(TAG, "board_size_change mBoardContainer", "width:" + width + " height:" + height);
+            }
+        });*/
 
         //设置透明
         //boardview.setBackgroundColor(Color.TRANSPARENT);
         //boardview.getBackground().setAlpha(0); // 设置填充透明度 范围：0-255
         //mBoard.setGlobalBackgroundColor(new TEduBoardController.TEduBoardColor(0, 0,0, 0));
         //mBoard.setBackgroundColor(new TEduBoardController.TEduBoardColor(0, 0,10, 0));
-
+        //mBoard.showVideoControl(false); //不显示视频控制栏
         postToast("正在使用白板：" + TEduBoardController.getVersion(), true);
+    }
+
+    public void testBoardSizeChange(boolean change) {
+        FrameLayout.LayoutParams linearParams = (FrameLayout.LayoutParams) boardview.getLayoutParams();
+        if (change) {
+            linearParams.height = 600;
+            linearParams.width = 200;
+        } else {
+            DisplayMetrics dm = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(dm);
+            int width = dm.widthPixels;
+            int height = dm.heightPixels;
+            linearParams.height = height;
+            linearParams.width = width;
+        }
+        boardview.setLayoutParams(linearParams);
     }
 
     private void removeBoardView() {
@@ -487,11 +554,12 @@ public class TICClassMainActivity extends BaseActvity
         }
     }
 
-    private  void onTEBHistroyDataSyncCompleted() {
+    private void onTEBHistroyDataSyncCompleted() {
         mHistroyDataSyncCompleted = true;
         postToast("历史数据同步完成", false);
     }
 
+    boolean isChange = true;
 
     @Override
     public void onClick(View v) {
@@ -500,6 +568,11 @@ public class TICClassMainActivity extends BaseActvity
 
             case R.id.tv_double_room_back_button: //返回
                 quitClass();
+          //      String expression = "f(x) = \\int_{-\\infty}^\\infty \\hat{f}(\\xi)\\,e^{2 \\pi i \\xi x} \\,d\\xi";
+          //      mBoard.addElementFormula(expression);
+                //     quitClass();
+                //    testBoardSizeChange(isChange);
+                //     isChange = !isChange;
                 break;
 
             case R.id.tv_memu: //菜单
@@ -517,7 +590,7 @@ public class TICClassMainActivity extends BaseActvity
                 }
 
 
-                TICMenuDialog.SettingCacheData  settingCacheData = new TICMenuDialog.SettingCacheData();
+                TICMenuDialog.SettingCacheData settingCacheData = new TICMenuDialog.SettingCacheData();
 
                 //trtc
                 settingCacheData.AudioEnable = mEnableAudio;
@@ -550,16 +623,11 @@ public class TICClassMainActivity extends BaseActvity
                 settingCacheData.currentFileId = mBoard.getCurrentFile();
                 settingCacheData.files = mBoard.getFileInfoList();
 
+                settingCacheData.isNickNameVisiable = nickNameVisiable;
                 moreDlg.show(settingCacheData);
             }
-                break;
+            break;
 
-            case R.id.btn_send: //发送按钮
-                final String msg = ((EditText)findViewById(R.id.et_message_input)).getText().toString();
-                if (!TextUtils.isEmpty(msg)) {
-                    sendGroupMessage(msg);
-                }
-                break;
         }
     }
 
@@ -576,50 +644,53 @@ public class TICClassMainActivity extends BaseActvity
         //1、设置白板的回调
         mBoardCallback = new MyBoardCallback(this);
 
-        //2、如果用户希望白板显示出来时，不使用系统默认的参数，就需要设置特性缺省参数，如是使用默认参数，则填null。
-        TEduBoardController.TEduBoardInitParam initParam = new TEduBoardController.TEduBoardInitParam();
-        initParam.brushColor = new TEduBoardController.TEduBoardColor(255, 0, 0, 255);
-        initParam.smoothLevel = 0; //用于指定笔迹平滑级别，默认值0.1，取值[0, 1]
-
-        TICClassroomOption classroomOption = new TICClassroomOption();
-        classroomOption.classId = mRoomId;
-        classroomOption.boardCallback = mBoardCallback;
-        classroomOption.boardInitPara = initParam;
-
-        mTicManager.joinClassroom(classroomOption, new TICManager.TICCallback() {
+        // 1、 IM进房
+        final Context ctx = this;
+        IMManager.getInstance().joinIMGroup(String.format("%d", mRoomId), new IMManager.IMCallBack() {
             @Override
-            public void onSuccess(Object data) {
-                postToast("进入课堂成功:" + mRoomId);
-            }
+            public void onComplete(int errCode, String errMsg) {
+                if (errCode == 0) {
+                    // 2、 创建白板
+                    mBoard = BoardManager.getInstance().creteBoard(ctx, ((TICSDKDemoApp) getApplication()).getConfig().getSdkAppIdFromConfig(), mUserID, mUserSig, mRoomId,
+                            new BoardManager.CreateBoardCallBack() {
+                                @Override
+                                public void onCreteBoard(int errCode, String errMsg, TEduBoardController boardController) {
+                                    if (errCode == 0) {
+                                        postToast("进入课堂成功:" + mRoomId);
+                                    }
+                                    else  {
+                                        postToast("进入课堂失败:" + mRoomId + " err:" + errCode + " msg:" + errMsg);
+                                    }
 
-            @Override
-            public void onError(String module, int errCode, String errMsg) {
-               if(errCode == 10015){
-                   postToast("课堂不存在:" + mRoomId + " err:" + errCode + " msg:" + errMsg);
+                                }
+                            });
+                    mBoard.addCallback(mBoardCallback);
                 }
                 else {
-                   postToast("进入课堂失败:" + mRoomId + " err:" + errCode + " msg:" + errMsg);
-               }
+                    postToast("进入课堂失败:" + mRoomId + " err:" + errCode + " msg:" + errMsg);
+                }
             }
         });
+
     }
 
     private void quitClass() {
+        if (mBoard != null) {
+            mBoard.removeCallback(mBoardCallback);
+        }
+        BoardManager.getInstance().destroyBoard();
 
-        //如果是老师，可以清除；
-        //如查是学生一般是不要清除数据
-        boolean clearBoard = false;
-        mTicManager.quitClassroom(clearBoard, new TICManager.TICCallback() {
+        IMManager.getInstance().quitIMGroup(String.valueOf(mRoomId), new IMManager.IMCallBack(){
             @Override
-            public void onSuccess(Object data) {
-                postToast("quitClassroom#onSuccess: " + data, true);
-                finish();
-            }
-
-            @Override
-            public void onError(String module, int errCode, String errMsg) {
-                postToast("quitClassroom#onError: errCode = " + errCode + "  description " + errMsg);
-                finish();
+            public void onComplete(int errCode, String errMsg) {
+                if (errCode == 0) {
+                    postToast("quitClassroom#onSuccess", true);
+                    finish();
+                }
+                else {
+                    postToast("quitClassroom#onError: errCode = " + errCode + "  description " + errMsg);
+                    finish();
+                }
             }
         });
     }
@@ -631,230 +702,21 @@ public class TICClassMainActivity extends BaseActvity
         quitClass();
     }
 
-    // ------------ FROM TICMessageListener ---------------------
-    @Override
-    public void onTICRecvTextMessage(String fromId, String text) {
-        postToast(String.format("[%s]（C2C）说: %s", fromId, text));
-    }
-
-    @Override
-    public void onTICRecvCustomMessage(String fromId, byte[] data) {
-        postToast(String.format("[%s]（C2C:Custom）说: %s", fromId, new String(data)));
-    }
-    @Override
-    public void onTICRecvGroupTextMessage(String fromId, String text) {
-        postToast(String.format("[%s]（Group:Custom）说: %s", fromId, text));
-    }
-
-    @Override
-    public void onTICRecvGroupCustomMessage(String fromUserId, byte[] data) {
-        postToast(String.format("[%s]（Group:Custom）说: %s", fromUserId, new String(data)));
-    }
-
-    @Override
-    public void onTICRecvMessage(TIMMessage message) {
-        handleTimElement(message);
-    }
-
-
-
-    private void handleTimElement(TIMMessage message) {
-
-        for (int i = 0; i < message.getElementCount(); i++) {
-            TIMElem elem = message.getElement(i);
-            switch (elem.getType()) {
-                case Text:
-                    postToast("This is Text message.");
-                    break;
-                case Custom:
-                    postToast("This is Custom message.");
-                    break;
-                case GroupTips:
-                    postToast("This is GroupTips message.");
-                    continue;
-                default:
-                    postToast("This is other message");
-                    break;
-            }
-        }
-    }
-
-
     //---------------------- TICEventListener-----------------
     @Override
-    public void onTICVideoDisconnect(int errCode, String errMsg) {
+    public void onTIMForceOffline() {
+        super.onTIMForceOffline();
+        quitClass();
     }
 
-    private void sendGroupMessage(final String msg) {
-        mTicManager.sendGroupTextMessage( msg, new TICManager.TICCallback() {
-            @Override
-            public void onSuccess(Object data) {
-                postToast("[我]说: " + msg);
-            }
-
-            @Override
-            public void onError(String module, int errCode, String errMsg) {
-                postToast("sendGroupMessage##onError##" + errMsg);
-
-            }
-        });
-    }
-
-    private void sendGroupMessage(final byte[] msg) {
-        mTicManager.sendGroupCustomMessage( msg, new TICManager.TICCallback() {
-            @Override
-            public void onSuccess(Object data) {
-                postToast("[我]说: " + new String(msg));
-            }
-
-            @Override
-            public void onError(String module, int errCode, String errMsg) {
-                postToast("sendGroupMessage##onError##" + errMsg);
-            }
-        });
-    }
-
-    private void sendCustomMessage(final String usrid, final byte[] msg) {
-        mTicManager.sendCustomMessage(usrid, msg, new TICManager.TICCallback() {
-            @Override
-            public void onSuccess(Object data) {
-                postToast("[我]对[" + usrid + "]说: " + msg);
-            }
-
-            @Override
-            public void onError(String module, int errCode, String errMsg) {
-                postToast("sendCustomMessage##onError##" + errMsg);
-
-            }
-        });
-    }
-
+    // IM掉线
     @Override
-    public void onTICForceOffline() {
-        super.onTICForceOffline();
-
-        //1、退出TRTC
-        if (mTrtcCloud != null ) {
-            mTrtcCloud.exitRoom();
-        }
-
-        //2.退出房间
-        mTicManager.quitClassroom(false, new TICManager.TICCallback() {
-            @Override
-            public void onSuccess(Object data) {
-                postToast("onForceOffline##quitClassroom#onSuccess: " + data);
-                Intent intent = new Intent(TICClassMainActivity.this, TICLoginActivity.class);
-                startActivity(intent);
-                finish();
-            }
-
-            @Override
-            public void onError(String module, int errCode, String errMsg) {
-                postToast("onForceOffline##quitClassroom#onError: errCode = " + errCode + "  description " + errMsg);
-            }
-        });
-
+    public void onConnectFailed(int code, String error) {
+        super.onConnectFailed(code,error);
+        quitClass();
     }
 
-    @Override
-    public void onTICClassroomDestroy() {
-        postToast("课堂已销毁");
-    }
-
-    @Override
-    public void onTICSendOfflineRecordInfo(int code, String desc) {
-        postToast("同步录制信息失败,code:" + code);
-
-        //可以在此提示用户录制信息有误，然后让用户选择是否重新触发同步录制信息;
-//        new  AlertDialog.Builder(this)
-//                .setTitle("同步录制信息失败")
-//                .setMessage("重试吗？" )
-//                .setPositiveButton("要重试" ,  new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialog, int which) {
-//                        mTicManager.sendOfflineRecordInfo();
-//                    }
-//                } )
-//                .setNegativeButton("不重试" , null)
-//                .show();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK) {
-
-
-        }
-    }
-
-
-    //--------------------权限检查-----------------------//
-
-    protected void checkCameraAndMicPermission() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            return;
-        }
-
-        List<String> permissionList = new ArrayList();
-        if (!checkPermissionAudioRecorder()) {
-            permissionList.add(Manifest.permission.RECORD_AUDIO);
-        }
-
-        if (!checkPermissionCamera()) {
-            permissionList.add(Manifest.permission.CAMERA);
-        }
-
-        if (!checkPermissionStorage()) {
-            permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        }
-
-        if (permissionList.size() < 1) {
-            return;
-        }
-        String[] permissions = permissionList.toArray(new String[0]);
-        ActivityCompat.requestPermissions(this, permissions, REQUEST_CODE);
-    }
-
-
-    private boolean checkPermissionAudioRecorder() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            return false;
-        }
-        return true;
-    }
-
-    private boolean checkPermissionCamera() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            return false;
-        }
-        return true;
-    }
-
-    private boolean checkPermissionStorage() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == REQUEST_CODE) {
-            for (int i = 0; i < grantResults.length; i++) {
-                if (grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                    //判断是否勾选禁止后不再询问
-                    boolean showRequestPermission = ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[i]);
-                    if (showRequestPermission) {
-                        postToast(permissions[i] + " 权限未申请");
-                    }
-                }
-            }
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
-
-     //Board Callback
+    //Board Callback
     static private class MyBoardCallback implements TEduBoardController.TEduBoardCallback {
         WeakReference<TICClassMainActivity> mActivityRef;
 
@@ -864,12 +726,10 @@ public class TICClassMainActivity extends BaseActvity
 
         @Override
         public void onTEBError(int code, String msg) {
-            TXLog.i(TAG, "onTEBError:" + code + "|" + msg);
         }
 
         @Override
         public void onTEBWarning(int code, String msg) {
-            TXLog.i(TAG, "onTEBWarning:" + code + "|" + msg);
         }
 
         @Override
@@ -885,6 +745,9 @@ public class TICClassMainActivity extends BaseActvity
             TICClassMainActivity activityEx = mActivityRef.get();
             if (activityEx != null) {
                 activityEx.onTEBHistroyDataSyncCompleted();
+                String currentBoard = activityEx.mBoard.getCurrentBoard();
+                String currentFile = activityEx.mBoard.getCurrentFile();
+                Log.w("DataSyncCompleted", "currentBoard: " + currentBoard + " currentFile: " + currentFile);
             }
         }
 
@@ -895,36 +758,40 @@ public class TICClassMainActivity extends BaseActvity
 
 
         @Override
+        public void onTEBScrollChanged(String boardId, int trigger, double scrollLeft, double scrollTop, double scale) {
+            
+        }
+
+        @Override
         public void onTEBAddBoard(List<String> boardId, final String fileId) {
-            TXLog.i(TAG, "onTEBAddBoard:" + fileId);
         }
 
         @Override
         public void onTEBDeleteBoard(List<String> boardId, final String fileId) {
-            TXLog.i(TAG, "onTEBDeleteBoard:" + fileId + "|" + boardId);
         }
 
         @Override
         public void onTEBGotoBoard(String boardId, final String fileId) {
-            TXLog.i(TAG, "onTEBGotoBoard:" + fileId + "|" + boardId);
         }
 
-         @Override
-         public void onTEBGotoStep(int currentStep, int total) {
-             TXLog.i(TAG, "onTEBGotoStep:" + currentStep + "|" + total);
-         }
+        @Override
+        public void onTEBGotoStep(int currentStep, int total) {
+        }
 
-         @Override
-         public void onTEBRectSelected() {
-             TXLog.i(TAG, "onTEBRectSelected:" );
-         }
+        @Override
+        public void onTEBRectSelected() {
+        }
 
-         @Override
-         public void onTEBRefresh() {
-             TXLog.i(TAG, "onTEBRefresh:" );
-         }
+        @Override
+        public void onTEBRefresh() {
+        }
 
-         @Override
+        @Override
+        public void onTEBOfflineWarning(int count) {
+
+        }
+
+        @Override
         public void onTEBDeleteFile(String fileId) {
         }
 
@@ -932,12 +799,11 @@ public class TICClassMainActivity extends BaseActvity
         public void onTEBSwitchFile(String fileId) {
         }
 
-         @Override
-         public void onTEBAddTranscodeFile(String s) {
-             TXLog.i(TAG, "onTEBAddTranscodeFile:" + s);
-         }
+        @Override
+        public void onTEBAddTranscodeFile(String s) {
+        }
 
-         @Override
+        @Override
         public void onTEBUndoStatusChanged(boolean canUndo) {
             TICClassMainActivity activityEx = mActivityRef.get();
             if (activityEx != null) {
@@ -946,7 +812,7 @@ public class TICClassMainActivity extends BaseActvity
         }
 
         @Override
-        public void onTEBRedoStatusChanged(boolean canredo){
+        public void onTEBRedoStatusChanged(boolean canredo) {
             TICClassMainActivity activityEx = mActivityRef.get();
             if (activityEx != null) {
                 activityEx.mCanRedo = canredo;
@@ -955,57 +821,130 @@ public class TICClassMainActivity extends BaseActvity
 
         @Override
         public void onTEBFileUploadProgress(final String path, int currentBytes, int totalBytes, int uploadSpeed, float percent) {
-            TXLog.i(TAG, "onTEBFileUploadProgress:" + path + " percent:" + percent);
         }
 
-         @Override
-         public void onTEBFileUploadStatus(final String path, int status, int code, String statusMsg) {
-             TXLog.i(TAG, "onTEBFileUploadStatus:" + path + " status:" + status);
-         }
+        @Override
+        public void onTEBFileUploadStatus(final String path, int status, int code, String statusMsg) {
+        }
 
-         @Override
-         public void onTEBFileTranscodeProgress(String s, String s1, String s2, TEduBoardController.TEduBoardTranscodeFileResult tEduBoardTranscodeFileResult) {
+        @Override
+        public void onTEBFileTranscodeProgress(String s, String s1, String s2, TEduBoardController.TEduBoardTranscodeFileResult tEduBoardTranscodeFileResult) {
 
-         }
+        }
 
-         @Override
-         public void onTEBH5FileStatusChanged(String fileId, int status) {
+        @Override
+        public void onTEBH5FileStatusChanged(String fileId, int status) {
 
-         }
+        }
 
-         @Override
-         public void onTEBAddImagesFile(String fileId) {
-             Log.i(TAG, "onTEBAddImagesFile:" + fileId);
-             TICClassMainActivity activityEx = mActivityRef.get();
-             TEduBoardController.TEduBoardFileInfo fileInfo = activityEx.mBoard.getFileInfo(fileId);
-         }
+        @Override
+        public void onTEBAddImagesFile(String fileId) {
+            Log.i(TAG, "onTEBAddImagesFile:" + fileId);
+            TICClassMainActivity activityEx = mActivityRef.get();
+            TEduBoardController.TEduBoardFileInfo fileInfo = activityEx.mBoard.getFileInfo(fileId);
+        }
 
-         @Override
-         public void onTEBVideoStatusChanged(String fileId, int status, float progress, float duration) {
-             Log.i(TAG, "onTEBVideoStatusChanged:" + fileId + " | " + status + "|" + progress);
-         }
+        @Override
+        public void onTEBVideoStatusChanged(String fileId, int status, float progress, float duration) {
+            Log.i(TAG, "onTEBVideoStatusChanged:" + fileId + " | " + status + "|" + progress);
 
-         @Override
-         public void onTEBImageStatusChanged(String boardId, String url, int status) {
-             TXLog.i(TAG, "onTEBImageStatusChanged:" + boardId + "|" + url + "|" + status);
-         }
+        }
 
-         @Override
-         public void onTEBSetBackgroundImage(final String url){
-             Log.i(TAG, "onTEBSetBackgroundImage:" + url);
-         }
+        @Override
+        public void onTEBAudioStatusChanged(String elementId, int status, float progress, float duration) {
+            Log.i(TAG, "onTEBAudioStatusChanged:" + elementId + " | " + status + "|" + progress);
+        }
 
-         @Override
-         public void onTEBAddImageElement(final String url){
-             Log.i(TAG, "onTEBAddImageElement:" + url);
-         }
+        @Override
+        public void onTEBSnapshot(String path, int code, String msg) {
+            Log.i(TAG, "onTEBSnapshot:" + path + " | " + code + "|" + msg);
+            if (code == 0) {
+                mActivityRef.get().postToast("截图成功，图片保存在：" + path, true);
+            }
+        }
 
-         @Override
-         public void onTEBBackgroundH5StatusChanged(String boardId, String url, int status) {
-             Log.i(TAG, "onTEBBackgroundH5StatusChanged:" + boardId  + " url:" + boardId + " status:" + status);
-         }
-     }
+        @Override
+        public void onTEBH5PPTStatusChanged(int statusCode, String fid, String describeMsg) {
 
+        }
+
+        @Override
+        public void onTEBTextElementStatusChange(String status, String id, String value, int left, int top) {
+            Log.e(TAG, "onTEBTextComponentStatusChange textH5Status:" + status + " textH5Id:" + id);
+
+            TICClassMainActivity activityEx = mActivityRef.get();
+            if (activityEx != null) {
+                activityEx.textH5Id = id;
+                activityEx.textH5Status = status;
+            }
+        }
+
+        @Override
+        public void onTEBClassGroupStatusChanged(boolean enable, String classGroupId, int operationType, String message) {
+
+        }
+
+        @Override
+        public void onTEBCursorPositionChanged(Point point) {
+
+        }
+
+        @Override
+        public void onTEBImageStatusChanged(String boardId, String url, int status) {
+        }
+
+        @Override
+        public void onTEBSetBackgroundImage(final String url) {
+            Log.i(TAG, "onTEBSetBackgroundImage:" + url);
+        }
+
+        @Override
+        public void onTEBAddImageElement(final String url) {
+            Log.i(TAG, "onTEBAddImageElement:" + url);
+        }
+
+        @Override
+        public void onTEBAddElement(String id, int type, String url) {
+
+        }
+
+        @Override
+        public void onTEBDeleteElement(List<String> id) {
+
+        }
+
+        @Override
+        public void onTEBSelectElement(List<TEduBoardController.ElementItem> elementItemList) {
+
+        }
+
+        @Override
+        public void onTEBMathGraphEvent(int code, String boardId, String graphId, String message) {
+
+        }
+
+        @Override
+        public void onTEBZoomDragStatus(String fid, int scale, int xOffset, int yOffset) {
+
+        }
+
+        @Override
+        public void onTEBBackgroundH5StatusChanged(String boardId, String url, int status) {
+            Log.i(TAG, "onTEBBackgroundH5StatusChanged:" + boardId + " url:" + boardId + " status:" + status);
+        }
+
+        @Override
+        public void onTEBTextElementWarning(String code, String message) {
+
+        }
+
+        @Override
+        public void onTEBImageElementStatusChanged(int status, String currentBoardId, String imgUrl, String currentImgUrl) {
+
+        }
+
+
+    }
 
 
 }

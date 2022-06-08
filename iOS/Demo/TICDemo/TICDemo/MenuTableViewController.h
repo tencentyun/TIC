@@ -9,15 +9,14 @@
 #import <UIKit/UIKit.h>
 
 @protocol MenuTableViewControllerDelegate <NSObject>
-//trtc
-- (void)onSwitchCamera;
-- (void)onCameraStateChanged:(BOOL)state;
-- (void)onMicStateChaged:(BOOL)state;
 - (void)onSpeakerStateChaged:(BOOL)state;
 //board（涂鸦）
 - (void)onDrawStateChanged:(BOOL)state;
 - (void)onSyncDataChanged:(BOOL)state;
+- (void)onMagicPenChanged:(BOOL)state;
+- (void)onPiecewiseErasureChanged:(BOOL)state;
 - (void)onSelectToolType:(int)toolType;
+- (void)onSelectCustomGraph:(NSString *)url;
 - (void)onSelectBrushColor:(UIColor *)color;
 - (void)onSelectBackgroundColor:(UIColor *)color;
 - (void)onBrushThinChanged:(float)thin;
@@ -27,6 +26,10 @@
 - (void)onAddH5File:(NSString *)url;
 - (void)onSetTextStyle:(int)style;
 - (void)onSetTextFamily:(NSString *)family;
+- (void)onAddMathBoard;
+- (void)onSetMathGraphType:(NSInteger)type;
+- (void)onSetOwnerNickNameVisible:(BOOL)state;
+
 
 - (void)onUndo;
 - (void)onRedo;

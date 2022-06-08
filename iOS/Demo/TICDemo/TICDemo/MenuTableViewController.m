@@ -9,8 +9,12 @@
 #import "MenuTableViewController.h"
 #import "PickSheetView.h"
 #import "TableSheetView.h"
-#import "TICManager.h"
 #import <MobileCoreServices/MobileCoreServices.h>
+#if TARGET_OS_IPHONE
+#import <TEduBoard/TEduBoard.h>
+#else
+#import <TEduBoard_Mac/TEduBoard.h>
+#endif
 
 @interface MenuTableViewController ()
 @property (strong, nonatomic) UITableView *subTableView;
@@ -55,30 +59,24 @@
 
 #pragma mark - action
 
-- (IBAction)onSwitchCamera:(id)sender {
-    if(self.delegate && [self.delegate respondsToSelector:@selector(onSwitchCamera)]){
-        [self.delegate onSwitchCamera];
+- (IBAction)onMagicPenChanged:(id)sender {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(onMagicPenChanged:)]) {
+        BOOL state = ((UISwitch *)sender).isOn;
+        [self.delegate onMagicPenChanged:state];
     }
 }
 
-- (IBAction)onCameraStateChanged:(id)sender {
-    if(self.delegate && [self.delegate respondsToSelector:@selector(onCameraStateChanged:)]){
+- (IBAction)onPiecewiseErasureChanged:(id)sender {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(onPiecewiseErasureChanged:)]) {
         BOOL state = ((UISwitch *)sender).isOn;
-        [self.delegate onCameraStateChanged:state];
+        [self.delegate onPiecewiseErasureChanged:state];
     }
 }
 
-- (IBAction)onMicStateChaged:(id)sender {
-    if(self.delegate && [self.delegate respondsToSelector:@selector(onMicStateChaged:)]){
+- (IBAction)onSetOwnerNickNameVisible:(id)sender {
+    if (self.delegate && [self.delegate respondsToSelector:@selector(onSetOwnerNickNameVisible:)]) {
         BOOL state = ((UISwitch *)sender).isOn;
-        [self.delegate onMicStateChaged:state];
-    }
-}
-
-- (IBAction)onSpeakerStateChaged:(id)sender {
-    if(self.delegate && [self.delegate respondsToSelector:@selector(onMicStateChaged:)]){
-        BOOL state = ((UISwitch *)sender).isOn;
-        [self.delegate onMicStateChaged:state];
+        [self.delegate onSetOwnerNickNameVisible:state];
     }
 }
 
@@ -112,7 +110,11 @@
     [array addObject:@"框选工具"];
     [array addObject:@"文本工具"];
     [array addObject:@"缩放移动"];
-    
+    [array addObject:@"空心正方形"];
+    [array addObject:@"实心正方形"];
+    [array addObject:@"空心正圆形"];
+    [array addObject:@"实心正圆形"];
+    [array addObject:@"自定义图形"];
     
     [self.tableSheet setSelectIndex:self.selectToolIndex];
     [self.tableSheet setData:array];
@@ -121,6 +123,27 @@
         ws.selectToolIndex = index;
         if(ws.delegate && [ws.delegate respondsToSelector:@selector(onSelectToolType:)]){
             [ws.delegate onSelectToolType:(int)index];
+        }
+    };
+    [self.view.superview addSubview:self.tableSheet];
+}
+
+- (IBAction)onSelectCustomGraph:(id)sender {
+    NSMutableArray *array = [NSMutableArray array];
+    [array addObject:@"三角形"];
+    [array addObject:@"爱心"];
+    [array addObject:@"五角星"];
+    
+    NSMutableArray *values = [NSMutableArray array];;
+    [values addObject:@"https://demo.qcloudtiw.com/resource/triangle.svg"];
+    [values addObject:@"https://demo.qcloudtiw.com/resource/heart.svg"];
+    [values addObject:@"https://demo.qcloudtiw.com/resource/star.svg"];
+
+    [self.tableSheet setData:array];
+    __weak typeof(self) ws = self;
+    self.tableSheet.block = ^(NSInteger index){
+        if(ws.delegate && [ws.delegate respondsToSelector:@selector(onSelectCustomGraph:)]){
+            [ws.delegate onSelectCustomGraph:[values objectAtIndex:index]];
         }
     };
     [self.view.superview addSubview:self.tableSheet];
@@ -180,7 +203,7 @@
 
 - (IBAction)onSetBackgroundH5:(id)sender {
     NSMutableArray *array = [NSMutableArray array];
-    [array addObject:@"https://www.qq.com"];
+    [array addObject:@"https://cloud.tencent.com/product/tiw"];
     
     [self.tableSheet setData:array];
     __weak typeof(self) ws = self;
@@ -259,7 +282,7 @@
 - (IBAction)onSetBackgroundImage:(id)sender {
     UIImagePickerController *picker = [[UIImagePickerController alloc] init];
     picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-    picker.mediaTypes = [UIImagePickerController availableMediaTypesForSourceType:UIImagePickerControllerSourceTypeCamera];
+    picker.mediaTypes = [UIImagePickerController availableMediaTypesForSourceType:UIImagePickerControllerSourceTypePhotoLibrary];
     picker.delegate = (id<UINavigationControllerDelegate, UIImagePickerControllerDelegate>)self;
     [self presentViewController:picker animated:YES completion:nil];
 }
@@ -522,5 +545,55 @@
         _tableSheet.frame = CGRectMake(0, self.view.superview.frame.size.height - height, self.view.superview.frame.size.width, height);
     }
     return _tableSheet;
+}
+
+- (IBAction)onAddMathBoard:(id)sender {
+    if(self.delegate && [self.delegate respondsToSelector:@selector(onAddMathBoard)]){
+        [self.delegate onAddMathBoard];
+    }
+}
+
+- (IBAction)onSetMathGraphType:(id)sender {
+//    TEduBoardMathGraphTypePOINT             =        1,       ///< 点
+//    TEduBoardMathGraphTypeLINE              =        2,       ///< 直线
+//    TEduBoardMathGraphTypeLINE_SEGMENT      =        3,       ///< 线段
+//    TEduBoardMathGraphTypeRAY               =        4,       ///< 射线
+//    TEduBoardMathGraphTypeCIRCLE            =        5,       ///< 圆
+//    TEduBoardMathGraphTypeANGLE             =        6,       ///< 角
+//    TEduBoardMathGraphTypePOLYGON           =        7,       ///< 多边形
+//    TEduBoardMathGraphTypeVECTOR            =        8,       ///< 向量
+//    TEduBoardMathGraphTypeELLIPSE           =        9,       ///< 椭圆
+//    TEduBoardMathGraphTypeCUBE              =        101,       ///< 立方体
+//    TEduBoardMathGraphTypeCYLINDER          =        102,       ///< 圆柱体
+//    TEduBoardMathGraphTypeCIRCULAR_CONE     =        103,       ///< 圆锥体
+    NSMutableArray *array = [NSMutableArray array];
+    [array addObject:@"点"];
+    [array addObject:@"直线"];
+    [array addObject:@"线段"];
+    [array addObject:@"射线"];
+    [array addObject:@"圆"];
+    [array addObject:@"角"];
+    [array addObject:@"多边形"];
+    [array addObject:@"向量"];
+    [array addObject:@"椭圆"];
+    [array addObject:@"立方体"];
+    [array addObject:@"圆柱体"];
+    [array addObject:@"圆锥体"];
+    
+    [self.tableSheet setSelectIndex:self.textStyleIndex];
+    [self.tableSheet setData:array];
+    __weak typeof(self) ws = self;
+    self.tableSheet.block = ^(NSInteger index){
+        NSInteger type = index + 1;
+        if (index >= 9) {
+            type = TEduBoardMathGraphTypeCUBE + (index - 9);
+        }
+        if(ws.delegate && [ws.delegate respondsToSelector:@selector(onSetMathGraphType:)]){
+            [ws.delegate onSetMathGraphType: type];
+        }
+    };
+    [self.view.superview addSubview:self.tableSheet];
+    
+   
 }
 @end

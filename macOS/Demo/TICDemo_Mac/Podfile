@@ -2,8 +2,8 @@
 platform :macos, '10.10'
 
 target 'TICDemo_Mac' do
-  pod 'TEduBoard_Mac','2.5.6.27'
-  pod 'TXIMSDK_Mac','4.6.101'
-  pod 'TXLiteAVSDK_TRTC_Mac','6.9.8341'
+  pod 'TEduBoard_Mac',:podspec=>'https://sdk.qcloudtiw.com/mac/2.7.3.119/TEduBoard_Mac.podspec'
+#  pod 'TEduBoard_Mac', '~>2.6.9'
+  pod 'TXIMSDK_Plus_Mac', '6.2.2363'
   pod 'SDWebImage'
 end

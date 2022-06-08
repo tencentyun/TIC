@@ -1,26 +1,24 @@
 package com.tencent.tic.demo.activities;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.tencent.tic.core.TICManager;
-import com.tencent.tic.demo.TICSDKDemoApp;
+import com.tencent.tic.core.IMManager;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 
-public class BaseActvity extends AppCompatActivity implements TICManager.TICIMStatusListener{
+public class BaseActvity extends AppCompatActivity implements IMManager.TIMCallBack {
 
     final String TAG = this.getClass().getSimpleName();
     final static int REQUEST_CODE = 1;
 
     protected final static String USER_ID = "USER_ID";
     protected final static String USER_SIG = "USER_SIG";
-    protected final static String USER_ROLE = "USER_ROLE";
     protected final static String USER_ROOM = "USER_ROOM";
 
-    protected TICManager mTicManager;
 
     //账号信息
     protected String mUserID;
@@ -34,27 +32,16 @@ public class BaseActvity extends AppCompatActivity implements TICManager.TICIMSt
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mTicManager = ((TICSDKDemoApp)getApplication()).getTICManager();
-        mTicManager.addIMStatusListener(this);
+        IMManager.getInstance().setmCallBack(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mTicManager.removeIMStatusListener(this);
+        IMManager.getInstance().setmCallBack(null);
     }
 
-    @Override
-    public void onTICForceOffline() {
-        postToast("您已被踢下线，请检查后重新登录", true);
-    }
-
-    @Override
-    public void onTICUserSigExpired() {
-        postToast("用户签名已过期！", true);
-    }
-
-    protected void postToast(String msg) {
+    public void postToast(String msg) {
         postToast(msg, false);
     }
 
@@ -84,4 +71,19 @@ public class BaseActvity extends AppCompatActivity implements TICManager.TICIMSt
         }
     }
 
+    @Override
+    public void onTIMForceOffline() {
+        postToast("您已被踢下线，请检查后重新登录", true);
+    }
+
+    @Override
+    public void onTIMUserSigExpired() {
+        postToast("用户签名已过期！", true);
+    }
+
+    // IM掉线
+    @Override
+    public void onConnectFailed(int code, String error) {
+        postToast("IM掉线，请重新登录", true);
+    }
 }

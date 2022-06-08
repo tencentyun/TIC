@@ -7,9 +7,14 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "TICManager.h"
+#if TARGET_OS_IPHONE
+#import <TEduBoard/TEduBoard.h>
+#else
+#import <TEduBoard_Mac/TEduBoard.h>
+#endif
 
-@interface ClassroomViewController : UIViewController <TICEventListener, TICMessageListener>
+@interface ClassroomViewController : UIViewController
 @property (nonatomic, strong) NSString *classId;
 @property (nonatomic, strong) NSString *userId;
+@property (nonatomic, strong) TEduBoardController *boardController;
 @end

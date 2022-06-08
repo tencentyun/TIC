@@ -7,10 +7,11 @@
 //
 
 #import "AppDelegate.h"
-#import "TICManager.h"
 #import "TICConfig.h"
+#import "JMToast.h"
+#import "IMManager.h"
 
-@interface AppDelegate () <TICStatusListener>
+@interface AppDelegate () <V2TIMSDKListener>
 
 @end
 
@@ -19,12 +20,15 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     int sdkAppid = [[TICConfig shareInstance].sdkAppId intValue];
-    [[TICManager sharedInstance] init:sdkAppid callback:^(TICModule module, int code, NSString *desc) {
-        if(code == 0){
-            [[TICManager sharedInstance] addStatusListener:self];
-        }
-    }];
+    BOOL sucess = [[IMManager sharedInstance] initSDK:sdkAppid listener:self];
+    if (!sucess) {
+        [[JMToast sharedToast] showDialogWithMsg:@"IM初始化失败！"];
+    }
     return YES;
+}
+
+-(void)dealloc {
+    [[IMManager sharedInstance] unInit];
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application {
@@ -53,8 +57,10 @@
 - (void)applicationWillTerminate:(UIApplication *)application {
 }
 
-#pragma mark - status listener
-- (void)onTICForceOffline {
+#pragma mark - V2TIMSDKListener
+/// 当前IM用户被踢下线，此时可以 UI 提示用户，并再次调用 V2TIMManager 的 login() 函数重新登录。
+- (void)onKickedOffline {
+    [[IMManager sharedInstance] kickout];
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"账号被踢" message:nil preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *action = [UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         [(UINavigationController *)self.window.rootViewController popToRootViewControllerAnimated:YES];
@@ -63,9 +69,11 @@
     UIViewController *currentVC = ((UINavigationController *)self.window.rootViewController).topViewController;
     [currentVC presentViewController:alert animated:YES completion:nil];
 }
-- (void)onTICUserSigExpired
-{
-    
+
+/// IM在线时票据过期：此时您需要生成新的 userSig 并再次调用 V2TIMManager 的 login() 函数重新登录。
+- (void)onUserSigExpired {
+    [[JMToast sharedToast] showDialogWithMsg:@"票据过期,请重新生成userSig"];
+    [(UINavigationController *)self.window.rootViewController popToRootViewControllerAnimated:YES];
 }
 
 @end

@@ -1,11 +1,18 @@
 #import "ViewController.h"
-#import "TICManager.h"
 #import "TICConfig.h"
 #import "ClassroomJoinViewController.h"
+#import "JMLoadingHUD.h"
+#import "JMToast.h"
+#import "IMManager.h"
+
+#if TARGET_OS_IPHONE
+#import <TEduBoard/TEduBoard.h>
+#else
+#import <TEduBoard_Mac/TEduBoard.h>
+#endif
 
 @interface ViewController () <UIPickerViewDelegate, UIPickerViewDataSource>
 @property (weak, nonatomic) IBOutlet UIPickerView *userPickView;
-@property (weak, nonatomic) IBOutlet UILabel *trtcVerLabel;
 @property (weak, nonatomic) IBOutlet UILabel *imsdkVerLabel;
 @property (weak, nonatomic) IBOutlet UILabel *boardVerLabel;
 
@@ -17,8 +24,7 @@
     [super viewDidLoad];
     self.title = @"TICDemo";
     
-    self.trtcVerLabel.text = [NSString stringWithFormat:@"TRTC: %@", [TRTCCloud getSDKVersion]];
-    self.imsdkVerLabel.text = [NSString stringWithFormat:@"IMSDK: %@", [[TIMManager sharedInstance] GetVersion]];
+    self.imsdkVerLabel.text = [NSString stringWithFormat:@"IMSDK: %@", [[V2TIMManager sharedInstance] getVersion]];
     self.boardVerLabel.text = [NSString stringWithFormat:@"TEduBoard: %@", [TEduBoardController getVersion]];
 }
 
@@ -30,16 +36,18 @@
     [JMLoadingHUD show];
     [JMLoadingHUD setTitle:@"登录中..."];
     __weak typeof(self) ws = self;
-    [[TICManager sharedInstance] login:userId userSig:userSig callback:^(TICModule module, int code, NSString *desc) {
-        if(code == 0){
+    // IM登录
+    [[IMManager sharedInstance] login:userId userSig:userSig callback:^(int code, NSString * _Nullable desc) {
+        if (code == 0) {
             [JMLoadingHUD hide];
             [[JMToast sharedToast] showDialogWithMsg:@"登录成功"];
             UIStoryboard *story = [UIStoryboard storyboardWithName:@"Main" bundle:[NSBundle mainBundle]];
             ClassroomJoinViewController *join = [story instantiateViewControllerWithIdentifier:@"ClassroomJoinViewController"];
-            join.title = userId;
+            join.userId = userId;
+            join.userSig = userSig;
             [ws.navigationController pushViewController:join animated:YES];
         }
-        else{
+        else {
             [JMLoadingHUD hide];
             [[JMToast sharedToast] showDialogWithMsg:[NSString stringWithFormat:@"登录失败: %d,%@",code, desc]];
         }

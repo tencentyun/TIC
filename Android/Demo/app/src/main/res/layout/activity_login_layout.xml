@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="10dp"
+    android:id="@+id/layout_view"
     android:layout_gravity="top|left">
 
     <TextView
@@ -99,6 +100,7 @@
             android:layout_marginTop="10dp"
             android:textAlignment="center"
             android:text="@string/login_remind"
+            android:visibility="gone"
             android:textColor="@color/colorRed"/>
 
     </LinearLayout>

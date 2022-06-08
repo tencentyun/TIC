@@ -2,7 +2,7 @@
 platform :ios, '8.0'
 
 target 'TICDemo' do
-  pod 'TEduBoard_iOS','2.5.6.27'
-  pod 'TXIMSDK_iOS','4.6.101'
-  pod 'TXLiteAVSDK_TRTC','6.9.8341'
+  pod 'TEduBoard_iOS',:podspec=>'https://sdk.qcloudtiw.com/ios/2.7.3.119/TEduBoard_iOS.podspec'
+#  pod 'TEduBoard_iOS'
+  pod 'TXIMSDK_Plus_iOS', '6.2.2363'
 end

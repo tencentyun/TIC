@@ -23,3 +23,7 @@
 
 -keep class qalsdk.**{*;}
 -dontwarn qalsdk.**
+
+-keep class com.tencent.imsdk.** { *; }
+
+-keep class leo.android.cglib.** { *; }
