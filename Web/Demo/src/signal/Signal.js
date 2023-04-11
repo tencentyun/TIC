@@ -53,7 +53,7 @@ export default {
         let error;
         [error] = await Util.awaitWrap(this._joinTimGroup());
         if (error) {
-          if (error.code === 10015) {
+          if (error.code === 10015 || error.code === 10010) {
             [error] = await Util.awaitWrap(this._createTimGroup()); // feature: 群组不存在, 则创建群组
             if (error) {
               reject(error);

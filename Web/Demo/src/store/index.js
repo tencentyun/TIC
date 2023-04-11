@@ -13,6 +13,7 @@ export default new Vuex.Store({
       userId: sessionStorage.getItem('TIW_CLASSINFO_USERID'),
       userSig: sessionStorage.getItem('TIW_CLASSINFO_USERSIG'),
       classId: sessionStorage.getItem('TIW_CLASSINFO_CLASSID'),
+      nickname: sessionStorage.getItem('TIW_CLASSINFO_NICKNAME'),
     },
     current: {
       toolType: 0,
@@ -31,10 +32,12 @@ export default new Vuex.Store({
       sessionStorage.setItem('TIW_CLASSINFO_USERID', payload.userId);
       sessionStorage.setItem('TIW_CLASSINFO_USERSIG', payload.userSig);
       sessionStorage.setItem('TIW_CLASSINFO_CLASSID', payload.classId);
+      sessionStorage.setItem('TIW_CLASSINFO_NICKNAME', payload.nickname);
 
       state.classInfo.userId = payload.userId;
       state.classInfo.classId = payload.classId;
       state.classInfo.userSig = payload.userSig;
+      state.classInfo.nickname = payload.nickname;
     },
 
     setSignalReady(state, payload) {

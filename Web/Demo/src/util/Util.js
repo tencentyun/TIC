@@ -4,6 +4,9 @@ export default {
   },
 
   rgba2hexa(rgbaColor) {
+    if (rgbaColor.startsWith('#')) {
+      return rgbaColor;
+    }
     const rgba = rgbaColor.substring(rgbaColor.indexOf('(') + 1, rgbaColor.lastIndexOf(')'));
     const rgbaArr = rgba.split(',');
     let hexaColor = '';

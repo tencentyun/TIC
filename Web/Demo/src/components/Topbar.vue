@@ -45,15 +45,19 @@ export default {
   },
   mounted() {
     setTimeout(() => {
-      this.show = false;
+      // this.show = false;
+
+      const hasShow = localStorage.getItem(`tiw_${TEduBoard.getVersion()}`);
+      console.log('hasShow', hasShow);
+      if (!hasShow) {
+        this.documentShow = true;
+      }
     }, 2500);
   },
   methods: {
     ...mapActions(['setSignalReady']),
     async quit() {
       this.quitClassroom(() => {
-        window.teduBoard.destroy();
-        window.teduBoard = null;
         this.setSignalReady(false);
         this.$router.push('/login');
       });

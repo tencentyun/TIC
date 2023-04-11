@@ -165,6 +165,7 @@ export default {
     setBoardScale(boardScale) {
       this.boardScale = boardScale;
       window.teduBoard.setBoardScale(this.boardScale);
+      this.boardScale = window.teduBoard.getBoardScale();
     },
     undo() {
       window.teduBoard.undo();

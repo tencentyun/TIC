@@ -13,6 +13,8 @@ Vue.config.productionTip = false;
 
 Vue.prototype.$EventBus = new Vue();
 
+Vue.prototype.TEduBoard = window.TEduBoard;
+
 new Vue({
   router,
   store,
